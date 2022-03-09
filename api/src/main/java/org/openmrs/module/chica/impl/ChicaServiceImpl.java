@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -26,6 +25,7 @@ import org.openmrs.Person;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.ObsService;
@@ -49,7 +49,6 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
@@ -59,7 +58,6 @@ import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.study.dp3.DeviceSyncRunnable;
 import org.openmrs.module.chica.study.dp3.NewGlookoUserRunnable;
 import org.openmrs.module.chica.xmlBeans.LanguageAnswers;
@@ -74,11 +72,13 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttribut
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChicaServiceImpl implements ChicaService
 {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChicaServiceImpl.class);
 
 	private ChicaDAO dao;
 
@@ -87,6 +87,7 @@ public class ChicaServiceImpl implements ChicaService
 	 */
 	public ChicaServiceImpl()
 	{
+        // This constructor is intentionally left empty.
 	}
 
 	/**
@@ -109,6 +110,7 @@ public class ChicaServiceImpl implements ChicaService
 	 * @should testPSFConsume
 	 * @should testPWSConsume
 	 */
+	@Override
 	public void consume(InputStream input, Patient patient,
 			Integer encounterId,FormInstance formInstance,
 			Integer sessionId,
@@ -119,7 +121,6 @@ public class ChicaServiceImpl implements ChicaService
 		ATDService atdService = Context.getService(ATDService.class);
 		try
 		{
-			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			ParameterHandler parameterHandler = new ChicaParameterHandler();
 
 			LogicService logicService = Context.getLogicService();
@@ -129,8 +130,6 @@ public class ChicaServiceImpl implements ChicaService
 			HashMap<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap = formDatasource
 					.getFormFields(formInstance);
 
-			Integer formInstanceId = formInstance.getFormInstanceId();
-
 			if (fieldMap == null)
 			{
 				try
@@ -139,17 +138,12 @@ public class ChicaServiceImpl implements ChicaService
 							formInstance,locationTagId);
 					fieldMap = formDatasource.getFormFields(formInstance);
 
-				} catch (Exception e1)
-				{
-					org.openmrs.module.chirdlutilbackports.hibernateBeans.Error Error = new org.openmrs.module.chirdlutilbackports.hibernateBeans.Error("Error","XML Parsing", 
-							" Error parsing XML file to be consumed. Form Instance Id = " + formInstanceId
-							, Util.getStackTrace(e1), new Date(),sessionId);
-					chirdlutilbackportsService.saveError(Error);
+				} catch (Exception e){	
+					log.error("Error parsing XML file to be consumed. Encounter id: {} Form Instance Id:{} Location tag id: {}"
+							, encounterId, formInstance, locationTagId, e);
 					return;
 				}
 			}
-
-			startTime = System.currentTimeMillis();
 
 			Integer formId = formInstance.getFormId();
 			
@@ -163,7 +157,7 @@ public class ChicaServiceImpl implements ChicaService
 
 			if (fieldsToConsume == null)
 			{
-				fieldsToConsume = new ArrayList<FormField>();
+				fieldsToConsume = new ArrayList<>();
 				String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 				
 				for (FormField currField : databaseForm.getOrderedFormFields())
@@ -211,19 +205,15 @@ public class ChicaServiceImpl implements ChicaService
 					}
 				}
 			}
-			System.out.println("chicaService.consume: Fields to consume: "+
-				(System.currentTimeMillis()-startTime));
+			log.info("chicaService.consume: Fields to consume: {}", System.currentTimeMillis()-startTime);
 			
 			startTime = System.currentTimeMillis();
 			atdService.consume(input, formInstance, patient, encounterId,
 					 null, parameterHandler,
 					 fieldsToConsume,locationTagId,sessionId);
-			System.out.println("chicaService.consume: Time of atdService.consume: "+
-				(System.currentTimeMillis()-startTime));
-		} catch (Exception e)
-		{
-			log.error(e.getMessage());
-			log.error(Util.getStackTrace(e));
+			log.info("chicaService.consume: Time of atdService.consume: {}", System.currentTimeMillis()-startTime);
+		} catch (Exception e){
+			log.error("Exception consuming formInstance: {} encounter id: {} location tag id: {}", formInstance, encounterId, locationTagId, e);
 		}
 	}
 
@@ -246,10 +236,9 @@ public class ChicaServiceImpl implements ChicaService
 			InputStream input = new FileInputStream(statsConfigFile);
 			statsConfig = (StatsConfig) XMLUtil.deserializeXML(
 					StatsConfig.class, input);
-		} catch (IOException e1)
+		} catch (IOException e)
 		{
-			log.error(e1.getMessage());
-			log.error(Util.getStackTrace(e1));
+			log.error("Exception populating field names from stats config file {} ",statsConfigFile,e);
 			return;
 		}
 
@@ -298,6 +287,7 @@ public class ChicaServiceImpl implements ChicaService
 		org.openmrs.module.atd.util.Util.populateFieldNameArrays(languages, languageAnswers);
 	}
 	
+	@Override
 	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
 		FormInstance formInstance, int encounterId, Patient patient)
 	{
@@ -313,6 +303,7 @@ public class ChicaServiceImpl implements ChicaService
 		return saveAnswers(fieldMap, formInstance, encounterId, patient, databaseForm, databaseForm.getFormFields());
 	}
 	
+	@Override
 	public Map<String, Field> saveAnswers(Map<String, org.openmrs.module.atd.xmlBeans.Field> fieldMap, 
 		FormInstance formInstance, int encounterId, Patient patient, Set<FormField> formFieldsToSave)
 	{
@@ -353,8 +344,8 @@ public class ChicaServiceImpl implements ChicaService
 		providerNameRule.setParameters(parameters);
 
 		Map<Integer, PatientATD> fieldIdToPatientATDMap = new HashMap<Integer, PatientATD>();
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter =  encounterService.getEncounter(encounterId);
 		Integer locationTagId = org.openmrs.module.chica.util.Util.getLocationTagId(encounter);
 		String formType = org.openmrs.module.chirdlutil.util.Util.getFormType(formInstance.getFormId(), locationTagId, formInstance.getLocationId());
 
@@ -498,7 +489,7 @@ public class ChicaServiceImpl implements ChicaService
 		if (languageResponse != null) {
 			HashMap<Integer, String> answers = maxAnswers;
 			if (answers != null) {
-				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag((org.openmrs.module.chica.hibernateBeans.Encounter) encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 				Integer formInstanceId = formInstance.getFormInstanceId();
 				Integer locationId = formInstance.getLocationId();
 				for (Integer currRuleId : answers.keySet())
@@ -597,26 +588,31 @@ public class ChicaServiceImpl implements ChicaService
 		return newAnswer;
 	}
 	
+	@Override
 	public Percentile getWtageinf(double ageMos, int sex)
 	{
 		return getChicaDAO().getWtageinf(ageMos, sex);
 	}
 
+	@Override
 	public Bmiage getBmiage(double ageMos, int sex)
 	{
 		return getChicaDAO().getBmiage(ageMos, sex);
 	}
 
+	@Override
 	public Hcageinf getHcageinf(double ageMos, int sex)
 	{
 		return getChicaDAO().getHcageinf(ageMos, sex);
 	}
 
+	@Override
 	public Lenageinf getLenageinf(double ageMos, int sex)
 	{
 		return getChicaDAO().getLenageinf(ageMos, sex);
 	}
 
+	@Override
 	public List<Study> getActiveStudies()
 	{
 		return getChicaDAO().getActiveStudies();
@@ -625,11 +621,13 @@ public class ChicaServiceImpl implements ChicaService
 	/**
 	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributesByName(java.lang.String, boolean)
 	 */
+	@Override
 	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
 	{
 		return getChicaDAO().getStudyAttributesByName(studyAttributeName, includeRetired);
 	}
 	
+	@Override
 	public StudyAttributeValue getStudyAttributeValue(Study study,
 			String studyAttributeName)
 	{
@@ -648,116 +646,137 @@ public class ChicaServiceImpl implements ChicaService
 	/**
 	 * @see org.openmrs.module.chica.service.ChicaService#getStudyAttributeValues(java.util.List, java.util.List, boolean)
 	 */
+	@Override
 	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
 			List<StudyAttribute> studyAttributeList, boolean includeRetired)
 	{
 		return getChicaDAO().getStudyAttributeValues(studyList, studyAttributeList, includeRetired);
 	}
 
+	@Override
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
 			Integer patientId)
 	{
 		return getChicaDAO().getChicaPatientObsByPSF(psfId, patientId);
 	}
 
+	@Override
 	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,
 			Integer patientId)
 	{
 		return getChicaDAO().getChicaPatientObsByPWS(pwsId, patientId);
 	}
 
+	@Override
 	public List<Chica1Appointment> getChica1AppointmentsByPatient(
 			Integer patientId)
 	{
 		return getChicaDAO().getChica1AppointmentsByPatient(patientId);
 	}
 
+	@Override
 	public List<Chica1Patient> getChica1Patients()
 	{
 		return getChicaDAO().getChica1Patients();
 	}
 
+	@Override
 	public PatientFamily getPatientFamily(Integer patientId)
 	{
 		return getChicaDAO().getPatientFamily(patientId);
 	}
 
+	@Override
 	public Family getFamilyByAddress(String address)
 	{
 		return getChicaDAO().getFamilyByAddress(address);
 
 	}
 	
+	@Override
 	public Family getFamilyByPhone(String phone)
 	{
 		return getChicaDAO().getFamilyByPhone(phone);
 
 	}
 
+	@Override
 	public void savePatientFamily(PatientFamily patientFamily)
 	{
 		getChicaDAO().savePatientFamily(patientFamily);
 
 	}
 
+	@Override
 	public void saveFamily(Family family)
 	{
 		getChicaDAO().saveFamily(family);
 	}
 
+	@Override
 	public void updateFamily(Family family)
 	{
 		getChicaDAO().updateFamily(family);
 	}
 	
+	@Override
 	public Obs getStudyArmObs(Integer familyId,Concept studyConcept){
 		return getChicaDAO().getStudyArmObs(familyId, studyConcept);
 	}
 	
+	@Override
 	public List<String> getInsCategories(){
 		return getChicaDAO().getInsCategories();
 	}
 	
+	@Override
 	public void updateChica1Patient(Chica1Patient patient){
 		getChicaDAO().updateChica1Patient(patient);
 	}
 	
+	@Override
 	public void updateChica1Appointment(Chica1Appointment appointment){
 		getChicaDAO().updateChica1Appointment(appointment);
 	}
 	
+	@Override
 	public List<Chica1PatientObsv> getUnloadedChicaPatientObs(Integer patientId,String date){
 		return getChicaDAO().getUnloadedChicaPatientObs(patientId, date);
 	}
 	
+	@Override
 	public List<Chica1Appointment> getChica1AppointmentsByDate(Integer patientId, String date){
 		return getChicaDAO().getChica1AppointmentsByDate(patientId, date);
 	}
 	
+	@Override
 	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication){
 		return getChicaDAO().getInsCategoryByCarrier(carrierCode,sendingFacility,sendingApplication);
 	}
 	
+	@Override
 	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication){
 		return getChicaDAO().getInsCategoryByName(insuranceName,sendingFacility,sendingApplication);
 	}
 	
+	@Override
 	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication){
 		return getChicaDAO().getInsCategoryByInsCode(insCode,sendingFacility,sendingApplication);
 	}
 	
+	@Override
 	public Double getHighBP(Patient patient, Integer bpPercentile,
-			String bpType, org.openmrs.Encounter encounter)
+			String bpType, Encounter encounter)
 	{
-		List<Person> persons = new ArrayList<Person>();
+		List<Person> persons = new ArrayList<>();
 		persons.add(patient);
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName("HtCentile");
-		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		List<Encounter> encounters = new ArrayList<>();
 		encounters.add(encounter);
 		Double heightPercentile = null;
 		ObsService obsService = Context.getObsService();
-		List<Concept> concepts = new ArrayList<Concept>();
+		List<Concept> concepts = new ArrayList<>();
 
 		concepts.add(concept);
 
@@ -780,6 +799,7 @@ public class ChicaServiceImpl implements ChicaService
 	/**
 	 * @should checkHighBP
 	 */
+	@Override
 	public Double getHighBP(Patient patient, Integer bpPercentile, String bpType, 
 			Double heightPercentile, Date onDate)
 	{
@@ -925,35 +945,42 @@ public class ChicaServiceImpl implements ChicaService
 		return Util.round(lowerAgeInter+((upperAgeInter-lowerAgeInter)*fraction),2);
 		}
 
+		@Override
 		public String getDDSTLeaf(String category, Integer ageInDays){
 			return getChicaDAO().getDDSTLeaf(category, ageInDays);
 		}
 		
+		@Override
 		public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export) {
 			getChicaDAO().insertEncounterToHL7ExportQueue(export);
 			return export;
 		}
 
+		@Override
 		public List<ChicaHL7Export> getPendingHL7Exports() {
 			return getChicaDAO().getPendingHL7Exports();
 			
 		}
 
+		@Override
 		public void saveChicaHL7Export(ChicaHL7Export export) {
 
 			getChicaDAO().saveChicaHL7Export(export);
 			
 		}
 	
+		@Override
 		public List<ChicaHL7Export> getPendingHL7ExportsByEncounterId(Integer encounterId) {
 			return getChicaDAO().getPendingHL7ExportsByEncounterId(encounterId);
 		}
 	
+		@Override
 		public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, 
 				Integer locationTagId,Integer locationId){
 			return getChicaDAO().getReprintRescanStatesByEncounter(encounterId, optionalDateRestriction, locationTagId,locationId);
 		}
 		
+		@Override
 		public List<String> getPrinterStations(Location location){
 			String locationTagAttributeName = ChirdlUtilConstants.LOC_TAG_ATTR_ACTIVE_PRINTER_STATION;
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
@@ -984,7 +1011,8 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		 * @see org.openmrs.module.chica.service.ChicaService#getPrinterStations(org.openmrs.User)
 		 */
-        public List<String> getPrinterStations(User user) {
+        @Override
+		public List<String> getPrinterStations(User user) {
         	List<String> stationNames = new ArrayList<String>();
         	String locationProp = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION);
 	        String locationTags = user.getUserProperty(ChirdlUtilConstants.USER_PROPERTY_LOCATION_TAGS);
@@ -1027,58 +1055,71 @@ public class ChicaServiceImpl implements ChicaService
 	        return stationNames;
         }
 		
+		@Override
 		public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId){
 			Chica1Appointment appt= getChicaDAO().getChica1AppointmentByEncounterId(encId);
 			return appt;
 			
 		}
 		
+		@Override
 		public void  saveHL7ExportMap (ChicaHL7ExportMap map){
 			
 			getChicaDAO().saveHL7ExportMap(map);
 			
 		}
 		
+		@Override
 		public ChicaHL7ExportMap getChicaExportMapByQueueId(Integer queue_id){
 			return getChicaDAO().getChicaExportMapByQueueId(queue_id);
 		}
 		
+		@Override
 		public ChicaHL7ExportStatus getChicaExportStatusByName (String name){
 			return getChicaDAO().getChicaExportStatusByName(name);
 		}
 		
+		@Override
 		public ChicaHL7ExportStatus getChicaExportStatusById (Integer id){
 			return getChicaDAO().getChicaExportStatusById( id);
 		}
 		
+		@Override
 		public List<Object[]> getFormsPrintedByWeek(String formName, String locationName) {
 			return getChicaDAO().getFormsPrintedByWeek(formName, locationName);
 		}
 		
+		@Override
 		public List<Object[]> getFormsScannedByWeek(String formName, String locationName) {
 			return getChicaDAO().getFormsScannedByWeek(formName, locationName);
 		}
 		
+		@Override
 		public List<Object[]> getFormsScannedAnsweredByWeek(String formName, String locationName) {
 			return getChicaDAO().getFormsScannedAnsweredByWeek(formName, locationName);
 		}
+		@Override
 		public List<Object[]> getFormsScannedAnythingMarkedByWeek(String formName, String locationName){
 			return getChicaDAO().getFormsScannedAnythingMarkedByWeek(formName,locationName);	
 		}
+		@Override
 		public List<Object[]> getQuestionsScanned(String formName, String locationName) {
 			return getChicaDAO().getQuestionsScanned(formName, locationName);
 		}
 
+		@Override
 		public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
 			return getChicaDAO().getQuestionsScannedAnswered(formName, locationName);
 		}
             
-		public List< org.openmrs.module.chica.hibernateBeans.Encounter> getEncountersForEnrolledPatients(Concept concept,
+		@Override
+		public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatients(concept, startDateTime, endDateTime);
     	}
 		
-		public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
+		@Override
+		public  List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 				Date startDateTime, Date endDateTime){
 			return getChicaDAO().getEncountersForEnrolledPatientsExcludingConcepts(includeConcept, excludeConcept, startDateTime, endDateTime);
 		}
@@ -1086,21 +1127,24 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		 * @see org.openmrs.module.chica.service.ChicaService#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)
 		 */
-        public StudySubject getStudySubject(Patient patient, Study study) {
+        @Override
+		public StudySubject getStudySubject(Patient patient, Study study) {
 	        return getChicaDAO().getStudySubject(patient, study);
         }
 
 		/**
 		 * @see org.openmrs.module.chica.service.ChicaService#getStudyByTitle(java.lang.String)
 		 */
-        public Study getStudyByTitle(String studyTitle) {
+        @Override
+		public Study getStudyByTitle(String studyTitle) {
 	        return getChicaDAO().getStudyByTitle(studyTitle);
         }
         
         /**
 		 * @see org.openmrs.module.chica.service.ChicaService#getStudiesByTitle(java.lang.String, boolean)
 		 */
-        public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
+        @Override
+		public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
 	        return getChicaDAO().getStudiesByTitle(studyTitle, includeRetired);
         }
 
@@ -1108,7 +1152,8 @@ public class ChicaServiceImpl implements ChicaService
     	 * DWE CHICA-761
     	 * @see org.openmrs.module.chica.service.ChicaService#getReprintRescanStatesBySessionId(Integer, Date, List, Integer)
     	 */
-    	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId)
+    	@Override
+		public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId)
     	{
     		return getChicaDAO().getReprintRescanStatesBySessionId(sessionId, optionalDateRestriction, locationTagIds, locationId);
     	}
@@ -1117,7 +1162,8 @@ public class ChicaServiceImpl implements ChicaService
     	 * CHICA-1063
     	 * @see org.openmrs.module.chica.service.ChicaService#createPatientStateQueryGlooko(String, String, String)
     	 */
-    	public void createPatientStateQueryGlooko(String glookoCode, String syncTimestamp, String dataType)
+    	@Override
+		public void createPatientStateQueryGlooko(String glookoCode, String syncTimestamp, String dataType)
     	{
 			Runnable deviceSync = new DeviceSyncRunnable(glookoCode, syncTimestamp, dataType);
 			Daemon.runInDaemonThread(deviceSync, org.openmrs.module.chica.util.Util.getDaemonToken());
@@ -1127,6 +1173,7 @@ public class ChicaServiceImpl implements ChicaService
 		 * CHICA-1063
 		 * @see org.openmrs.module.chica.service.ChicaService#addGlookoCodePersonAttribute(String, String, String, String)
 		 */
+		@Override
 		public void addGlookoCodePersonAttribute(String firstName, String lastName, String dateOfBirth, String glookoCode) 
 		{
 			Runnable newUser = new NewGlookoUserRunnable(firstName, lastName, dateOfBirth, glookoCode);
@@ -1136,6 +1183,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 		  */
+		@Override
 		public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
 			return getChicaDAO().saveStudyAttribute(studyAttribute);
 		}
@@ -1144,6 +1192,7 @@ public class ChicaServiceImpl implements ChicaService
 		  * @see org.openmrs.module.chica.service.ChicaService#retireStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute,
 		  * java.lang.String)
 		  */
+		@Override
 		public StudyAttribute retireStudyAttribute(StudyAttribute studyAttribute, String reason) {
 		        return getChicaDAO().saveStudyAttribute(studyAttribute);
 		}
@@ -1151,6 +1200,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 		  */
+		@Override
 		public StudyAttribute unretireStudyAttribute(StudyAttribute studyAttribute) {
 		        return getChicaDAO().saveStudyAttribute(studyAttribute);
 		}
@@ -1158,6 +1208,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
 		  */
+		@Override
 		public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
 			return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}	
@@ -1166,6 +1217,7 @@ public class ChicaServiceImpl implements ChicaService
 		  * @see org.openmrs.module.chica.service.ChicaService#retireStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue,
 		  * java.lang.String)
 		  */
+		@Override
 		public StudyAttributeValue retireStudyAttributeValue(StudyAttributeValue studyAttributeValue, String reason) {
 		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}
@@ -1173,6 +1225,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
 		  */
+		@Override
 		public StudyAttributeValue unretireStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
 		        return getChicaDAO().saveStudyAttributeValue(studyAttributeValue);
 		}
@@ -1180,6 +1233,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
 		  */
+		@Override
 		public Study saveStudy(Study study) {
 			return getChicaDAO().saveStudy(study);
 		}	
@@ -1188,6 +1242,7 @@ public class ChicaServiceImpl implements ChicaService
 		  * @see org.openmrs.module.chica.service.ChicaService#retireStudy(org.openmrs.module.chica.hibernateBeans.Study,
 		  * java.lang.String)
 		  */
+		@Override
 		public Study retireStudy(Study study, String reason) {
 		        return getChicaDAO().saveStudy(study);
 		}
@@ -1195,6 +1250,7 @@ public class ChicaServiceImpl implements ChicaService
 		/**
 		  * @see org.openmrs.module.chica.service.ChicaService#unretireStudy(org.openmrs.module.chica.hibernateBeans.Study)
 		  */
+		@Override
 		public Study unretireStudy(Study study) {
 		        return getChicaDAO().saveStudy(study);
 		}

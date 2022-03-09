@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -18,6 +16,8 @@ import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Calculates height percentile based upon a provided height, the patient's age, and gender.
@@ -28,7 +28,7 @@ public class CalculateHeightPercentile implements Rule {
 	
 	private static final String CALCULATION_HEIGHT_PERCENTILE = "length";
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(CalculateHeightPercentile.class);
 	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -42,7 +42,7 @@ public class CalculateHeightPercentile implements Rule {
 		// Ensure the parameter is a Result
 		Object heightResultsObject = parameters.get(ChirdlUtilConstants.PARAMETER_1);
 		if (!(heightResultsObject instanceof Result)) {
-			return Result.emptyResult();
+			return Result.emptyResult(); 
 		}
 		
 		Result heightResults = (Result)heightResultsObject;
@@ -50,14 +50,14 @@ public class CalculateHeightPercentile implements Rule {
 		// Ensure the patient exists
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Cannot find patient with ID " + patientId);
+			log.error("Cannot find patient with ID {}.", patientId);
 			return Result.emptyResult();
 		}
 		
 		// Ensure the patient has a birthdate
 		Date birthDate = patient.getBirthdate();
 		if (birthDate == null) {
-			this.log.error("Patient " + patientId + " does not have a birthdate specified.");
+			log.error("Patient {} does not have a birthdate specified.", patientId );
 			return Result.emptyResult();
 		}
 		
@@ -88,7 +88,7 @@ public class CalculateHeightPercentile implements Rule {
 				dateTime);
 			return new Result(heightPercentile);
 		} catch (Exception e) {
-			this.log.error("Error calculating height percentile for patient " + patientId, e);
+			log.error("Error calculating height percentile for patient {}.", patientId, e);
 			return Result.emptyResult();
 		}
 	}

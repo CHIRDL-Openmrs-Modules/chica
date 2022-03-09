@@ -6,6 +6,10 @@
     atd_patient_state*,
     chirdlutilbackports_program*,
     atd_session*,
+    chirdlutilbackports_encounter_attribute*,
+    chirdlutilbackports_encounter_attribute_value*,
+    chirdlutilbackports_session*,
+    chirdlutilbackports_form_instance*,
     chirdlutilbackports_state*,
     chirdlutilbackports_state_action*,
     chirdlutilbackports_state_mapping*,
@@ -51,6 +55,8 @@
     dss_rule*,
     encounter*,
     encounter_type*,
+    encounter_provider*,
+    encounter_role*,
     field*,
     field_answer*,
     field_type*,
@@ -66,6 +72,8 @@
     hl7_source*,
     linkagetable*,
     location*,
+    location_tag_map*,
+    location_tag*,
     mime_type*,
     nbs_alert*,
     note*,
@@ -89,6 +97,7 @@
     program*,
     program_workflow*,
     program_workflow_state*,
+    provider*,
     relationship*,
     relationship_type*,
     report_object*,
@@ -222,6 +231,31 @@
     cutoff_age CDATA #REQUIRED
     reportable CDATA #IMPLIED
     ddst_id CDATA #REQUIRED
+>
+
+<!ELEMENT chirdlutilbackports_encounter_attribute EMPTY>
+<!ATTLIST chirdlutilbackports_encounter_attribute
+    encounter_attribute_id CDATA #REQUIRED
+    name CDATA #REQUIRED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT chirdlutilbackports_encounter_attribute_value EMPTY>
+<!ATTLIST chirdlutilbackports_encounter_attribute_value
+    encounter_attribute_value_id CDATA #REQUIRED
+    encounter_attribute_id CDATA #REQUIRED
+    encounter_id CDATA #REQUIRED
+    value_text CDATA #IMPLIED
+    value_datetime CDATA #IMPLIED
+    creator CDATA #REQUIRED
+    date_created CDATA #REQUIRED
+    changed_by CDATA #IMPLIED
+    date_changed CDATA #IMPLIED
+    voided CDATA #REQUIRED
+    voided_by CDATA #IMPLIED
+    date_voided CDATA #IMPLIED
+    void_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT chirdlutilbackports_error EMPTY>
@@ -382,6 +416,19 @@
     date_changed CDATA #IMPLIED
 >
 
+<!ELEMENT chirdlutilbackports_form_instance EMPTY>
+<!ATTLIST chirdlutilbackports_form_instance
+    form_instance_id CDATA #REQUIRED
+    form_id CDATA #IMPLIED
+    location_id CDATA #IMPLIED
+>
+
+<!ELEMENT chirdlutilbackports_session EMPTY>
+<!ATTLIST chirdlutilbackports_session
+    session_id CDATA #REQUIRED
+    encounter_id CDATA #IMPLIED
+>
+
 <!ELEMENT chica_wtageinf EMPTY>
 <!ATTLIST chica_wtageinf
     sex CDATA #IMPLIED
@@ -512,20 +559,26 @@
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
     concept_name_id CDATA #REQUIRED
+    concept_name_type CDATA #IMPLIED
+    date_changed CDATA #IMPLIED
+    changed_by CDATA #IMPLIED
     voided CDATA #REQUIRED
     voided_by CDATA #IMPLIED
     date_voided CDATA #IMPLIED
     void_reason CDATA #IMPLIED
     locale_preferred CDATA #REQUIRED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT concept_name_tag EMPTY>
 <!ATTLIST concept_name_tag
     concept_name_tag_id CDATA #REQUIRED
     tag CDATA #REQUIRED
-    description CDATA #REQUIRED
+    description CDATA #IMPLIED
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
+    date_changed CDATA #IMPLIED
+    changed_by CDATA #IMPLIED
     voided CDATA #REQUIRED
     voided_by CDATA #IMPLIED
     date_voided CDATA #IMPLIED
@@ -695,7 +748,6 @@
     encounter_id CDATA #REQUIRED
     encounter_type CDATA #IMPLIED
     patient_id CDATA #REQUIRED
-    provider_id CDATA #REQUIRED
     location_id CDATA #REQUIRED
     form_id CDATA #IMPLIED
     encounter_datetime CDATA #REQUIRED
@@ -710,19 +762,52 @@
     printer_location CDATA #IMPLIED
     insurance_carrier_code CDATA #IMPLIED
     insurance_plan_code CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT encounter_type EMPTY>
 <!ATTLIST encounter_type
     encounter_type_id CDATA #REQUIRED
     name CDATA #REQUIRED
-    description CDATA #REQUIRED
+    description CDATA #IMPLIED
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
     retired CDATA #REQUIRED
     retired_by CDATA #IMPLIED
     date_retired CDATA #IMPLIED
     retire_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
+>
+
+<!ELEMENT encounter_provider EMPTY>
+<!ATTLIST encounter_provider
+    encounter_provider_id CDATA #REQUIRED
+    encounter_id CDATA #REQUIRED
+    encounter_role_id CDATA #REQUIRED
+    date_created CDATA #REQUIRED
+    creator CDATA #REQUIRED
+    voided CDATA #REQUIRED
+    date_voided CDATA #IMPLIED
+    void_reason CDATA #IMPLIED
+    changed_by CDATA #IMPLIED
+    voided_by CDATA #IMPLIED
+    provider_id CDATA #IMPLIED
+    uuid CDATA #REQUIRED
+>
+<!ELEMENT encounter_role EMPTY>
+<!ATTLIST encounter_role
+    encounter_role_id CDATA #REQUIRED
+    name CDATA #REQUIRED
+    description CDATA #IMPLIED
+    creator CDATA #REQUIRED
+    date_created CDATA #REQUIRED
+    changed_by CDATA #IMPLIED
+    date_changed CDATA #IMPLIED
+    retired CDATA #REQUIRED
+    date_retired CDATA #IMPLIED
+    retired_by CDATA #IMPLIED
+    retire_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT field EMPTY>
@@ -783,6 +868,7 @@
     retired_by CDATA #IMPLIED
     date_retired CDATA #IMPLIED
     retired_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT form_field EMPTY>
@@ -925,7 +1011,31 @@
     retired_by CDATA #IMPLIED
     date_retired CDATA #IMPLIED
     retire_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
+
+<!ELEMENT location_tag EMPTY>
+<!ATTLIST location_tag
+    location_tag_id CDATA #REQUIRED
+    name CDATA #REQUIRED
+    description CDATA #IMPLIED
+    creator CDATA #REQUIRED
+    date_created CDATA #REQUIRED
+    dateChanged CDATA #IMPLIED
+    changed_by CDATA #IMPLIED
+    retired CDATA #REQUIRED
+    retired_by CDATA #IMPLIED
+    date_retired CDATA #IMPLIED
+    retire_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
+>
+
+<!ELEMENT location_tag_map EMPTY>
+<!ATTLIST location_tag_map
+    location_id CDATA #REQUIRED
+    location_tag_id CDATA #REQUIRED
+>
+
 
 <!ELEMENT mime_type EMPTY>
 <!ATTLIST mime_type
@@ -1102,7 +1212,7 @@
     name CDATA #REQUIRED
     description CDATA #REQUIRED
     format CDATA #IMPLIED
-    check_digit CDATA #REQUIRED
+    check_digit CDATA #IMPLIED
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
     required CDATA #REQUIRED
@@ -1165,6 +1275,7 @@
     voided_by CDATA #IMPLIED
     date_voided CDATA #IMPLIED
     void_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT person_address EMPTY>
@@ -1218,6 +1329,7 @@
     foreign_key CDATA #IMPLIED
     searchable CDATA #REQUIRED
     edit_privilege CDATA #IMPLIED
+    sort_weight CDATA #IMPLIED
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
     changed_by CDATA #IMPLIED
@@ -1226,6 +1338,8 @@
     retired_by CDATA #IMPLIED
     date_retired CDATA #IMPLIED
     retire_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
+    
 >
 
 <!ELEMENT person_name EMPTY>
@@ -1254,7 +1368,8 @@
 <!ELEMENT privilege EMPTY>
 <!ATTLIST privilege
     privilege CDATA #REQUIRED
-    description CDATA #REQUIRED
+    description CDATA #IMPLIED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT program EMPTY>
@@ -1294,6 +1409,25 @@
     retired CDATA #REQUIRED
     changed_by CDATA #IMPLIED
     date_changed CDATA #IMPLIED
+>
+
+<!ELEMENT provider EMPTY>
+<!ATTLIST provider
+    provider_id CDATA #REQUIRED
+    person_id CDATA #REQUIRED
+    name CDATA #IMPLIED
+    identifier CDATA #IMPLIED
+    creator CDATA #REQUIRED
+    role_id CDATA #IMPLIED
+    speciality_id CDATA #IMPLIED
+    date_created CDATA #REQUIRED
+    changed_by CDATA #IMPLIED
+    date_changed CDATA #IMPLIED
+    retired_by CDATA #IMPLIED
+    retired CDATA #REQUIRED
+    retire_reason CDATA #IMPLIED
+    uuid CDATA #REQUIRED
+   
 >
 
 <!ELEMENT relationship EMPTY>
@@ -1352,6 +1486,7 @@
 <!ATTLIST role
     role CDATA #REQUIRED
     description CDATA #REQUIRED
+    uuid CDATA #REQUIRED
 >
 
 <!ELEMENT role_privilege EMPTY>
@@ -1436,16 +1571,21 @@
 <!ATTLIST users
     user_id CDATA #REQUIRED
     system_id CDATA #REQUIRED
+    person_id CDATA #REQUIRED
     username CDATA #IMPLIED
+    password CDATA #IMPLIED
+    salt CDATA #IMPLIED
+    email CDATA #IMPLIED
     secret_question CDATA #IMPLIED
     creator CDATA #REQUIRED
     date_created CDATA #REQUIRED
     changed_by CDATA #IMPLIED
     date_changed CDATA #IMPLIED
-    voided CDATA #REQUIRED
-    voided_by CDATA #IMPLIED
-    date_voided CDATA #IMPLIED
-    void_reason CDATA #IMPLIED
+    retired CDATA #REQUIRED
+    retired_by CDATA #IMPLIED
+    date_retired CDATA #IMPLIED
+    retire_reason CDATA #IMPLIED
+    uuid CDATA #IMPLIED
 >
 
 

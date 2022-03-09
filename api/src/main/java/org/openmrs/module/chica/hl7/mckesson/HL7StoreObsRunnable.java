@@ -20,8 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
@@ -39,6 +37,8 @@ import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -49,7 +49,7 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class HL7StoreObsRunnable implements Runnable {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7StoreObsRunnable.class);
 	private Integer patientId;
 	private Integer locationId;
 	private Integer sessionId;
@@ -82,13 +82,13 @@ public class HL7StoreObsRunnable implements Runnable {
 		try {
 			Patient patient = Context.getPatientService().getPatient(this.patientId);
 			if (patient == null) {
-				this.log.error("Invalid patient ID: " + this.patientId);
+				log.error("Invalid patient ID: {}", this.patientId);
 				return;
 			}
 			
 			Location location = Context.getLocationService().getLocation(this.locationId);
 			if (location == null) {
-				this.log.error("Invalid location ID: " + this.locationId);
+				log.error("Invalid location ID: {}", this.locationId);
 				return;
 			}
 			
@@ -96,14 +96,14 @@ public class HL7StoreObsRunnable implements Runnable {
 			LocationTag locationTag = Context.getLocationService().getLocationTagByName(this.printerLocation);
 			if(locationTag == null)
 			{
-				this.log.error("Invalid printer location: " + this.printerLocation);
+				log.error("Invalid printer location: {} ", this.printerLocation);
 				return;
 			}
 			
 			storeHL7Obs(patient, location, locationTag.getLocationTagId());
 		}
 		catch (Exception e) {
-			this.log.error("Error processing file", e);
+			log.error("Error storing HL7 obs for patient id: {}, location id: {}, printer location {}", this.patientId, this.locationId, this.printerLocation, e);
 		}
 	}
 	
@@ -174,13 +174,13 @@ public class HL7StoreObsRunnable implements Runnable {
 			
 				// check to see if we've already looked up a mapping for this concept
 				Concept mappedConcept = mrfConceptMapping.get(conceptId);
-				if (mappedConcept == null) {
+				if (mappedConcept == null && !mrfConceptSet.contains(conceptId)) {
 					// check to see if we've already searched this one before
-					if (!mrfConceptSet.contains(conceptId)) {
-						mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
-						mrfConceptSet.add(conceptId);
-						mrfConceptMapping.put(conceptId, mappedConcept);
-					}
+				
+					mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
+					mrfConceptSet.add(conceptId);
+					mrfConceptMapping.put(conceptId, mappedConcept);
+					
 				}
 				
 				if (mappedConcept != null) {
@@ -225,8 +225,7 @@ public class HL7StoreObsRunnable implements Runnable {
 						if (answerConcept != null) {
 							String answerConceptName = answerConcept.getName().getName();
 							currObs.setValueText(answerConceptName);
-							this.log.error("Could not map vitals concept: " + answerConceptName
-								+ ". Could not store vitals observation.");
+							log.error("Could not map vitals concept: {}. Could not store vitals observation.", answerConceptName);
 						}
 					}
 					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedVitalsConcept);
@@ -236,9 +235,9 @@ public class HL7StoreObsRunnable implements Runnable {
 					try{
 						obsService.saveObs(currObs, null);
 						savedToDB = true;
-					}catch(APIException apie){
+					}catch(APIException e){
 						// CHICA-1017 Catch the exception and log it so that we can continue processing the message
-						this.log.error("APIException while saving obs " + currObs + ".", apie);
+						log.error("APIException while saving obs {}", currObs, e);
 					}
 				}
 				

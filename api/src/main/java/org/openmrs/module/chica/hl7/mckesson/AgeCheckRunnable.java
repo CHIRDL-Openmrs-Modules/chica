@@ -2,8 +2,6 @@ package org.openmrs.module.chica.hl7.mckesson;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.LocationService;
@@ -13,6 +11,8 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -23,7 +23,8 @@ import ca.uhn.hl7v2.model.Message;
  *
  */
 public class AgeCheckRunnable implements RunnableResult<Boolean> {
-	private Log log = LogFactory.getLog(this.getClass());
+	
+	private static final Logger log = LoggerFactory.getLogger(AgeCheckRunnable.class);
 	private Boolean ageOk = Boolean.TRUE;
 	private Message message;
 	private String printerLocation;
@@ -79,10 +80,10 @@ public class AgeCheckRunnable implements RunnableResult<Boolean> {
 		} catch (NumberFormatException e) {
 			//String was either null, empty, or not a digit
 			//No age limit value could be retrieved from attributes, so do not filter
-			this.log.error("Error occurred parsing age limit string.", e);
+			log.error("Error occurred parsing age limit string.", e);
 			this.exception = e;
 		} catch (Exception e){
-			this.log.error("Exception while verifying patient age. ", e);
+			log.error("Exception while verifying patient age. ", e);
 			this.exception = e;
 		}
 	}

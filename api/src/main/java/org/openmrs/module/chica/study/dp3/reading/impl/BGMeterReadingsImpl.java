@@ -23,7 +23,7 @@ public class BGMeterReadingsImpl implements Readings
 	 */
 	public BGMeterReadingsImpl()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**
@@ -32,16 +32,16 @@ public class BGMeterReadingsImpl implements Readings
 	 */
 	public List<Object> getReadings()
 	{
-		return readings;
+		return this.readings;
 	}
 	
 	@Override
 	public List<GenericReading> getGenericReadingList() throws Exception{
-		if(genericReadingsList == null)
+		if(this.genericReadingsList == null)
 		{
-			genericReadingsList = new ArrayList<GenericReading>();
+			this.genericReadingsList = new ArrayList<>();
 			
-			for(Object obj : readings)
+			for(Object obj : this.readings)
 			{
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				HashMap<String, Object> map = (HashMap)obj;
@@ -55,10 +55,10 @@ public class BGMeterReadingsImpl implements Readings
 				String mealTagSource = map.get(GlookoConstants.PARAMETER_MEAL_TAG_SOURCE) == null ? null : (String) map.get(GlookoConstants.PARAMETER_MEAL_TAG_SOURCE);
 				String mealTag = map.get(GlookoConstants.PARAMETER_MEAL_TAG) == null ? null : (String) map.get(GlookoConstants.PARAMETER_MEAL_TAG);
 
-				genericReadingsList.add(new GenericReading(timestamp, timeOffset, syncTimestamp, guid, updatedAt, value, units, mealTagSource, mealTag));
+				this.genericReadingsList.add(new GenericReading(timestamp, timeOffset, syncTimestamp, guid, updatedAt, value, units, mealTagSource, mealTag));
 			}
 		}
 		
-		return genericReadingsList;
+		return this.genericReadingsList;
 	}
 }

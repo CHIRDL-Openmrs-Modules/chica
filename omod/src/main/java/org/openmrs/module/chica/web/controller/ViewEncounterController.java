@@ -7,22 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.Person;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.APIException;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
@@ -30,11 +29,13 @@ import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncounterForm;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.ui.ModelMap;
@@ -48,7 +49,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class ViewEncounterController {
 
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(ViewEncounterController.class);
 	
 	private static final String FORM_VIEW = "/module/chica/viewEncounter";
 	private static final String FORM_VIEW_NAME = "viewEncounter.form";
@@ -69,7 +70,7 @@ public class ViewEncounterController {
 	@RequestMapping(method = RequestMethod.POST)
 	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object command) throws Exception {
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		String optionsString = request.getParameter(PARAMATER_OPTIONS);
 		String patientIdString = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
 		Integer patientId = null;
@@ -81,7 +82,7 @@ public class ViewEncounterController {
 		} 
 		catch (Exception e) 
 		{
-			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: " + patientIdString + ").", e);
+			log.error("Error displaying form in View Encounters. Unable to parse patientId (patientIdString: {})", patientIdString, e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
@@ -94,14 +95,14 @@ public class ViewEncounterController {
 		} 
 		catch (Exception e) 
 		{
-			log.error("Error displaying form in View Encounters. Unable to parse encounterId (encounterIdString: " + encounterIdString + ").", e);
+			log.error("Error displaying form in View Encounters. Unable to parse encounterId (encounterIdString: {}).",encounterIdString, e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
 		
 		if(optionsString == null)
 		{
-			log.error("Error displaying form in View Encounters for encounterId: " + encounterId + "(optionsString: " + optionsString + ")");
+			log.error("Error displaying form in View Encounters for encounterId: {} (optionsString: {})",encounterId,optionsString);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
@@ -121,7 +122,7 @@ public class ViewEncounterController {
 		}
 		catch(Exception e)
 		{
-			log.error("Error displaying form in View Encounters for encounterId: " + encounterId + "(optionsString: " + optionsString + ")", e);
+			log.error("Error displaying form in View Encounters for encounterId: {} (optionsString: {})",encounterId,optionsString,e);
 			map.put(PARAMATER_VIEW_ENCOUNTERS_ERROR_MSG, errorMsg);
 			return new ModelAndView(new RedirectView(FORM_VIEW_NAME), map);
 		}
@@ -222,7 +223,7 @@ public class ViewEncounterController {
 							}
 							catch(APIException e)
 							{
-								log.error(this.getClass().getName() + ": Error finding form information for the form to be displayed on the right side.", e);
+								log.error("{}: Error finding form information for the form to be displayed on the right side.",this.getClass().getName(), e);
 							}	
 						}	
 					}
@@ -296,7 +297,7 @@ public class ViewEncounterController {
 							}
 							catch(APIException e)
 							{
-								log.error(this.getClass().getName() + ": Error finding form information for the form to be displayed on the left side.", e);
+								log.error("{}: Error finding form information for the form to be displayed on the left side.",this.getClass().getName(), e);
 							}		
 						}		
 					}
@@ -351,7 +352,7 @@ public class ViewEncounterController {
 				}
 				catch(NumberFormatException nfe)
 				{
-					log.error(this.getClass().getName() + ": unable to parse parameter for patientId: " + patientIdParam);
+					log.error("{}: unable to parse parameter for patientId: {}",this.getClass().getName(), patientIdParam,nfe);
 				}
 			}
 			else
@@ -374,7 +375,7 @@ public class ViewEncounterController {
 			map.put(PARAMATER_TITLE_DOB, dobString);
 
 			// encounter rows
-			EncounterService encounterService = Context.getService(EncounterService.class);
+			EncounterService encounterService = Context.getEncounterService();
 			List<org.openmrs.Encounter> list = encounterService.getEncountersByPatientId(patient.getPatientId());
 			List<PatientRow> rows = new ArrayList<PatientRow>();
 			
@@ -385,7 +386,7 @@ public class ViewEncounterController {
 				Integer encounterId = enc.getEncounterId();
 				PatientRow row = new PatientRow();
 				
-				Encounter enct = (Encounter) encounterService.getEncounter(encounterId);
+				Encounter enct = encounterService.getEncounter(encounterId);
 				if (enct == null)
 				{
 					continue;
@@ -409,13 +410,22 @@ public class ViewEncounterController {
 				org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(enct);
 				String providerName = getProviderName(provider);
 				
+				//Get printer location from encounter attribute
+				String printerLocation = null;
+				EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService
+						.getEncounterAttributeValueByName(enct.getEncounterId(),
+								ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+				if (printerLocationAttributeValue != null) {
+					 printerLocation = printerLocationAttributeValue.getValueText();
+				}
+				
 				row.setPatientId(patient.getPatientId());
 				row.setFirstName(patient.getGivenName());
 				row.setLastName(patient.getFamilyName());
 				row.setMdName(providerName);
 				row.setCheckin(checkinDateString);
 				row.setEncounter(enct);
-				row.setStation(enct.getPrinterLocation());
+				row.setStation(printerLocation);
 				row.setAgeAtVisit(org.openmrs.module.chirdlutil.util.Util.adjustAgeUnits(patient.getBirthdate(), checkin));
 
 				// This section will add form instances to the row, which is used to populate the Action drop-down

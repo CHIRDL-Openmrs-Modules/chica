@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
@@ -19,7 +19,7 @@ import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * @author Tammy Dugan
@@ -35,7 +35,7 @@ public class TestXMLDatasource extends BaseModuleContextSensitiveTest
 	 * Require authorization before every test method in this class
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception {
 		// create the basic user and give it full rights
 		initializeInMemoryDatabase();
@@ -45,7 +45,7 @@ public class TestXMLDatasource extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testXMLDatasource() throws FileNotFoundException, Exception
 	{
 		DssService dssService = Context.getService(DssService.class);

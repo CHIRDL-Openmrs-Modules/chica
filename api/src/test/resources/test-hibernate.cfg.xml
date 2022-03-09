@@ -13,7 +13,8 @@
 		<mapping resource="chica1_patient_obsv.hbm.xml" />
 		<mapping resource="chica1_patient.hbm.xml" />
 		<mapping resource="ddst.hbm.xml" />
-		<mapping resource="encounter.hbm.xml" />
+        <mapping resource="encounter_attribute_value.hbm.xml" />
+        <mapping resource="encounter_attribute.hbm.xml" />
 		<mapping resource="family.hbm.xml" />
 		<mapping resource="hcageinf.hbm.xml" />
 		<mapping resource="high_bp.hbm.xml" />

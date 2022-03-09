@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.CareSetting;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
@@ -28,7 +28,7 @@ import org.openmrs.logic.rule.RuleParameterInfo;
  */
 public class PlaceOrder implements Rule {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(PlaceOrder.class);
 	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -36,65 +36,65 @@ public class PlaceOrder implements Rule {
 	@Override
 	public Result eval(LogicContext context, Integer patientId, Map<String, Object> parameters) {
 		if (patientId == null) {
-			this.log.error("Cannot place order.  Patient ID is null.");
+			log.error("Cannot place order.  Patient ID is null.");
 			return Result.emptyResult();
 		}
 		
 		if (parameters == null) {
-			this.log.error("Cannot place order.  Parameters are null.");
+			log.error("Cannot place order.  Parameters are null.");
 			return Result.emptyResult();
 		}
 		
 		String conceptName = (String)parameters.get("param1");
 		if (StringUtils.isBlank(conceptName)) {
-			this.log.error("Cannot place order.  No order concept name provided.");
+			log.error("Cannot place order.  No order concept name provided.");
 			return Result.emptyResult();
 		}
 		
 		Integer encounterId = (Integer)parameters.get("encounterId");
 		if (encounterId == null) {
-			this.log.error("Cannot place order.  No encounter ID available.");
+			log.error("Cannot place order.  No encounter ID available.");
 			return Result.emptyResult();
 		}
 		
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Cannot place order.  No patient found for ID " + patientId);
+			log.error("Cannot place order.  No patient found for ID " + patientId);
 			return Result.emptyResult();
 		}
 		
 		Encounter encounter = Context.getEncounterService().getEncounter(encounterId);
 		if (encounter == null) {
-			this.log.error("Cannot place order.  No encounter found for ID " + encounterId);
+			log.error("Cannot place order.  No encounter found for ID " + encounterId);
 			return Result.emptyResult();
 		}
 		
 		if (encounter.getActiveEncounterProviders().isEmpty()) {
-			this.log.error("Cannot place order.  No encounter provider found for encounter " + encounterId);
+			log.error("Cannot place order.  No encounter provider found for encounter " + encounterId);
 			return Result.emptyResult();
 		}
 		
 		String orderTypeName = (String)parameters.get("param2");
 		if (StringUtils.isBlank(orderTypeName)) {
-			this.log.error("Cannot place order.  Order type not provided.");
+			log.error("Cannot place order.  Order type not provided.");
 			return Result.emptyResult();
 		}
 		
 		OrderType orderType = Context.getOrderService().getOrderTypeByName(orderTypeName);
 		if (orderType == null) {
-			this.log.error("Cannot place order.  Order type with the following name cannot be found: " + orderTypeName);
+			log.error("Cannot place order.  Order type with the following name cannot be found: " + orderTypeName);
 			return Result.emptyResult();
 		}
 		
 		String careSettingName = (String)parameters.get("param3");
 		if (StringUtils.isBlank(careSettingName)) {
-			this.log.error("Cannot place order.  Care setting not provided.");
+			log.error("Cannot place order.  Care setting not provided.");
 			return Result.emptyResult();
 		}
 		
 		CareSetting careSetting = Context.getOrderService().getCareSettingByName(careSettingName);
 		if (careSetting == null) {
-			this.log.error("Cannot place order.  Care setting with the following name cannot be found: " 
+			log.error("Cannot place order.  Care setting with the following name cannot be found: " 
 				+ careSettingName);
 			return Result.emptyResult();
 		}
@@ -148,7 +148,7 @@ public class PlaceOrder implements Rule {
 			String orderConceptName) {
 		Concept orderConcept = Context.getConceptService().getConceptByName(orderConceptName);
 		if (orderConcept == null) {
-			this.log.error("Cannot place order.  Order concept with the following name cannot be found: "
+			log.error("Cannot place order.  Order concept with the following name cannot be found: "
 				+ orderConceptName);
 			return Result.emptyResult();
 		}
@@ -158,15 +158,15 @@ public class PlaceOrder implements Rule {
 			order = (Order)orderType.getJavaClass().newInstance();
 		}
 		catch (InstantiationException e) {
-			this.log.error("Error instantiating order for order type " + orderType.getOrderTypeId(), e);
+			log.error("Error instantiating order for order type " + orderType.getOrderTypeId(), e);
 			return Result.emptyResult();
 		}
 		catch (IllegalAccessException e) {
-			this.log.error("Illegal access error instantiating order for order type " + orderType.getOrderTypeId(), e);
+			log.error("Illegal access error instantiating order for order type " + orderType.getOrderTypeId(), e);
 			return Result.emptyResult();
 		}
 		catch (APIException e) {
-			this.log.error("API exception instantiating order for order type " + orderType.getOrderTypeId(), e);
+			log.error("API exception instantiating order for order type " + orderType.getOrderTypeId(), e);
 			return Result.emptyResult();
 		}
 		
@@ -182,7 +182,7 @@ public class PlaceOrder implements Rule {
 			Context.getOrderService().saveOrder(order, null);
 		}
 		catch (APIException e) {
-			this.log.error("Error saving order for patient ID " + patient.getPatientId() + ", encounter ID " 
+			log.error("Error saving order for patient ID " + patient.getPatientId() + ", encounter ID " 
 				+ encounter.getEncounterId() + ", and order concpet ID " + orderConcept.getConceptId());
 			return Result.emptyResult();
 		}

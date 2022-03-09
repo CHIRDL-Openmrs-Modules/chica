@@ -2,16 +2,15 @@ package org.openmrs.module.chica;
 
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.DaemonToken;
 import org.openmrs.module.DaemonTokenAware;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Checks that all global properties for this module have been set.
@@ -21,14 +20,15 @@ import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
  */
 public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAware {
 
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChicaActivator.class);
+	private static final String CHICA = "chica";	
 
 	/**
 	 * @see org.openmrs.module.BaseModuleActivator#started()
 	 */
 	@Override
 	public void started() {
-		this.log.info("Starting Chica Module");
+		log.info("Starting Chica Module");
 		
 		//check that all the required global properties are set
 		checkGlobalProperties();
@@ -52,21 +52,18 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 			{
 				currProperty = properties.next();
 				currName = currProperty.getProperty();
-				if (currName.startsWith("chica"))
+				if (currName.startsWith(CHICA))
 				{
 					currValue = currProperty.getPropertyValue();
 					if (currValue == null || currValue.length() == 0)
 					{
-						this.log.error("You must set a value for global property: "
-								+ currName);
+						log.error("You must set a value for global property: {} ", currName);
 					}
 				}
 			}
 		} catch (Exception e)
 		{
-			this.log.error("Error checking global properties for chica module");
-			this.log.error(e.getMessage());
-			this.log.error(Util.getStackTrace(e));
+			log.error("Error checking global properties for chica module.", e);
 		}
 	}
 	
@@ -75,7 +72,7 @@ public class ChicaActivator extends BaseModuleActivator implements DaemonTokenAw
 	 */
 	@Override
 	public void stopped() {
-		this.log.info("Shutting down Chica Module");
+		log.info("Shutting down Chica Module");
 	}
 
 	/**

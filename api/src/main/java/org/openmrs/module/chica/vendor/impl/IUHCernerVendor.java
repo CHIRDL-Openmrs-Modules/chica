@@ -40,15 +40,17 @@ public class IUHCernerVendor extends VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.impl.VendorImpl#getMrn()
 	 */
+	@Override
 	public String getMrn() {
-		return request.getParameter(PARAM_PERSON);
+		return this.request.getParameter(PARAM_PERSON);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.impl.VendorImpl#getProviderId()
 	 */
+	@Override
 	public String getProviderId() {
-		return request.getParameter(PARAM_USER);
+		return this.request.getParameter(PARAM_USER);
 	}
 }
 

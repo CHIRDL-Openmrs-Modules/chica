@@ -4,19 +4,18 @@
 package org.openmrs.module.chica.hl7.mckesson;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.PrinterLocationHL7Filter;
 import org.openmrs.module.chica.hl7.CurrentDateHL7Filter;
+import org.openmrs.module.chica.hl7.PrinterLocationHL7Filter;
 import org.openmrs.module.sockethl7listener.HL7Filter;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.SimpleServer;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.llp.LowerLayerProtocol;
 import ca.uhn.hl7v2.parser.PipeParser;
@@ -28,13 +27,13 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class CheckinProcessor extends AbstractTask
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(CheckinProcessor.class);
 	private SimpleServer server = null;
 	
 	@Override
 	public void initialize(TaskDefinition config)
 	{
-		this.log.info("Initializing McKesson checkin processor...");
+		log.info("Initializing McKesson checkin processor...");
 		super.initialize(config);
 		AdministrationService adminService = Context.getAdministrationService();
 
@@ -55,7 +54,7 @@ public class CheckinProcessor extends AbstractTask
 				port = Integer.parseInt(portString);
 			} catch (NumberFormatException e)
 			{
-				this.log.error("Could not start SimpleServer. Port "+portString+" could not be parsed");
+				log.error("Could not start SimpleServer. Port {} could not be parsed", portString);
 				return;
 			}
 			PipeParser parser = new PipeParser();
@@ -75,11 +74,9 @@ public class CheckinProcessor extends AbstractTask
 			log.info("Starting SimpleServer...");
 		} catch (Exception e)
 		{
-			log.error("Error starting SimpleServer...");
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error starting SimpleServer...", e);
 		}
-		this.log.info("Finished initializing McKesson checkin processor.");
+		log.info("Finished initializing McKesson checkin processor.");
 	}
 
 	@Override
@@ -91,8 +88,7 @@ public class CheckinProcessor extends AbstractTask
 			this.server.start();
 		} catch (Exception e)
 		{
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception running Checkin Processor task.", e);
 		} finally
 		{
 			Context.closeSession();
@@ -121,8 +117,7 @@ public class CheckinProcessor extends AbstractTask
 			}
 		} catch (Exception e)
 		{
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception shutting down Checkin Processor task.",e);
 		}	
 	}
 }

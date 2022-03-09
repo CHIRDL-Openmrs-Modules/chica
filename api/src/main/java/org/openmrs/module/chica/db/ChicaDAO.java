@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.db.DAOException;
@@ -17,7 +18,6 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;

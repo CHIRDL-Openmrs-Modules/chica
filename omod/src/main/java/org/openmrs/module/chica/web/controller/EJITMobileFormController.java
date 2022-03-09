@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.chica.web.ServletUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class EJITMobileFormController {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(EJITMobileFormController.class);
     
     /** Form views */
     private static final String FORM_VIEW_PQH9_MOBILE = "/module/chica/phq9Mobile";
@@ -242,7 +242,15 @@ public class EJITMobileFormController {
      * @param request The HTTP request information
      * @return The name of the next view
      */
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = {"module/chica/phq9Mobile.form", "module/chica/CRAFFTMobile.form",
+    						 "module/chica/MCHATMobile.form", "module/chica/sexRiskMobile.form",
+    						 "module/chica/SCAREDParentMobile.form", "module/chica/ISQMobile.form", 
+    						 "module/chica/additionalInformationMobile.form", "module/chica/PSQMobile.form", 
+    						 "module/chica/MCHATRMobile.form", "module/chica/TRAQMobile.form",
+    						 "module/chica/diabetesHistory.form", "module/chica/parentPsychosocial.form", 
+    						 "module/chica/EatingDisorderMobile.form", "module/chica/insulinDosingMedications.form", 
+    						 "module/chica/SUDEPMobile.form", "module/chica/GAD7.form"}, 
+    				method = RequestMethod.POST)
     protected ModelAndView processSubmit(HttpServletRequest request) {
         try {
             if (!ServletUtil.authenticateUser(request)) {

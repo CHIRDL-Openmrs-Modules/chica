@@ -16,7 +16,7 @@ public class LoginResponse
 	 */
 	public LoginResponse()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**
@@ -24,7 +24,7 @@ public class LoginResponse
 	 */
 	public User getUser()
 	{
-		return user;
+		return this.user;
 	}
 	
 	/**
@@ -32,7 +32,7 @@ public class LoginResponse
 	 */
 	public String getToken()
 	{
-		return token;
+		return this.token;
 	}
 	
 	/* (non-Javadoc)
@@ -62,18 +62,18 @@ public class LoginResponse
 			return false;
 		}
 		LoginResponse other = (LoginResponse) obj;
-		if (token == null) {
+		if (this.token == null) {
 			if (other.token != null) {
 				return false;
 			}
-		} else if (!token.equals(other.token)) {
+		} else if (!this.token.equals(other.token)) {
 			return false;
 		}
-		if (user == null) {
+		if (this.user == null) {
 			if (other.user != null) {
 				return false;
 			}
-		} else if (!user.equals(other.user)) {
+		} else if (!this.user.equals(other.user)) {
 			return false;
 		}
 		return true;
@@ -95,7 +95,7 @@ public class LoginResponse
 		 */
 		public User()
 		{
-			
+			// This constructor is intentionally left empty.
 		}
 		
 		/**
@@ -103,7 +103,7 @@ public class LoginResponse
 		 */
 		public String getUsername()
 		{
-			return username;
+			return this.username;
 		}
 		
 		/**
@@ -111,7 +111,7 @@ public class LoginResponse
 		 */
 		public String[] getScope()
 		{
-			return scope;
+			return this.scope;
 		}
 		
 		/**
@@ -119,7 +119,7 @@ public class LoginResponse
 		 */
 		public String getKey()
 		{
-			return key;
+			return this.key;
 		}
 		
 		/**
@@ -156,7 +156,7 @@ public class LoginResponse
 			result = prime * result + getOuterType().hashCode();
 			result = prime * result + ((key == null) ? 0 : key.hashCode());
 			result = prime * result + Arrays.hashCode(scope);
-			result = prime * result + ((username == null) ? 0 : username.hashCode());
+			result = prime * result + ((this.username == null) ? 0 : username.hashCode());
 			return result;
 		}
 
@@ -178,21 +178,21 @@ public class LoginResponse
 			if (!getOuterType().equals(other.getOuterType())) {
 				return false;
 			}
-			if (key == null) {
+			if (this.key == null) {
 				if (other.key != null) {
 					return false;
 				}
-			} else if (!key.equals(other.key)) {
+			} else if (!this.key.equals(other.key)) {
 				return false;
 			}
 			if (!Arrays.equals(scope, other.scope)) {
 				return false;
 			}
-			if (username == null) {
+			if (this.username == null) {
 				if (other.username != null) {
 					return false;
 				}
-			} else if (!username.equals(other.username)) {
+			} else if (!this.username.equals(other.username)) {
 				return false;
 			}
 			return true;

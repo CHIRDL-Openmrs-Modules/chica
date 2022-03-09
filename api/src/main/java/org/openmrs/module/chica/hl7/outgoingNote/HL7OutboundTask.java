@@ -1,12 +1,12 @@
 package org.openmrs.module.chica.hl7.outgoingNote;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DWE CHICA-636
@@ -16,7 +16,7 @@ import org.openmrs.scheduler.tasks.AbstractTask;
  */
 public class HL7OutboundTask extends AbstractTask
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7OutboundTask.class);
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;
@@ -29,7 +29,7 @@ public class HL7OutboundTask extends AbstractTask
 	@Override
 	public void initialize(TaskDefinition config) 
 	{
-		this.log.info("Initializing " + this.getClass().getName() + "...");
+		log.info("Initializing {} ...", this.getClass().getName());
 		super.initialize(config);
 
 		try 
@@ -41,13 +41,13 @@ public class HL7OutboundTask extends AbstractTask
 			
 			if (this.host == null)
 			{
-				this.log.error("Could not start " + this.getClass().getName() + ". Host has not been set.");
+				log.error("Could not start {}. Host has not been set.", this.getClass().getName());
 				return;
 			}
 			
 			if(portString == null)
 			{
-				this.log.error("Could not start " + this.getClass().getName() + ". Port has not been set.");
+				log.error("Could not start {}. Port has not been set.", this.getClass().getName());
 				return;
 			}
 
@@ -73,12 +73,12 @@ public class HL7OutboundTask extends AbstractTask
 		} 
 		catch(Exception e)
 		{
-			this.log.error("Error starting " + this.getClass().getName() + "...", e);
+			log.error("Error starting {} ...", this.getClass().getName(), e);
 			this.host = null;
 			return;
 		}
 		
-		this.log.info("Finished initializing " + this.getClass().getName() + ".");
+		log.info("Finished initializing {}.", this.getClass().getName());
 	}
 	
 	@Override
@@ -89,12 +89,12 @@ public class HL7OutboundTask extends AbstractTask
 		{
 			if(this.host != null && this.port != null)
 			{
-				this.log.error("Starting HL7OutboundHandler...");
+				log.error("Starting HL7OutboundHandler...");
 				
 				this.hl7OutboundHandler = new HL7OutboundHandler(this.host, this.port, this.socketReadTimeout, this.sleepTime);
 				this.hl7OutboundHandlerThread = Daemon.runInNewDaemonThread(this.hl7OutboundHandler);
 				
-				this.log.error("Finished starting HL7OutboundHandler.");
+				log.error("Finished starting HL7OutboundHandler.");
 			}
 			else
 			{
@@ -103,8 +103,7 @@ public class HL7OutboundTask extends AbstractTask
 		} 
 		catch (Exception e)
 		{
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error starting HL7OutboundHandler thread.", e);
 		} 
 		finally
 		{
@@ -127,12 +126,12 @@ public class HL7OutboundTask extends AbstractTask
 				
 				if(this.hl7OutboundHandlerThread.isAlive())
 				{
-					this.log.error("Unable to stop HL7OutboundHandler.");
+					log.error("Unable to stop HL7OutboundHandler.");
 				}
 			} 
 			catch (InterruptedException e) 
 			{
-				this.log.error("Error occurred while stopping HL7OutboundHandler thread.", e);
+				log.error("Error stopping HL7OutboundHandler thread.", e);
 				Thread.currentThread().interrupt();
 			}
 		}

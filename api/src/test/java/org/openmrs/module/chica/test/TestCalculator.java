@@ -1,13 +1,13 @@
 package org.openmrs.module.chica.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openmrs.module.chica.Calculator;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * @author Tammy Dugan
@@ -23,7 +23,7 @@ public class TestCalculator extends BaseModuleContextSensitiveTest
 	 * Require authorization before every test method in this class
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception {
 		
 			initializeInMemoryDatabase();

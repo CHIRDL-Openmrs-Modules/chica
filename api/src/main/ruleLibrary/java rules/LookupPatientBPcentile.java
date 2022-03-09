@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -22,7 +22,7 @@ import org.openmrs.module.chirdlutil.util.Util;
 
 public class LookupPatientBPcentile implements Rule {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(LookupPatientBPcentile.class);
 	
 	/**
 	 * *

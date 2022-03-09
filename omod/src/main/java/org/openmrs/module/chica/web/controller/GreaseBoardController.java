@@ -10,22 +10,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -36,6 +34,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +48,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = "module/chica/greaseBoard.form")
 public class GreaseBoardController {
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(GreaseBoardController.class);
 	private static final String FORM = "greaseBoard.form";
 	
 	private static int numRefreshes = 0;
@@ -68,7 +68,7 @@ public class GreaseBoardController {
 			}
 		} catch (NumberFormatException e) 
 		{
-			log.error("Error parsing patientId: " + patientIdString, e);
+			log.error("Error parsing patientId: {}",patientIdString, e);
 		}
 		String sessionIdString = request.getParameter("greaseBoardSessionId");
 		Integer sessionId = null;
@@ -79,7 +79,7 @@ public class GreaseBoardController {
 			}
 		} catch (NumberFormatException e) 
 		{
-			log.error("Error parsing sessionId: " + sessionIdString, e);
+			log.error("Error parsing sessionId: {}",sessionIdString, e);
 		}
 		
 		//Initiate an ADHD WU for the patient
@@ -165,8 +165,8 @@ public class GreaseBoardController {
 				FormService formService = Context.getFormService();
 				Session session = chirdlutilbackportsService.getSession(sessionId);
 				Integer encounterId = session.getEncounterId();
-				EncounterService encounterService = Context.getService(EncounterService.class);
-				Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+				EncounterService encounterService = Context.getEncounterService();
+				Encounter encounter =  encounterService.getEncounter(encounterId);
 				String formName = Util.getFormNameByPrintOptionString(encounter, optionsString); 
 
 				if (StringUtils.isNotBlank(formName)) {
@@ -175,7 +175,7 @@ public class GreaseBoardController {
 					if (form != null) {
 						formId = form.getFormId();
 					} else {
-						log.error("The locationTagAttributeValue "+formName+" is invalid");
+						log.error("The locationTagAttributeValue {} is invalid",formName);
 						return new ModelAndView(new RedirectView(FORM));
 					}
 					
@@ -193,7 +193,7 @@ public class GreaseBoardController {
 						currState = chirdlutilbackportsService
 								.getStateByName(stateName);
 						if (currState == null) {
-							log.error("A start state with name "+stateName+" cannot be found in the CHICA system.");
+							log.error("A start state with name {} cannot be found in the CHICA system.",stateName);
 							return new ModelAndView(new RedirectView(FORM));
 						}
 						

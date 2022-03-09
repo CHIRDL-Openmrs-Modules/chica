@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.openmrs.Concept;
 import org.openmrs.ConceptDatatype;
@@ -23,12 +20,13 @@ import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.HL7SocketHandler;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -52,7 +50,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class HL7ObsHandler25 implements HL7ObsHandler
 {
 
-	protected static final Log log = LogFactory.getLog(HL7ObsHandler25.class);
+	private static final Logger log = LoggerFactory.getLogger(HL7ObsHandler25.class);
 
 	public static MSH getMSH(ADT_A01 adt)
 	{
@@ -82,8 +80,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			obx = adt.getOBX(obRep);
 		} catch (Exception e)
 		{
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error getting OBX segment for obRep: {}.", obRep, e);
 		}
 
 		return obx;
@@ -353,7 +350,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 		return dVal;
 	}
 
-	private Concept processCEType(Varies value, Logger logger,
+	private Concept processCEType(Varies value,
 			String pIdentifierString, String conceptQuestionId)
 	{
 		String conceptName = ((CE) value.getData()).getText().toString();
@@ -369,36 +366,27 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 			conceptName = stConceptId;
 		}
 
-		// Success conversion to int
-		if (intObxValueID != null)
+		try
 		{
-			try
-			{
-				Concept answer = new Concept();
-				answer.setConceptId(intObxValueID);
-				ConceptName name = new ConceptName();
-				name.setName( conceptName);
-				name.setLocale(new Locale("en_US"));
-				answer.addName(name);
+			Concept answer = new Concept();
+			answer.setConceptId(intObxValueID);
+			ConceptName name = new ConceptName();
+			name.setName( conceptName);
+			name.setLocale(new Locale("en_US"));
+			answer.addName(name);
 
-				return answer;
-			} catch (RuntimeException e)
-			{
-				logger.error("createObs() failed. MRN: " + pIdentifierString
-						+ ";Invalid OBX value: " + stConceptId
-						+ ";concept question id: " + conceptQuestionId
-						+ "; concept name: " + conceptName);
-				logger.error(e.getMessage());
-				logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-			}
-
+			return answer;
+		} catch (RuntimeException e)
+		{
+			log.error(" Exception creating answer concept OBX segment for patient identifier: {} OBX coded value: {}; concept question id: {} concept name: {}", pIdentifierString, stConceptId, conceptQuestionId, conceptName, e);
 		}
+
 		return null;
 	}
 
 	public Concept getCodedResult(Message message, int orderRep, int obxRep,
-			Logger logger, String pIdentifierString, String obsvID,
-			String obsValueType, Logger conceptNotFoundLogger)
+			 String pIdentifierString, String obsvID,
+			String obsValueType)
 	{
 	    OBX obx = getOBX(message, orderRep, obxRep);
 	    if(obx != null){
@@ -411,7 +399,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 
 	            if (obsValueType.equals("CE"))
 	            {
-	                return processCEType(value, logger, pIdentifierString, obsvID);
+	                return processCEType(value, pIdentifierString, obsvID);
 	            }
 	        }
 	    }
@@ -431,7 +419,7 @@ public class HL7ObsHandler25 implements HL7ObsHandler
 		HL7SocketHandler hl7SocketHandler = new HL7SocketHandler(parser,
 				patientHandler, this, hl7EncounterHandler,
 				hl7PatientHandler,null);
-		ArrayList<Obs> allObs = new ArrayList<Obs>();
+		ArrayList<Obs> allObs = new ArrayList<>();
 		LocationService locationService = Context.getLocationService();
 		String sendingFacility = getSendingFacility(message);
 		Location existingLoc = locationService.getLocation(sendingFacility);

@@ -1,27 +1,28 @@
 package org.openmrs.module.chica.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.OutputStream;
-import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
@@ -29,7 +30,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * @author Tammy Dugan
@@ -45,7 +46,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 	 * Require authorization before every test method in this class
 	 * 
 	 */
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception {
 		// create the basic user and give it full rights
 		initializeInMemoryDatabase();
@@ -55,29 +56,25 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 	}
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testConsume() throws Exception
 	{
 		LocationService locationService = Context.getLocationService();
 
 		int patientId = 30520;
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		PatientService patientService = Context.getPatientService();
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter encounter = new Encounter();
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
-
-		encounter.setLocation(locationService.getLocation("Unknown Location"));
+		encounter.setLocation(locationService.getLocation(ChirdlUtilConstants.LOCATION_UNKNOWN));
 		encounter.setPatient(patient);
-		Calendar scheduledTime = Calendar.getInstance();
-		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		encounter.setScheduledTime(scheduledTime.getTime());
 		encounter.setDateCreated(new Date());
 		encounterService.saveEncounter(encounter);
+		
 		Integer encounterId = encounter.getEncounterId();
 		ATDService atdService = Context.getService(ATDService.class);
 		ChicaService chicaService = Context.getService(ChicaService.class);
@@ -118,13 +115,9 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
+					//Remove try/catch for test
 					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+						formId = Integer.parseInt(value);
 					}
 				}
 				FormInstance formInstance = new FormInstance();
@@ -153,12 +146,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
 					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+					formId = Integer.parseInt(value);
 					}
 				}
 				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
@@ -187,12 +175,7 @@ public class TestConsumer extends BaseModuleContextSensitiveTest
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
 					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+					formId = Integer.parseInt(value);
 					}
 				}
 				formInstance = new FormInstance();

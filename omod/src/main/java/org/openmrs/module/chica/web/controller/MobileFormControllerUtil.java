@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
@@ -19,6 +17,8 @@ import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -31,7 +31,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class MobileFormControllerUtil {
     
     /** Logger for this class and subclasses */
-    protected static final Log log = LogFactory.getLog(MobileFormControllerUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(MobileFormControllerUtil.class);
     
     /**
      * Constructor method

@@ -3,8 +3,6 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
@@ -17,13 +15,15 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1070 Used to create HL7 ORU message and store in the sockethl7listener_hl7_out_queue table to be picked up by the HL7OutboundHandler task
  */
 public class ExportObs implements ProcessStateAction
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ExportObs.class);
 	
 	@Override
 	public void processAction(StateAction stateAction, Patient patient, PatientState patientState, HashMap<String, Object> parameters) {
@@ -43,13 +43,13 @@ public class ExportObs implements ProcessStateAction
 			// If host and port are not set, allow the record to be created with localhost and port 0
 			if(StringUtils.isBlank(host))
 			{
-				this.log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+				log.error("Error creating HL7Outbound record in {}. Host has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_HOST);
 				host = ChirdlUtilConstants.DEFAULT_HOST;
 			}
 			
 			if(StringUtils.isBlank(portString))
 			{
-				this.log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+				log.error("Error creating HL7Outbound record in {}. Port has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_PORT);
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
@@ -59,7 +59,8 @@ public class ExportObs implements ProcessStateAction
 			}
 			catch(NumberFormatException e)
 			{
-				this.log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + "). Port will be set to default value " + ChirdlUtilConstants.DEFAULT_PORT + ".", e);
+				log.error("Error creating HL7Outbound record in {}. Port is not in a valid numeric format (portString:{}). Port will be set to default value {}."
+						, this.getClass().getName(), portString, ChirdlUtilConstants.DEFAULT_PORT, e);
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
@@ -68,7 +69,7 @@ public class ExportObs implements ProcessStateAction
 		}
 		catch(Exception e)
 		{
-			this.log.error("Exception exporting obs for encounterId: " + encounterId, e);
+			log.error("Exception exporting obs for encounterId: {}", encounterId, e);
 		}
 		finally
 		{

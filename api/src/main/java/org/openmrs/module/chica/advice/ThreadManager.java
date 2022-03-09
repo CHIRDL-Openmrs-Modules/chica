@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.chirdlutil.ReadWriteManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -17,7 +17,7 @@ import org.openmrs.module.chirdlutil.ReadWriteManager;
  */
 public class ThreadManager
 {
-	private static Log log = LogFactory.getLog(ThreadManager.class);
+	private static final Logger log = LoggerFactory.getLogger(ThreadManager.class);
 
 	private static Collection<Thread> activeThreads = Collections
 			.synchronizedCollection(new ArrayList<Thread>());
@@ -35,9 +35,9 @@ public class ThreadManager
 	            activeThreads.add(thread);
             }
             catch (Exception e) {
-	            log.error("",e);
+	            log.error("Exception adding thread to active threads.", e);
             }finally{
-			readWriteManager.releaseWriteLock();
+            	readWriteManager.releaseWriteLock();
             }
 
 			thread.start();
@@ -46,7 +46,7 @@ public class ThreadManager
 			// thread is added
 		} catch (Exception e)
 		{
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception starting thread.",e);
 		}
 	}
 
@@ -57,15 +57,15 @@ public class ThreadManager
 			// log the number of active threads so we can be sure that they are
 			// not building up
 			// and filling up the JVM memory
-			log.info("Total number of threads created: " + totalThreadsCreated);
-			log.info("Total number of threads purged: " + purgedThreads);
+			log.info("Total number of threads created: {}",  totalThreadsCreated);
+			log.info("Total number of threads purged: {}",  purgedThreads);
 
 			readWriteManager.getReadLock();
 			int activeThreadsLength = 0;
             Thread[] activeThreadsArray = null;
             try {
 	            activeThreadsLength = activeThreads.size();
-	            log.info("Number of active threads: " + activeThreadsLength);
+	            log.info("Number of active threads: {}", activeThreadsLength);
 	            activeThreadsArray = new Thread[activeThreadsLength];
 	            activeThreads.toArray(activeThreadsArray);
             }
@@ -87,7 +87,7 @@ public class ThreadManager
                             activeThreads.remove(currThread);
                         }
                         catch (Exception e) {
-                            log.error("",e);
+                            log.error("Exception removing inactive threads.",e);
                         }finally{
                             readWriteManager.releaseWriteLock();
                         }
@@ -97,7 +97,7 @@ public class ThreadManager
             }
 		} catch (Exception e)
 		{
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Thread monitor exception.", e);
 		}
 	}
 }

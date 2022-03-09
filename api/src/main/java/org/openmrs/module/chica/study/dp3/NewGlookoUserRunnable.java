@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
@@ -18,6 +16,8 @@ import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1063
@@ -25,7 +25,7 @@ import org.openmrs.module.chirdlutil.util.DateUtil;
  */
 public class NewGlookoUserRunnable implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(NewGlookoUserRunnable.class);
 	private String firstName;
 	private String lastName; 
 	private String dateOfBirth; 
@@ -111,21 +111,21 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 				}
 				else
 				{
-					this.log.error("New Glooko user notification was received. Unable to locate patient match for: " + this.lastName + ", " + this.firstName);
+					log.error("New Glooko user notification was received. Unable to locate patient match for: {}, {}.",  this.lastName, this.firstName);
 				}
 			}
 			else
 			{
-				this.log.error("New Glooko user notification was received. Unable to locate possible patient matches for: " + this.lastName + ", " + this.firstName);
+				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: {}, {}.", this.lastName,  this.firstName);
 			}	
 		}
 		catch(ContextAuthenticationException e)
 		{
-			this.log.error("Error authenticating context.", e);
+			log.error("Error authenticating context.", e);
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in {}", this.getClass().getName(), e);
 		}		
 	}
 	
@@ -141,7 +141,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 
 			if (attributeType == null)
 			{
-				this.log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId() + " Person attribute type does not exist.");
+				log.error("Unable to create GlookoCode person attribute for patient: {}.  Person attribute type does not exist.",patient.getPatientId());
 				return;
 			}
 			
@@ -154,7 +154,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 		}
 		catch(APIException e)
 		{
-			this.log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId(), e);
+			log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId(), e);
 		}	
 	}
 

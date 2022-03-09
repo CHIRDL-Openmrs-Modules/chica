@@ -7,8 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
@@ -18,6 +16,8 @@ import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class FormController {
 	
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(FormController.class);
 	
 	/** Parameters */
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -100,7 +100,7 @@ public class FormController {
      * @return The name of the next view
      */
     @RequestMapping(value = "module/chica/pwsIUHCerner.form", method = RequestMethod.POST)
-    protected ModelAndView processPwsIuhCernerSubmit(HttpServletRequest request) {
+    public ModelAndView processPwsIuhCernerSubmit(HttpServletRequest request) {
         return handleSubmit(request, FORM_VIEW_PWS_IUH);
     }
     
@@ -151,10 +151,9 @@ public class FormController {
             Patient patient = Context.getPatientService().getPatient(patientId);
             ControllerUtil.saveProviderSubmitter(patient, encounterId, providerId, formInstTag);
         } else {
-            String message = "No valid providerId provided.  Cannot log who is submitting form ID: " + formInstTag.getFormId() + 
-                    " form instance ID: " + formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
-                    " location tag ID: " + formInstTag.getLocationTagId();
-            log.error(message);
+       
+            log.error("No valid providerId provided.  Cannot log who is submitting form ID: {} form instance ID: {} location ID: {} location tag ID: {}",
+                    formInstTag.getFormId(),formInstTag.getFormInstanceId(),formInstTag.getLocationId(),formInstTag.getLocationTagId());
         }
         
         map.put(PARAM_PATIENT_ID, patientIdStr);
@@ -223,23 +222,22 @@ public class FormController {
 		if (providerId != null && providerId.trim().length() > 0) {
 			ControllerUtil.saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientIdStr + 
-				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
-					formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
+			log.error("Error saving viewing provider ID for form ID: {} patient ID: {} encounter ID: {} provider ID: {} form instance ID: {} location ID: {} location tag ID: {}",
+					formId,patientIdStr,encounterId,providerId,formInstanceId,locationId,locationTagId);
 		}
 		
 		// Add session timeout information
 		Integer sessionTimeoutWarning = 180;
 		String sessionTimeoutWarningStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
 		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
-			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING + " global property does not have a value set.  180 seconds "
-					+ "will be used as a default value.");
+			log.warn("The {} global property does not have a value set.  180 seconds will be used as a default value.",
+					ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING );
 		} else {
 			try {
 				sessionTimeoutWarning = Integer.parseInt(sessionTimeoutWarningStr);
 			} catch (NumberFormatException e) {
-				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING + " global property is not a valid Integer.  180 seconds "
-						+ "will be used as a default value", e);
+				log.error("The {} global property is not a valid Integer.  180 seconds will be used as a default value", 
+						ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING,e);
 				sessionTimeoutWarning = 180;
 			}
 		}
@@ -284,7 +282,7 @@ public class FormController {
 		List<String> submittedFormInstances = null;
 		Object submittedFormInstancesObj = session.getAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
 
-		if(submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List)
+		if(submittedFormInstancesObj instanceof List)
 		{
 			submittedFormInstances =  (List<String>) submittedFormInstancesObj;
 			if(submittedFormInstances.contains(formInstance))
