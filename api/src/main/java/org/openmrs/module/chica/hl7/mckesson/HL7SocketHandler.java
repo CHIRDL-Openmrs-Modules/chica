@@ -64,7 +64,6 @@ import org.openmrs.module.sockethl7listener.HL7ObsHandler;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
 import org.openmrs.module.sockethl7listener.PatientHandler;
 import org.openmrs.module.sockethl7listener.Provider;
-import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,12 +90,6 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  */
 public class HL7SocketHandler extends
 		org.openmrs.module.sockethl7listener.HL7SocketHandler {
-
-	
-
-	private static final String VOID_REASON_MRN_CORRECTION = "MRN Correction";
-
-	private static final String VOID_REASON_MRN_LEADING_ZERO_CORRECTION = "MRN Leading Zero Correction";
 
 	private static final String HYPHEN = "-";
 
@@ -138,7 +131,6 @@ public class HL7SocketHandler extends
 					.getPatientIdentifier();
 			
 			if (patientIdentifier != null) {
-				String mrn = patientIdentifier.getIdentifier();
 				// look for matched patient
 				Patient matchedPatient = findPatient(hl7Patient);
 				
@@ -300,7 +292,8 @@ public class HL7SocketHandler extends
 		}
 		
 		// CHICA-1185 Get HL7 event type code to determine if this was an A10 converted to an A04
-		String eventTypeCode = parameters.get(ChirdlUtilConstants.PARAMETER_HL7_EVENT_TYPE_CODE) == null ? ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING : (String)parameters.get(ChirdlUtilConstants.PARAMETER_HL7_EVENT_TYPE_CODE);
+		String eventTypeCode = parameters.get(ChirdlUtilConstants.PARAMETER_HL7_EVENT_TYPE_CODE) == null ? 
+				ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING : (String)parameters.get(ChirdlUtilConstants.PARAMETER_HL7_EVENT_TYPE_CODE);
 
 		currentPatient.setCauseOfDeath(hl7Patient.getCauseOfDeath());
 		currentPatient.setDead(hl7Patient.getDead());
@@ -631,7 +624,6 @@ public class HL7SocketHandler extends
 					{
 						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_TYPE, visitType);
 					}
-				
 				}
 			} catch (EncodingNotSupportedException e) {
 				log.error("Encoding not supported when parsing incoming message.", e);
@@ -659,7 +651,6 @@ public class HL7SocketHandler extends
 		if(newEncounterCreated) 
 		{
 			Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION,printerLocation);
-
 		}else{
 			// Use the existing printer location
 			// Note: This really shouldn't be needed at this point, but setting it just
@@ -670,7 +661,7 @@ public class HL7SocketHandler extends
 				printerLocation = printerLocationAttributeValue.getValueText();
 			}
 		}
-		
+
 		Location location = null;
 
 		if (locationString != null) {
@@ -838,11 +829,11 @@ public class HL7SocketHandler extends
 			});
 
 
-			if (nameList.size() > 0 && nameList.get(0) != null) {
+			if (!nameList.isEmpty() && nameList.get(0) != null) {
 				// set latest to preferred
 				nameList.get(0).setPreferred(true);
 				Set<PersonName> nameSet = new TreeSet<>(nameList);
-				if (nameSet.size() > 0) {
+				if (!nameSet.isEmpty()) {
 					currentPatient.getNames().clear();
 					currentPatient.getNames().addAll(nameSet);
 				}
@@ -920,11 +911,11 @@ public class HL7SocketHandler extends
 				}
 			});
 
-			if (addressList.size() > 0 && addressList.get(0) != null) {
+			if (!addressList.isEmpty() && addressList.get(0) != null) {
 				// set latest to preferred
 				addressList.get(0).setPreferred(true);
 				Set<PersonAddress> addressSet = new TreeSet<>(addressList);
-				if (addressSet.size() > 0) {
+				if (!addressSet.isEmpty()) {
 					currentPatient.getAddresses().clear();
 					currentPatient.getAddresses().addAll(addressSet);
 				}
@@ -972,7 +963,7 @@ public class HL7SocketHandler extends
 
 		List<Patient> lookupPatients = patientService.getPatientsByIdentifier(null, newSSN
 				.getIdentifier(), null, true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
-		if (lookupPatients != null && lookupPatients.size() > 0) {
+		if (lookupPatients != null && !lookupPatients.isEmpty()) {
 			if (personAttrType != null) {
 				PersonAttribute personAttr = new PersonAttribute(
 						personAttrType, newSSN.getIdentifier());
@@ -1253,7 +1244,6 @@ public class HL7SocketHandler extends
 	 */
 	public void addMRN(Patient existingPatient, Patient newPatient, Date encounterDate){
 		
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		PatientService patientService = Context.getPatientService();
 		String newMRN = null;
 		String existingMRN = null;
@@ -1269,7 +1259,7 @@ public class HL7SocketHandler extends
 			newMRN = newPatientIdentifier.getIdentifier();
 
 			PatientIdentifierType identifierType = patientService.getPatientIdentifierTypeByName(ChirdlUtilConstants.IDENTIFIER_TYPE_MRN);
-			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+			List<PatientIdentifierType> identifierTypes = new ArrayList<>();
 			identifierTypes.add(identifierType);
 
 			//If new MRN does not exist or matches the existing MRN, no need to update.
@@ -1321,8 +1311,7 @@ public class HL7SocketHandler extends
 			}
 
 		} catch (Exception e) {
-			log.error("Exception adding new MRN to existing patient. Existing MRN: " 
-					+ existingMRN + "; New MRN: " + newMRN, e);
+			log.error("Exception adding new MRN to existing patient. Existing MRN: {}; New MRN: {}",existingMRN,newMRN,e);
 		}
 
 	}
@@ -1356,31 +1345,7 @@ public class HL7SocketHandler extends
 
 		return validAgeRunnable.getResult().booleanValue();
 	}
-	
 
-	/**
-	 * Saves the hl7 registration message to the sockethl7listener_patient_message table.
-	 * If patient is new to the system, no patient id will be saved.
-	 * @param message
-	 * @param patient
-	 * @param duplicateString
-	 * @param duplcateEncounter
-	 */
-	private void saveMessage(Message message, Patient patient, boolean duplicateString, boolean duplcateEncounter){
-		
-
-		SocketHL7ListenerService sockethl7listenerService = Context.getService(SocketHL7ListenerService.class);
-		Integer patientId = null;
-		if (patient != null) {
-			patientId = patient.getPatientId();
-			try {
-				sockethl7listenerService.setHl7Message(patientId, null, this.parser.encode(message),
-						duplicateString, duplcateEncounter, super.getPort());
-			} catch (HL7Exception e) {
-				log.error("Error saving HL7 registration message.", e);
-			}
-		}
-	}
 	
 	/**
 	 * Pulls patient identifier from the hl7 message, looks up identifier in CHICA,
@@ -1396,7 +1361,7 @@ public class HL7SocketHandler extends
 			for (PatientIdentifier identifier : patientHandler
 					.getIdentifiers(message)) {
 
-				List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+				List<PatientIdentifierType> identifierTypes = new ArrayList<>();
 				identifierTypes.add(identifier.getIdentifierType());
 
 				List<Patient> patients = patientService.getPatientsByIdentifier(null,
@@ -1483,7 +1448,7 @@ public class HL7SocketHandler extends
 			}
 		
 		}catch (Exception e){
-			log.error("Alias merge error for patient " + newPatient.getId(), e );
+			log.error("Alias merge error for patient {}", newPatient.getId(), e );
 		}
 	}
 	
@@ -1628,8 +1593,9 @@ public class HL7SocketHandler extends
 			}
 
 		} catch (Exception e) {
-			log.error("Exception adding new " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + " to existing patient. Existing " + ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR + ": " 
-					+ existingMRNEHR + "; New "+ ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR +": " + newMRNEHR, e);
+			log.error("Exception adding new {} to existing patient. Existing {}: {}; New {}: {}", 
+					ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR,ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR,
+					existingMRNEHR,ChirdlUtilConstants.IDENTIFIER_TYPE_MRN_EHR,newMRNEHR,e);
 		}
 
 	}
