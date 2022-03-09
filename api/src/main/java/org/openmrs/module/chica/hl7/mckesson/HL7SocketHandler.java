@@ -620,7 +620,7 @@ public class HL7SocketHandler extends
 					
 					// CHICA-1160 Parse visit type from PV2-12
 					visitType = ((org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25) this.hl7EncounterHandler).getVisitType(message);
-					if(StringUtils.isNotEmpty(visitType))
+					if(StringUtils.isNotBlank(visitType))
 					{
 						Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_TYPE, visitType);
 					}
@@ -636,11 +636,11 @@ public class HL7SocketHandler extends
 		EncounterService encounterService = Context.getEncounterService();
 		encounter = encounterService.getEncounter(encounterId);
 		
-		if(StringUtils.isNotEmpty(planCode)) {
+		if(StringUtils.isNotBlank(planCode)) {
 			Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_PLAN_CODE,planCode);
 		}
 		
-		if(StringUtils.isNotEmpty(carrierCode)) {
+		if(StringUtils.isNotBlank(carrierCode)) {
 			Util.storeEncounterAttributeAsValueText(encounter, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_CARRIER_CODE,carrierCode);
 		}
 		if(appointmentTime!= null) {
@@ -725,7 +725,7 @@ public class HL7SocketHandler extends
 			String category =  null;
 			String sendingApplication =(String) parameters.get(ChirdlUtilConstants.PARAMETER_SENDING_APPLICATION);
 			String sendingFacility = (String) parameters.get(ChirdlUtilConstants.PARAMETER_SENDING_FACILITY);
-			if(StringUtils.isNotEmpty(sendingApplication) && StringUtils.isNotEmpty(sendingFacility) && StringUtils.isNotEmpty(planCode))
+			if(StringUtils.isNotBlank(sendingApplication) && StringUtils.isNotBlank(sendingFacility) && StringUtils.isNotBlank(planCode))
 			{
 				ChicaService chicaService = Context.getService(ChicaService.class);
 				category = chicaService.getInsCategoryByInsCode(planCode, sendingFacility, sendingApplication);

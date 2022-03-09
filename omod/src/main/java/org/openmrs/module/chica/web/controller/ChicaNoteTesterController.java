@@ -86,7 +86,7 @@ public class ChicaNoteTesterController {
 				
 			}
 			catch (Exception e) {
-				log.error("Error intializing form for patient id {}", request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID),e);
+				log.error("Error intializing form.",e);
 			}
 		}
 		
