@@ -775,7 +775,7 @@ public class DynamicFormAccess {
 		DssElement dssElement = dssManager.getDssElement(dssMergeCounter, type);
 		
 		if (dssElement != null) {
-			dssElement.addParameter(ChirdlUtilConstants.PARAMETER_FORM_FIELD_ID, fieldId);
+			dssElement.addParameter("fieldId", fieldId);
 			return dssElement.getResult();
 		}
 		
@@ -809,7 +809,7 @@ public class DynamicFormAccess {
 				continue;
 			}
 			
-			Integer fieldId = (Integer) currDssElement.getParameter(ChirdlUtilConstants.PARAMETER_FORM_FIELD_ID);
+			Integer fieldId = (Integer) currDssElement.getParameter("fieldId");
 			PatientATD patientATD = waitForScanFieldIdToAtdMap.get(fieldId);
 			if (patientATD == null) {
 				atdService.addPatientATD(formInstance, currDssElement, encounterId, patientId);
