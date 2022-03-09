@@ -61,14 +61,21 @@ public class CalculateWeightPercentile implements Rule {
 			return Result.emptyResult();
 		}
 		
+		Double weight = null;
+		Date dateTime = null;
 		// Get the weight observation
 		Object weightObsObj = weightResults.getResultObject();
-		if (!(weightObsObj instanceof Obs)) {
+		if (weightObsObj instanceof Obs) {
+			Obs weightObs = (Obs)weightObsObj;
+			weight = weightObs.getValueNumeric();
+			dateTime = weightObs.getObsDatetime();
+		} else if (Datatype.NUMERIC.equals(weightResults.getDatatype())) {
+			weight = weightResults.toNumber();
+			dateTime = weightResults.getResultDate();
+		} else {
 			return Result.emptyResult();
 		}
 		
-		Obs weightObs = (Obs)weightObsObj;
-		Double weight = weightObs.getValueNumeric();
 		if (weight == null) {
 			return Result.emptyResult();
 		}
@@ -78,7 +85,7 @@ public class CalculateWeightPercentile implements Rule {
 		try {
 			Double weightPercentile = calc.calculatePercentile(weight, patient.getGender(), birthDate, 
 				CALCULATION_WEIGHT_PERCENTILE, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_KG, 
-				weightObs.getObsDatetime());
+				dateTime);
 			return new Result(weightPercentile);
 		} catch (Exception e) {
 			log.error("Error calculating weight percentile for patient {}",patientId, e);

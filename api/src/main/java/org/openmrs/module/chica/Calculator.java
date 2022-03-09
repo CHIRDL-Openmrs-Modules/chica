@@ -17,21 +17,21 @@ import org.openmrs.module.chirdlutil.util.Util;
 public class Calculator 
 {
 	
-	private static final String MALE_STRING = "M";
+	public static final String MALE_STRING = "M";
 	
-	private static final String FEMALE_STRING = "F";
+	public static final String FEMALE_STRING = "F";
 	
-	private static final int MALE_INT = 1;
+	public static final int MALE_INT = 1;
 	
-	private static final int FEMALE_INT = 2;
+	public static final int FEMALE_INT = 2;
 	
-	private static final String PERCENTILE_HC = "hc";
+	public static final String PERCENTILE_HC = "hc";
 	
-	private static final String PERCENTILE_LEN = "length";
+	public static final String PERCENTILE_LEN = "length";
 	
-	private static final String PERCENTILE_BMI = "bmi";
+	public static final String PERCENTILE_BMI = "bmi";
 	
-	private static final String PERCENTILE_WT = "weight";
+	public static final String PERCENTILE_WT = "weight";
 	
 	/**
 	 * 
@@ -75,7 +75,7 @@ public class Calculator
 		return String.valueOf(Util.round(percentile, 0).intValue());
 	}
 	
-	private Percentile lookupPercentile(String type, Double agemos, Integer sex) 
+	public Percentile lookupPercentile(String type, Double agemos, Integer sex) 
 	{
 		if (type == null || agemos == null || sex == null) {
 			return null;
@@ -202,7 +202,7 @@ public class Calculator
 		return calculatePercentile(measurement, gender, birthdate, type, measurementUnits, Calendar.getInstance().getTime());
 	}
 	
-	private Double interpolate(Double leftX, Double rightX, Double leftY, Double rightY, Double xValue){
+	public Double interpolate(Double leftX, Double rightX, Double leftY, Double rightY, Double xValue){
 		double result = (Math.abs(xValue-leftX)/(Math.abs(rightX-leftX)))*Math.abs(rightY-leftY);
 		
 		if(leftY <= rightY){

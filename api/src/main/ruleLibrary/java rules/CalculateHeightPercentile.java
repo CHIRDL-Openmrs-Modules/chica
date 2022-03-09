@@ -61,14 +61,21 @@ public class CalculateHeightPercentile implements Rule {
 			return Result.emptyResult();
 		}
 		
+		Double height = null;
+		Date dateTime = null;
 		// Get the height observation
 		Object heightObsObj = heightResults.getResultObject();
-		if (!(heightObsObj instanceof Obs)) {
+		if (heightObsObj instanceof Obs) {
+			Obs heightObs = (Obs)heightObsObj;
+			height = heightObs.getValueNumeric();
+			dateTime = heightObs.getObsDatetime();
+		} else if (Datatype.NUMERIC.equals(heightResults.getDatatype())) {
+			height = heightResults.toNumber();
+			dateTime = heightResults.getResultDate();
+		} else {
 			return Result.emptyResult();
 		}
 		
-		Obs heightObs = (Obs)heightObsObj;
-		Double height = heightObs.getValueNumeric();
 		if (height == null) {
 			return Result.emptyResult();
 		}
@@ -78,7 +85,7 @@ public class CalculateHeightPercentile implements Rule {
 		try {
 			Double heightPercentile = calc.calculatePercentile(height, patient.getGender(), birthDate, 
 				CALCULATION_HEIGHT_PERCENTILE, org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_CM, 
-				heightObs.getObsDatetime());
+				dateTime);
 			return new Result(heightPercentile);
 		} catch (Exception e) {
 			log.error("Error calculating height percentile for patient {}.", patientId, e);
