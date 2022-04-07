@@ -101,7 +101,8 @@ public class ExternalFormController {
 		}
 		
 		try {
-			Context.authenticate(username, password);
+			Context.authenticate(username, password, request.getRemoteAddr(), 
+				request.getHeader(ChirdlUtilConstants.HTTP_HEADER_USER_AGENT));
 		} catch (ContextAuthenticationException e) {
 			// username/password not valid
 			map.put(ChirdlUtilConstants.PARAMETER_HAS_ERRORS, ChirdlUtilConstants.PARAMETER_VAL_TRUE);

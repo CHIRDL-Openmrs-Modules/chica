@@ -251,7 +251,8 @@ public class ServletUtil {
         String user = userpass[0];
         String pass = userpass[1];
         try {
-        	Context.authenticate(user, pass);
+        	Context.authenticate(
+        		user, pass, request.getRemoteAddr(), request.getHeader(ChirdlUtilConstants.HTTP_HEADER_USER_AGENT));
         } catch (ContextAuthenticationException e) {
         	return false;
         }
