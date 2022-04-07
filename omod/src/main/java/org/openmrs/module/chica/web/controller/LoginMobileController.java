@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +50,8 @@ public class LoginMobileController {
 		}
 		
 		try {
-			Context.authenticate(username, password);
+			Context.authenticate(username, password, request.getRemoteAddr(), 
+				request.getHeader(ChirdlUtilConstants.HTTP_HEADER_USER_AGENT));
 		} catch (ContextAuthenticationException e) {
 			map.put("errorMessage", "Invalid username/password");
 			return new ModelAndView(FORM_VIEW, map);
