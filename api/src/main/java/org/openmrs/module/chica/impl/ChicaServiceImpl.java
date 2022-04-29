@@ -40,7 +40,6 @@ import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chica.ChicaParameterHandler;
-import org.openmrs.module.chica.MDPercentile;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.db.ChicaDAO;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
@@ -54,6 +53,8 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDwtageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -1272,7 +1273,7 @@ public class ChicaServiceImpl implements ChicaService
          * @see org.openmrs.module.chica.service.ChicaService#getMdlenageinf(double meanAge)
          */
         @Override
-        public MDPercentile getMdlenageinf(double meanAge) {
+        public MDlenageinf getMdlenageinf(double meanAge) {
             return getChicaDAO().getMdlenageinf(meanAge);
         }
         
@@ -1280,7 +1281,7 @@ public class ChicaServiceImpl implements ChicaService
          * @see org.openmrs.module.chica.service.ChicaService#getMdlenageLeftinf(double meanAge)
          */
         @Override
-        public MDPercentile getMdlenageLeftinf(double meanAge) {
+        public MDlenageinf getMdlenageLeftinf(double meanAge) {
             return getChicaDAO().getMdlenageLeftinf(meanAge);
         }
         
@@ -1288,7 +1289,31 @@ public class ChicaServiceImpl implements ChicaService
          * @see org.openmrs.module.chica.service.ChicaService#getMdlenageRightinf(double meanAge)
          */
         @Override
-        public MDPercentile getMdlenageRightinf(double meanAge) {
+        public MDlenageinf getMdlenageRightinf(double meanAge) {
             return getChicaDAO().getMdlenageRightinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdwtageinf(double meanAge)
+         */
+        @Override
+        public MDwtageinf getMdwtageinf(double meanAge) {
+            return getChicaDAO().getMdwtageinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdwtageLeftinf(double meanAge)
+         */
+        @Override
+        public MDwtageinf getMdwtageLeftinf(double meanAge) {
+            return getChicaDAO().getMdwtageLeftinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdwtageRightinf(double meanAge)
+         */
+        @Override
+        public MDwtageinf getMdwtageRightinf(double meanAge) {
+            return getChicaDAO().getMdwtageRightinf(meanAge);
         }
 }

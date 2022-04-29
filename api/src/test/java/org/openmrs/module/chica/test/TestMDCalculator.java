@@ -30,6 +30,7 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         
          initializeInMemoryDatabase();
          executeDataSet(TestUtil.MD_LENGTH_AGE_FILE);
+         executeDataSet(TestUtil.MD_WEIGHT_AGE_FILE);
          authenticate();
     }
 
@@ -41,6 +42,10 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Double percentile = calculator.calculatePercentile(new Double(110), date, "mdlength", Calendar.getInstance().getTime());
         System.out.println("Mean age range height percentile - "+percentile);
         Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(17), date, "mdweight", Calendar.getInstance().getTime());
+        System.out.println("Mean age range weight percentile - "+percentile);
+        Assert.assertNotNull(percentile);
     }  
     
     @Test
@@ -49,7 +54,11 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(5);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(112), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Above 90 percentile - "+percentile);
+        System.out.println("Above 90 height percentile - "+percentile);
+        Assert.assertEquals(percentile, new Double(99));
+        
+        percentile = calculator.calculatePercentile(new Double(25), date, "mdweight", Calendar.getInstance().getTime());
+        System.out.println("Above 90 weight percentile - "+percentile);
         Assert.assertEquals(percentile, new Double(99));
     } 
     
@@ -58,8 +67,12 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Calculator calculator = new Calculator();
         LocalDate dob = LocalDate.now().minusYears(5);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Below 10 percentile - "+percentile);
+        Double percentile = calculator.calculatePercentile(new Double(13), date, "mdlength", Calendar.getInstance().getTime());
+        System.out.println("Below 10 height percentile - "+percentile);
+        Assert.assertEquals(percentile, new Double(1));
+        
+        percentile = calculator.calculatePercentile(new Double(13), date, "mdweight", Calendar.getInstance().getTime());
+        System.out.println("Below 10 weight percentile - "+percentile);
         Assert.assertEquals(percentile, new Double(1));
     } 
     
@@ -69,7 +82,11 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(2);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Percentile when left row is null - "+percentile);
+        System.out.println("Height percentile when left row is null - "+percentile);
+        Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(95), date, "mdweight", Calendar.getInstance().getTime());
+        System.out.println("Weighy percentile when left row is null - "+percentile);
         Assert.assertNotNull(percentile);
     } 
     
@@ -79,7 +96,11 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(12);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Percentile when right row is null - "+percentile);
+        System.out.println("Height percentile when right row is null - "+percentile);
+        Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(95), date, "mdweight", Calendar.getInstance().getTime());
+        System.out.println("Weight percentile when right row is null - "+percentile);
         Assert.assertNotNull(percentile);
     }
  

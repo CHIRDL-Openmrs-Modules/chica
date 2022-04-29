@@ -39,6 +39,7 @@ import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
 import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDwtageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -1246,6 +1247,32 @@ public class HibernateChicaDAO implements ChicaDAO
     @Override
     public MDlenageinf getMdlenageRightinf(double meanAge) {
         return (MDlenageinf)this.sessionFactory.getCurrentSession().createCriteria(MDlenageinf.class).add(Restrictions.gt("meanAge", meanAge))
+                .addOrder(Order.asc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdwtageinf(double meanAge)
+     */
+    @Override
+    public MDwtageinf getMdwtageinf(double meanAge) {
+       return (MDwtageinf)this.sessionFactory.getCurrentSession().createCriteria(MDwtageinf.class).add(Restrictions.eq("meanAge", meanAge)).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdwtageLeftinf(double meanAge)
+     */
+    @Override
+    public MDwtageinf getMdwtageLeftinf(double meanAge) {
+       return (MDwtageinf)this.sessionFactory.getCurrentSession().createCriteria(MDwtageinf.class).add(Restrictions.lt("meanAge", meanAge))
+               .addOrder(Order.desc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdwtageRightinf(double meanAge)
+     */
+    @Override
+    public MDwtageinf getMdwtageRightinf(double meanAge) {
+        return (MDwtageinf)this.sessionFactory.getCurrentSession().createCriteria(MDwtageinf.class).add(Restrictions.gt("meanAge", meanAge))
                 .addOrder(Order.asc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
     }
   

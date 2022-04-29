@@ -29,6 +29,8 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDwtageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -420,21 +422,42 @@ public interface ChicaService
      * @return Muscular Dystrophy height mean age percentile
      */
     @Authorized()
-    public MDPercentile getMdlenageinf(double meanAge);
+    public MDlenageinf getMdlenageinf(double meanAge);
     
     /**
      * @param meanAge
      * @return Muscular Dystrophy height mean age left percentile
      */
     @Authorized()
-    public MDPercentile getMdlenageLeftinf(double meanAge);
+    public MDlenageinf getMdlenageLeftinf(double meanAge);
     
     /**
      * @param meanAge
      * @return Muscular Dystrophy height mean age right percentile
      */
     @Authorized()
-    public MDPercentile getMdlenageRightinf(double meanAge);
+    public MDlenageinf getMdlenageRightinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy weight mean age percentile
+     */
+    @Authorized()
+    public MDwtageinf getMdwtageinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy weight mean age left percentile
+     */
+    @Authorized()
+    public MDwtageinf getMdwtageLeftinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy weight mean age right percentile
+     */
+    @Authorized()
+    public MDwtageinf getMdwtageRightinf(double meanAge);
 	
 		
 }

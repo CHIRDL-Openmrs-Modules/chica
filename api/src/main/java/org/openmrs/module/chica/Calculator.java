@@ -38,6 +38,8 @@ public class Calculator
 	
 	public static final String PERCENTILE_MD_LEN = "mdlength";
 	
+	public static final String PERCENTILE_MD_WT = "mdweight";
+	
 	public static final String PERCENTILE_LEFT = "left";
     
     public static final String PERCENTILE_RIGHT = "right";
@@ -549,6 +551,7 @@ public class Calculator
         
         Double meanAge = Util.getFractionalAgeInUnits(birthdate, currDate, Util.YEAR_ABBR);
         log.info("Mean Age in Years - "+ meanAge);
+        System.out.println("Mean Age in Years - "+meanAge);
         
         Double p10;
         Double p25;
@@ -627,6 +630,16 @@ public class Calculator
             } else {
                 percentileTable = chicaService.getMdlenageinf(meanAge);
             }
+        } else if (type.equalsIgnoreCase(PERCENTILE_MD_WT)) {
+            if (StringUtils.isNotBlank(percentileRow)) {
+                if (percentileRow.equalsIgnoreCase(PERCENTILE_LEFT)) {
+                    percentileTable = chicaService.getMdwtageLeftinf(meanAge);
+                } else {
+                    percentileTable = chicaService.getMdwtageRightinf(meanAge);
+                }
+            } else {
+                percentileTable = chicaService.getMdwtageinf(meanAge);
+            }
         }
         return percentileTable;
     }
@@ -639,6 +652,9 @@ public class Calculator
         
         double percentile = 0;
         log.info("10th_for_age - "+p10+"\n25th_for_age - "+p25+"\n50th_for_age - "
+                            +p50+"\n75th_for_age - "+p75+"\n90th_for_age - "+p90);
+        
+        System.out.println("10th_for_age - "+p10+"\n25th_for_age - "+p25+"\n50th_for_age - "
                             +p50+"\n75th_for_age - "+p75+"\n90th_for_age - "+p90);
 
         if (measurement < p10) {
