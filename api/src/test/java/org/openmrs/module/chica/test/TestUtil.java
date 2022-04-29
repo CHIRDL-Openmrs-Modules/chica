@@ -34,6 +34,7 @@ public class TestUtil
 	public static final String RULES_FILE = "dbunitFiles/rules.xml";
 	public static final String PATIENT_FORMS_FILE = "dbunitFiles/patientForms.xml";
 	public static final String STUDY_FILE = "dbunitFiles/study.xml";
+	public static final String MD_LENGTH_AGE_FILE = "dbunitFiles/MdHeightAgeCalculation.xml";
 
 	/**
 	 * Turns database table into dbunit xml

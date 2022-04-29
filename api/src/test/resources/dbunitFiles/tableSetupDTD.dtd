@@ -18,6 +18,7 @@
     chica_high_bp*,
     chica_insurance_category*,
     chica_lenageinf*,
+    chica_md_lenaginf*,
     chica_patient_family*,
     chica_statistics*,
     chica_study*,
@@ -305,6 +306,21 @@
     m CDATA #IMPLIED
     s CDATA #IMPLIED
     lenageinf_id CDATA #REQUIRED
+>
+
+<!ELEMENT chica_md_wtaginf EMPTY>
+<!ATTLIST chica_md_wtaginf
+    md_lenaginf_id CDATA #REQUIRED
+    age_years CDATA #IMPLIED
+    mean_age CDATA #IMPLIED
+    sample CDATA #IMPLIED
+    mean CDATA #IMPLIED
+	sd CDATA #IMPLIED
+	p10 CDATA #IMPLIED
+	p25 CDATA #IMPLIED
+	p50 CDATA #IMPLIED
+	p75 CDATA #IMPLIED
+	p90 CDATA #IMPLIED
 >
 
 <!ELEMENT chica_patient_family EMPTY>

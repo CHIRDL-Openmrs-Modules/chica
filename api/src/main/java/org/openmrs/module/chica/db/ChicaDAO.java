@@ -9,6 +9,7 @@ import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.db.DAOException;
+import org.openmrs.module.chica.MDPercentile;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -234,5 +235,23 @@ public interface ChicaDAO {
 	 * @throws DAOException
 	 */
 	public Study saveStudy(Study study) ;
+	
+	/**
+     * @param meanAge
+     * @return Muscular Dystrophy height mean age percentile
+     */
+    public MDPercentile getMdlenageinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy height mean age left percentile
+     */
+    public MDPercentile getMdlenageLeftinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy height mean age left percentile
+     */
+    public MDPercentile getMdlenageRightinf(double meanAge);
 	
 }
