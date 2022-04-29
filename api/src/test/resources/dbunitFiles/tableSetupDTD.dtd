@@ -308,8 +308,8 @@
     lenageinf_id CDATA #REQUIRED
 >
 
-<!ELEMENT chica_md_wtaginf EMPTY>
-<!ATTLIST chica_md_wtaginf
+<!ELEMENT chica_md_lenaginf EMPTY>
+<!ATTLIST chica_md_lenaginf
     md_lenaginf_id CDATA #REQUIRED
     age_years CDATA #IMPLIED
     mean_age CDATA #IMPLIED

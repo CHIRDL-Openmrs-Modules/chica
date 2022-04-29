@@ -9,7 +9,6 @@ import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.db.DAOException;
-import org.openmrs.module.chica.MDPercentile;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -22,6 +21,7 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -240,18 +240,18 @@ public interface ChicaDAO {
      * @param meanAge
      * @return Muscular Dystrophy height mean age percentile
      */
-    public MDPercentile getMdlenageinf(double meanAge);
+    public MDlenageinf getMdlenageinf(double meanAge);
     
     /**
      * @param meanAge
      * @return Muscular Dystrophy height mean age left percentile
      */
-    public MDPercentile getMdlenageLeftinf(double meanAge);
+    public MDlenageinf getMdlenageLeftinf(double meanAge);
     
     /**
      * @param meanAge
      * @return Muscular Dystrophy height mean age left percentile
      */
-    public MDPercentile getMdlenageRightinf(double meanAge);
+    public MDlenageinf getMdlenageRightinf(double meanAge);
 	
 }
