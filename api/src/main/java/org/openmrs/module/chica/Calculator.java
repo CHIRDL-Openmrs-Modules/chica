@@ -551,7 +551,6 @@ public class Calculator
         
         Double meanAge = Util.getFractionalAgeInUnits(birthdate, currDate, Util.YEAR_ABBR);
         log.info("Mean Age in Years - "+ meanAge);
-        System.out.println("Mean Age in Years - "+meanAge);
         
         Double p10;
         Double p25;
@@ -652,9 +651,6 @@ public class Calculator
         
         double percentile = 0;
         log.info("10th_for_age - "+p10+"\n25th_for_age - "+p25+"\n50th_for_age - "
-                            +p50+"\n75th_for_age - "+p75+"\n90th_for_age - "+p90);
-        
-        System.out.println("10th_for_age - "+p10+"\n25th_for_age - "+p25+"\n50th_for_age - "
                             +p50+"\n75th_for_age - "+p75+"\n90th_for_age - "+p90);
 
         if (measurement < p10) {
