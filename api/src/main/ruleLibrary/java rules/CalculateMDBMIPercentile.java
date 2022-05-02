@@ -1,13 +1,9 @@
 package org.openmrs.module.chica.rule;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
@@ -16,19 +12,20 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 
 /**
- * Calculates bmi percentile based upon a provided weight, the patient's age, and gender.
+ * Calculates a patient's Muscular Dystrophy BMI percentile. 
  * 
  * @author Seema Sarala
+ *
  */
 public class CalculateMDBMIPercentile implements Rule {
     
+    private static final String RULE_CALCULATE_BMI = "CalculateBMI";
     private static final String CALCULATION_MD_BMI_PERCENTILE = "mdbmi";
-    
-    private Log log = LogFactory.getLog(this.getClass());
     
     /**
      * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -39,56 +36,27 @@ public class CalculateMDBMIPercentile implements Rule {
             return Result.emptyResult();
         }
         
-        // Ensure the parameter is a Result
-        Object weightResultsObject = parameters.get(ChirdlUtilConstants.PARAMETER_1);
-        if (!(weightResultsObject instanceof Result)) {
-            return Result.emptyResult();
-        }
-        
-        Result weightResults = (Result)weightResultsObject;
-        
-        // Ensure the patient exists
         Patient patient = Context.getPatientService().getPatient(patientId);
         if (patient == null) {
-            this.log.error("Cannot find patient with ID " + patientId);
             return Result.emptyResult();
         }
         
-        // Ensure the patient has a birthdate
-        Date birthDate = patient.getBirthdate();
-        if (birthDate == null) {
-            this.log.error("Patient " + patientId + " does not have a birthdate specified.");
+        Result bmiResult = calculateBMI(patient, parameters);
+        if (bmiResult == null || bmiResult.isNull()) {
             return Result.emptyResult();
         }
         
-        Double weight = null;
-        Date dateTime = null;
-        // Get the weight observation
-        Object weightObsObj = weightResults.getResultObject();
-        if (weightObsObj instanceof Obs) {
-            Obs weightObs = (Obs)weightObsObj;
-            weight = weightObs.getValueNumeric();
-            dateTime = weightObs.getObsDatetime();
-        } else if (Datatype.NUMERIC.equals(weightResults.getDatatype())) {
-            weight = weightResults.toNumber();
-            dateTime = weightResults.getResultDate();
-        } else {
-            return Result.emptyResult();
+        Calculator calculator = new Calculator();
+        Double percentile = calculator.calculatePercentile(bmiResult.toNumber(), patient.getBirthdate(), 
+                    CALCULATION_MD_BMI_PERCENTILE, bmiResult.getResultDate());
+        if (percentile != null) {
+            percentile = org.openmrs.module.chirdlutil.util.Util.round(percentile, 2);
+            Result result = new Result(percentile);
+            result.setResultDate(bmiResult.getResultDate());
+            return result;
         }
         
-        if (weight == null) {
-            return Result.emptyResult();
-        }
-        
-        // Calculate the weight percentile
-        Calculator calc = new Calculator();
-        try {
-            Double weightPercentile = calc.calculatePercentile(weight, birthDate, CALCULATION_MD_BMI_PERCENTILE, dateTime);
-            return new Result(weightPercentile);
-        } catch (Exception e) {
-            this.log.error("Error calculating weight percentile for patient " + patientId, e);
-            return Result.emptyResult();
-        }
+        return Result.emptyResult();
     }
     
     /**
@@ -123,4 +91,25 @@ public class CalculateMDBMIPercentile implements Rule {
         return Datatype.NUMERIC;
     }
     
+    /**
+     * Calculates the BMI for the patient.
+     * 
+     * @param patient The patient to calculate the BMI for
+     * @param parameters Map of patient information.
+     * @return The patient's BMI
+     */
+    private Result calculateBMI(Patient patient, Map<String, Object> parameters) {
+        Object bmiResultsObject = parameters.get(ChirdlUtilConstants.PARAMETER_3);
+        
+        // Check to see if the BMI was already provided as a parameter
+        if (bmiResultsObject instanceof Result) {
+            Result bmiResults = (Result)bmiResultsObject;
+            Double bmi = bmiResults.toNumber();
+            if (bmi != null) {
+                return bmiResults;
+            }
+        }
+        
+        return Context.getService(ATDService.class).evaluateRule(RULE_CALCULATE_BMI, patient, parameters);
+    }
 }
