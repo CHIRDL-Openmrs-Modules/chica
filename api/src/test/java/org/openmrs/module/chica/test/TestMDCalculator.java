@@ -39,7 +39,6 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(5).minusMonths(3).minusDays(2);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(110), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Mean age range height percentile - "+percentile);
         Assert.assertNotNull(percentile);
     }  
     
@@ -49,7 +48,6 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(5);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(112), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Above 90 percentile - "+percentile);
         Assert.assertEquals(percentile, new Double(99));
     } 
     
@@ -59,7 +57,6 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(5);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Below 10 percentile - "+percentile);
         Assert.assertEquals(percentile, new Double(1));
     } 
     
@@ -69,7 +66,6 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(2);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Percentile when left row is null - "+percentile);
         Assert.assertNotNull(percentile);
     } 
     
@@ -79,7 +75,6 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(12);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
-        System.out.println("Percentile when right row is null - "+percentile);
         Assert.assertNotNull(percentile);
     }
  

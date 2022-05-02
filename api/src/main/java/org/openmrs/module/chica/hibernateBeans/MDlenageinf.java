@@ -290,5 +290,12 @@ public class MDlenageinf implements java.io.Serializable, MDPercentile {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "MDlenageinf [mdlenageinfId=" + this.mdlenageinfId + ", ageYears=" + this.ageYears + ", meanAge=" + this.meanAge
+                + ", sample=" + this.sample + ", mean=" + this.mean + ", sd=" + this.sd + ", p10=" + this.p10 + ", p25=" + this.p25 + ", p50=" + this.p50
+                + ", p75=" + this.p75 + ", p90=" + this.p90 + "]";
+    }
     
 }
