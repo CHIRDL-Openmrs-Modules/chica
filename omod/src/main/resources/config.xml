@@ -441,6 +441,7 @@
         study_subject.hbm.xml
         mdlenageinf.hbm.xml
         mdwtageinf.hbm.xml
+        mdbmiageinf.hbm.xml
     </mappingFiles>
     
    

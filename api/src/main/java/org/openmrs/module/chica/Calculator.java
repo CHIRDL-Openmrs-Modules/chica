@@ -40,6 +40,8 @@ public class Calculator
 	
 	public static final String PERCENTILE_MD_WT = "mdweight";
 	
+	public static final String PERCENTILE_MD_BMI = "mdbmi";
+	
 	public static final String PERCENTILE_LEFT = "left";
     
     public static final String PERCENTILE_RIGHT = "right";
@@ -638,6 +640,16 @@ public class Calculator
                 }
             } else {
                 percentileTable = chicaService.getMdwtageinf(meanAge);
+            }
+        } else if (type.equalsIgnoreCase(PERCENTILE_MD_BMI)) {
+            if (StringUtils.isNotBlank(percentileRow)) {
+                if (percentileRow.equalsIgnoreCase(PERCENTILE_LEFT)) {
+                    percentileTable = chicaService.getMdbmiageLeftinf(meanAge);
+                } else {
+                    percentileTable = chicaService.getMdbmiageRightinf(meanAge);
+                }
+            } else {
+                percentileTable = chicaService.getMdbmiageinf(meanAge);
             }
         }
         return percentileTable;
