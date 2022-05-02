@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset SYSTEM "test/dbunitFiles/tableSetupDTD.dtd">
+<dataset>
+  <chica_md_bmiage md_bmiaginf_id="111" age_years="2" mean_age="2.25" sample="57" mean="17.6" sd="1.5" p10="15.9" p25="16.5" p50="17.6" p75="18.3" p90="19.6" gt_two_below_mean="14.6"/>
+  <chica_md_bmiage md_bmiaginf_id="112" age_years="2.5" mean_age="2.75" sample="66" mean="17" sd="1.5" p10="15.5" p25="16.1" p50="16.7" p75="17.7" p90="19.5" gt_two_below_mean="14"/>
+  <chica_md_bmiage md_bmiaginf_id="113" age_years="3" mean_age="3.25" sample="80" mean="16.9" sd="1.5" p10="15.2" p25="15.9" p50="16.8" p75="17.8" p90="18.7" gt_two_below_mean="13.9"/>	
+  <chica_md_bmiage md_bmiaginf_id="114" age_years="3.5" mean_age="3.75" sample="88" mean="16.9" sd="1.5" p10="15.3" p25="15.8" p50="16.9" p75="17.8" p90="18.6" gt_two_below_mean="13.9"/>  
+  <chica_md_bmiage md_bmiaginf_id="115" age_years="4" mean_age="4.25" sample="108" mean="16.8" sd="1.8" p10="15.1" p25="15.7" p50="16.7" p75="17.6" p90="18.4" gt_two_below_mean="13.2"/>
+  <chica_md_bmiage md_bmiaginf_id="116" age_years="4.5" mean_age="4.75" sample="120" mean="16.7" sd="1.9" p10="14.8" p25="15.6" p50="16.4" p75="17.6" p90="18.8" gt_two_below_mean="12.9"/>
+  <chica_md_bmiage md_bmiaginf_id="117" age_years="5" mean_age="5.25" sample="129" mean="16.7" sd="2.4" p10="14.8" p25="15.5" p50="16.3" p75="17.5" p90="19.3" gt_two_below_mean="11.9"/>
+  <chica_md_bmiage md_bmiaginf_id="118" age_years="5.5" mean_age="5.75" sample="117" mean="16.6" sd="2.8" p10="14.5" p25="15.1" p50="16" p75="17.1" p90="18.6" gt_two_below_mean="11"/>
+  <chica_md_bmiage md_bmiaginf_id="119" age_years="6" mean_age="6.25" sample="128" mean="16.6" sd="3.1" p10="14.4" p25="15.1" p50="16" p75="17" p90="18.3" gt_two_below_mean="10.4"/>
+  <chica_md_bmiage md_bmiaginf_id="120" age_years="6.5" mean_age="6.75" sample="101" mean="16.4" sd="3.2" p10="13.9" p25="14.9" p50="15.8" p75="16.9" p90="18.9" gt_two_below_mean="10"/>
+  <chica_md_bmiage md_bmiaginf_id="121" age_years="7" mean_age="7.25" sample="91" mean="16.6" sd="3.7" p10="14" p25="14.5" p50="15.5" p75="17.8" p90="19.3" gt_two_below_mean="9.2"/>
+  <chica_md_bmiage md_bmiaginf_id="122" age_years="7.5" mean_age="7.75" sample="83" mean="16.6" sd="3.6" p10="14.1" p25="14.6" p50="15.6" p75="17.7" p90="19.8" gt_two_below_mean="9.4"/>
+  <chica_md_bmiage md_bmiaginf_id="123" age_years="8" mean_age="8.25" sample="66" mean="16.8" sd="4.2" p10="13.4" p25="14.4" p50="15.5" p75="18.2" p90="22.3" gt_two_below_mean="8.4"/>
+  <chica_md_bmiage md_bmiaginf_id="124" age_years="8.5" mean_age="8.75" sample="58" mean="16.8" sd="3.9" p10="13.6" p25="14.4" p50="16" p75="17.4" p90="20.8" gt_two_below_mean="9"/>
+  <chica_md_bmiage md_bmiaginf_id="125" age_years="9" mean_age="9.25" sample="46" mean="18" sd="5.2" p10="13.6" p25="14.5" p50="16.1" p75="19.5" p90="26.4" gt_two_below_mean="7.6"/>
+  <chica_md_bmiage md_bmiaginf_id="126" age_years="9.5" mean_age="9.75" sample="41" mean="17.5" sd="4.4" p10="13" p25="14.2" p50="16.2" p75="20.4" p90="24.2" gt_two_below_mean="8.7"/>
+  <chica_md_bmiage md_bmiaginf_id="127" age_years="10" mean_age="10.25" sample="29" mean="18.8" sd="5.7" p10="12.5" p25="14.7" p50="17.7" p75="21.5" p90="25.7" gt_two_below_mean="7.4"/>
+  <chica_md_bmiage md_bmiaginf_id="128" age_years="10.5" mean_age="10.75" sample="25" mean="20" sd="5.8" p10="13" p25="15.4" p50="18.2" p75="25" p90="28.1" gt_two_below_mean="8.4"/>
+  <chica_md_bmiage md_bmiaginf_id="129" age_years="11" mean_age="11.25" sample="17" mean="19.7" sd="5.1" p10="13.7" p25="15.8" p50="19.5" p75="22" p90="29.4" gt_two_below_mean="9.5"/>
+  <chica_md_bmiage md_bmiaginf_id="130" age_years="11.5" mean_age="11.75" sample="15" mean="20.4" sd="4.1" p10="14" p25="17.6" p50="19.8" p75="23.1" p90="25.6" gt_two_below_mean="12.2"/>
+</dataset>
