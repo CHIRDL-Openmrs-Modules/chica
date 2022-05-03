@@ -30,6 +30,8 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         
          initializeInMemoryDatabase();
          executeDataSet(TestUtil.MD_LENGTH_AGE_FILE);
+         executeDataSet(TestUtil.MD_WEIGHT_AGE_FILE);
+         executeDataSet(TestUtil.MD_BMI_AGE_FILE);
          authenticate();
     }
 
@@ -40,6 +42,12 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(110), date, "mdlength", Calendar.getInstance().getTime());
         Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(17), date, "mdweight", Calendar.getInstance().getTime());
+        Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(15), date, "mdbmi", Calendar.getInstance().getTime());
+        Assert.assertNotNull(percentile);
     }  
     
     @Test
@@ -49,6 +57,12 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(112), date, "mdlength", Calendar.getInstance().getTime());
         Assert.assertEquals(percentile, new Double(99));
+        
+        percentile = calculator.calculatePercentile(new Double(25), date, "mdweight", Calendar.getInstance().getTime());
+        Assert.assertEquals(percentile, new Double(99));
+        
+        percentile = calculator.calculatePercentile(new Double(22), date, "mdbmi", Calendar.getInstance().getTime());
+        Assert.assertEquals(percentile, new Double(99));
     } 
     
     @Test
@@ -56,7 +70,13 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Calculator calculator = new Calculator();
         LocalDate dob = LocalDate.now().minusYears(5);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
+        Double percentile = calculator.calculatePercentile(new Double(13), date, "mdlength", Calendar.getInstance().getTime());
+        Assert.assertEquals(percentile, new Double(1));
+        
+        percentile = calculator.calculatePercentile(new Double(13), date, "mdweight", Calendar.getInstance().getTime());
+        Assert.assertEquals(percentile, new Double(1));
+        
+        percentile = calculator.calculatePercentile(new Double(13), date, "mdbmi", Calendar.getInstance().getTime());
         Assert.assertEquals(percentile, new Double(1));
     } 
     
@@ -67,6 +87,12 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
         Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(95), date, "mdweight", Calendar.getInstance().getTime());
+        Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(95), date, "mdbmi", Calendar.getInstance().getTime());
+        Assert.assertNotNull(percentile);
     } 
     
     @Test
@@ -75,6 +101,12 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dob = LocalDate.now().minusYears(12);
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Double percentile = calculator.calculatePercentile(new Double(95), date, "mdlength", Calendar.getInstance().getTime());
+        Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(95), date, "mdweight", Calendar.getInstance().getTime());
+        Assert.assertNotNull(percentile);
+        
+        percentile = calculator.calculatePercentile(new Double(95), date, "mdbmi", Calendar.getInstance().getTime());
         Assert.assertNotNull(percentile);
     }
  
