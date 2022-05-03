@@ -44,12 +44,9 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Assert.assertNotNull(percentile);
         
         percentile = calculator.calculatePercentile(new Double(17), date, "mdweight", Calendar.getInstance().getTime());
-<<<<<<< HEAD
         Assert.assertNotNull(percentile);
         
         percentile = calculator.calculatePercentile(new Double(15), date, "mdbmi", Calendar.getInstance().getTime());
-=======
->>>>>>> refs/remotes/origin/CHICA-1524_MD_Specific_Weight_Percentile
         Assert.assertNotNull(percentile);
     }  
     
@@ -62,12 +59,9 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Assert.assertEquals(percentile, new Double(99));
         
         percentile = calculator.calculatePercentile(new Double(25), date, "mdweight", Calendar.getInstance().getTime());
-<<<<<<< HEAD
         Assert.assertEquals(percentile, new Double(99));
         
         percentile = calculator.calculatePercentile(new Double(22), date, "mdbmi", Calendar.getInstance().getTime());
-=======
->>>>>>> refs/remotes/origin/CHICA-1524_MD_Specific_Weight_Percentile
         Assert.assertEquals(percentile, new Double(99));
     } 
     
@@ -80,12 +74,9 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Assert.assertEquals(percentile, new Double(1));
         
         percentile = calculator.calculatePercentile(new Double(13), date, "mdweight", Calendar.getInstance().getTime());
-<<<<<<< HEAD
         Assert.assertEquals(percentile, new Double(1));
         
         percentile = calculator.calculatePercentile(new Double(13), date, "mdbmi", Calendar.getInstance().getTime());
-=======
->>>>>>> refs/remotes/origin/CHICA-1524_MD_Specific_Weight_Percentile
         Assert.assertEquals(percentile, new Double(1));
     } 
     
@@ -98,12 +89,9 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Assert.assertNotNull(percentile);
         
         percentile = calculator.calculatePercentile(new Double(95), date, "mdweight", Calendar.getInstance().getTime());
-<<<<<<< HEAD
         Assert.assertNotNull(percentile);
         
         percentile = calculator.calculatePercentile(new Double(95), date, "mdbmi", Calendar.getInstance().getTime());
-=======
->>>>>>> refs/remotes/origin/CHICA-1524_MD_Specific_Weight_Percentile
         Assert.assertNotNull(percentile);
     } 
     
@@ -116,12 +104,9 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Assert.assertNotNull(percentile);
         
         percentile = calculator.calculatePercentile(new Double(95), date, "mdweight", Calendar.getInstance().getTime());
-<<<<<<< HEAD
         Assert.assertNotNull(percentile);
         
         percentile = calculator.calculatePercentile(new Double(95), date, "mdbmi", Calendar.getInstance().getTime());
-=======
->>>>>>> refs/remotes/origin/CHICA-1524_MD_Specific_Weight_Percentile
         Assert.assertNotNull(percentile);
     }
  
