@@ -10,6 +10,7 @@
     chirdlutilbackports_state_action*,
     chirdlutilbackports_state_mapping*,
     chica_bmiage*,
+    chica_md_bmiage*,
     chica_ddst*,
     chirdlutilbackports_error*,
     chirdlutilbackports_error_category*,
@@ -215,6 +216,22 @@
     m CDATA #IMPLIED
     s CDATA #IMPLIED
     bmiage_id CDATA #REQUIRED
+>
+
+<!ELEMENT chica_md_bmiage EMPTY>
+<!ATTLIST chica_md_bmiage
+    md_bmiaginf_id CDATA #REQUIRED
+    age_years CDATA #IMPLIED
+    mean_age CDATA #IMPLIED
+    sample CDATA #IMPLIED
+    mean CDATA #IMPLIED
+	sd CDATA #IMPLIED
+	p10 CDATA #IMPLIED
+	p25 CDATA #IMPLIED
+	p50 CDATA #IMPLIED
+	p75 CDATA #IMPLIED
+	p90 CDATA #IMPLIED
+	gt_two_below_mean CDATA #IMPLIED
 >
 
 <!ELEMENT chica_ddst EMPTY>
