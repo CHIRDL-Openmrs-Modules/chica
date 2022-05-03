@@ -107,8 +107,8 @@ public class GetPSFQuestionsAnswers implements Rule {
 	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
 		ATDService atdService = Context.getService(ATDService.class);
 		String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
-		boolean includeNullObs = true;
-		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, patientForm, includeNullObs);
+		//Get all questions even if not answered by patient.
+		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, patientForm, true);
 		if (stats == null || stats.isEmpty()) {
 			return new ArrayList<>();
 		}
