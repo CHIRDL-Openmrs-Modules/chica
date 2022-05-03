@@ -52,6 +52,9 @@ import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDbmiageinf;
+import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDwtageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -228,7 +231,7 @@ public class ChicaServiceImpl implements ChicaService
 				.getGlobalProperty("chica.statsConfigFile");
 
 		if(statsConfigFile == null){
-			log.error("Could not find statsConfigFile. Please set global property chica.statsConfigFile.");
+			this.log.error("Could not find statsConfigFile. Please set global property chica.statsConfigFile.");
 			return;
 		}
 		try
@@ -295,7 +298,7 @@ public class ChicaServiceImpl implements ChicaService
 		Form databaseForm = Context.getFormService().getForm(formId);
 		if (databaseForm == null)
 		{
-			log.error("Could not consume teleform export xml because form "
+			this.log.error("Could not consume teleform export xml because form "
 					+ formId + " does not exist in the database");
 			return null;
 		}
@@ -311,7 +314,7 @@ public class ChicaServiceImpl implements ChicaService
 		Form databaseForm = Context.getFormService().getForm(formId);
 		if (databaseForm == null)
 		{
-			log.error("Could not consume teleform export xml because form "
+			this.log.error("Could not consume teleform export xml because form "
 					+ formId + " does not exist in the database");
 			return null;
 		}
@@ -326,20 +329,20 @@ public class ChicaServiceImpl implements ChicaService
 				.getService(ATDService.class);
 		TeleformTranslator translator = new TeleformTranslator();
 
-		ArrayList<String> pwsAnswerChoices = new ArrayList<String>();
-		ArrayList<String> pwsAnswerChoiceErr = new ArrayList<String>();
+		ArrayList<String> pwsAnswerChoices = new ArrayList<>();
+		ArrayList<String> pwsAnswerChoiceErr = new ArrayList<>();
 
-		HashMap<String, HashMap<String, Field>> languageToFieldnames = new HashMap<String, HashMap<String, Field>>();
+		HashMap<String, HashMap<String, Field>> languageToFieldnames = new HashMap<>();
 
 		this.populateFieldNameArrays(languageToFieldnames, pwsAnswerChoices,
 				pwsAnswerChoiceErr);
 
-		HashMap<String, Integer> languageToNumAnswers = new HashMap<String, Integer>();
-		HashMap<String, HashMap<Integer, String>> languageToAnswers = new HashMap<String, HashMap<Integer, String>>();
+		HashMap<String, Integer> languageToNumAnswers = new HashMap<>();
+		HashMap<String, HashMap<Integer, String>> languageToAnswers = new HashMap<>();
 
 		Rule providerNameRule = new Rule();
 		providerNameRule.setTokenName("providerName");
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
+		HashMap<String, Object> parameters = new HashMap<>();
 		parameters.put("encounterId", encounterId);
 		providerNameRule.setParameters(parameters);
 
@@ -400,7 +403,7 @@ public class ChicaServiceImpl implements ChicaService
 
 								if (answers == null)
 								{
-									answers = new HashMap<Integer, String>();
+									answers = new HashMap<>();
 									languageToAnswers
 											.put(currLanguage, answers);
 								}
@@ -522,7 +525,7 @@ public class ChicaServiceImpl implements ChicaService
 			Concept currConcept = conceptService.getConceptByName(conceptName);
 			Concept languageConcept = conceptService.getConceptByName(languageResponse);
 			if (currConcept == null || languageConcept == null) {
-				log
+				this.log
 					.error("Could not save preferred language for concept: " + conceptName + " and language: "
 				        + languageResponse);
 			} else {
@@ -573,8 +576,8 @@ public class ChicaServiceImpl implements ChicaService
 				}
 			} catch (Exception e)
 			{
-				log.error(e.getMessage());
-				log.error(Util.getStackTrace(e));
+				this.log.error(e.getMessage());
+				this.log.error(Util.getStackTrace(e));
 			}
 		}
 
@@ -986,7 +989,7 @@ public class ChicaServiceImpl implements ChicaService
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 			Set<LocationTag> tags = location.getTags();
-			List<String>  stationNames = new ArrayList<String>();
+			List<String>  stationNames = new ArrayList<>();
 			for (LocationTag tag : tags){
 				LocationTagAttributeValue locationTagAttributeValue = 
 					chirdlutilbackportsService.getLocationTagAttributeValue(tag
@@ -1254,4 +1257,76 @@ public class ChicaServiceImpl implements ChicaService
 		public Study unretireStudy(Study study) {
 		        return getChicaDAO().saveStudy(study);
 		}
+		
+		/**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdlenageinf(double meanAge)
+         */
+        @Override
+        public MDlenageinf getMdlenageinf(double meanAge) {
+            return getChicaDAO().getMdlenageinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdlenageLeftinf(double meanAge)
+         */
+        @Override
+        public MDlenageinf getMdlenageLeftinf(double meanAge) {
+            return getChicaDAO().getMdlenageLeftinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdlenageRightinf(double meanAge)
+         */
+        @Override
+        public MDlenageinf getMdlenageRightinf(double meanAge) {
+            return getChicaDAO().getMdlenageRightinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdwtageinf(double meanAge)
+         */
+        @Override
+        public MDwtageinf getMdwtageinf(double meanAge) {
+            return getChicaDAO().getMdwtageinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdwtageLeftinf(double meanAge)
+         */
+        @Override
+        public MDwtageinf getMdwtageLeftinf(double meanAge) {
+            return getChicaDAO().getMdwtageLeftinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdwtageRightinf(double meanAge)
+         */
+        @Override
+        public MDwtageinf getMdwtageRightinf(double meanAge) {
+            return getChicaDAO().getMdwtageRightinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdbmiageinf(double meanAge)
+         */
+        @Override
+        public MDbmiageinf getMdbmiageinf(double meanAge) {
+            return getChicaDAO().getMdbmiageinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdbmiageLeftinf(double meanAge)
+         */
+        @Override
+        public MDbmiageinf getMdbmiageLeftinf(double meanAge) {
+            return getChicaDAO().getMdbmiageLeftinf(meanAge);
+        }
+        
+        /**
+         * @see org.openmrs.module.chica.service.ChicaService#getMdbmiageRightinf(double meanAge)
+         */
+        @Override
+        public MDbmiageinf getMdbmiageRightinf(double meanAge) {
+            return getChicaDAO().getMdbmiageRightinf(meanAge);
+        }
 }

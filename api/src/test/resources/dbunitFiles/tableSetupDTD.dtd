@@ -14,6 +14,7 @@
     chirdlutilbackports_state_action*,
     chirdlutilbackports_state_mapping*,
     chica_bmiage*,
+    chica_md_bmiage*,
     chica_ddst*,
     chirdlutilbackports_error*,
     chirdlutilbackports_error_category*,
@@ -22,12 +23,14 @@
     chica_high_bp*,
     chica_insurance_category*,
     chica_lenageinf*,
+    chica_md_lenaginf*,
     chica_patient_family*,
     chica_statistics*,
     chica_study*,
     chica_study_attribute*,
     chica_study_attribute_value*,
     chica_wtageinf*,
+    chica_md_wtaginf*,
     cohort*,
     cohort_member*,
     complex_obs*,
@@ -224,6 +227,22 @@
     bmiage_id CDATA #REQUIRED
 >
 
+<!ELEMENT chica_md_bmiage EMPTY>
+<!ATTLIST chica_md_bmiage
+    md_bmiaginf_id CDATA #REQUIRED
+    age_years CDATA #IMPLIED
+    mean_age CDATA #IMPLIED
+    sample CDATA #IMPLIED
+    mean CDATA #IMPLIED
+	sd CDATA #IMPLIED
+	p10 CDATA #IMPLIED
+	p25 CDATA #IMPLIED
+	p50 CDATA #IMPLIED
+	p75 CDATA #IMPLIED
+	p90 CDATA #IMPLIED
+	gt_two_below_mean CDATA #IMPLIED
+>
+
 <!ELEMENT chica_ddst EMPTY>
 <!ATTLIST chica_ddst
     category CDATA #REQUIRED
@@ -341,6 +360,21 @@
     lenageinf_id CDATA #REQUIRED
 >
 
+<!ELEMENT chica_md_lenaginf EMPTY>
+<!ATTLIST chica_md_lenaginf
+    md_lenaginf_id CDATA #REQUIRED
+    age_years CDATA #IMPLIED
+    mean_age CDATA #IMPLIED
+    sample CDATA #IMPLIED
+    mean CDATA #IMPLIED
+	sd CDATA #IMPLIED
+	p10 CDATA #IMPLIED
+	p25 CDATA #IMPLIED
+	p50 CDATA #IMPLIED
+	p75 CDATA #IMPLIED
+	p90 CDATA #IMPLIED
+>
+
 <!ELEMENT chica_patient_family EMPTY>
 <!ATTLIST chica_patient_family
     patient_family_id CDATA #REQUIRED
@@ -437,6 +471,21 @@
     m CDATA #IMPLIED
     s CDATA #IMPLIED
     wtageinf_id CDATA #REQUIRED
+>
+
+<!ELEMENT chica_md_wtaginf EMPTY>
+<!ATTLIST chica_md_wtaginf
+    md_wtaginf_id CDATA #REQUIRED
+    age_years CDATA #IMPLIED
+    mean_age CDATA #IMPLIED
+    sample CDATA #IMPLIED
+    mean CDATA #IMPLIED
+	sd CDATA #IMPLIED
+	p10 CDATA #IMPLIED
+	p25 CDATA #IMPLIED
+	p50 CDATA #IMPLIED
+	p75 CDATA #IMPLIED
+	p90 CDATA #IMPLIED
 >
 
 <!ELEMENT cohort EMPTY>

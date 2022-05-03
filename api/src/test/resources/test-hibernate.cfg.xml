@@ -37,5 +37,8 @@
 	    <mapping resource="session.hbm.xml"/>
 	    <mapping resource="patient_state.hbm.xml"/>
 	    <mapping resource="form_instance.hbm.xml"/>
+	    <mapping resource="mdlenageinf.hbm.xml" />
+	    <mapping resource="mdwtageinf.hbm.xml" />
+	    <mapping resource="mdbmiageinf.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
