@@ -42,6 +42,7 @@ public class GetPSFQuestionsAnswers implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		Integer encounterId = (Integer)parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		if (encounterId == null) {
@@ -49,7 +50,7 @@ public class GetPSFQuestionsAnswers implements Rule {
 		}
 		
 		List<PSFQuestionAnswer> psfResults = getQuestionsAnswers(patientId, encounterId);
-		if (psfResults.size() == 0) {
+		if (psfResults.isEmpty()) {
 			return Result.emptyResult();
 		}
 		
@@ -67,6 +68,7 @@ public class GetPSFQuestionsAnswers implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.TEXT;
 	}
@@ -74,6 +76,7 @@ public class GetPSFQuestionsAnswers implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[]{};
 	}
@@ -81,13 +84,15 @@ public class GetPSFQuestionsAnswers implements Rule {
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
-		return new HashSet<RuleParameterInfo>();
+		return new HashSet<>();
 	}
 	
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0;
 	}
@@ -102,9 +107,10 @@ public class GetPSFQuestionsAnswers implements Rule {
 	private List<PSFQuestionAnswer> getQuestionsAnswers(Integer patientId, Integer encounterId) {
 		ATDService atdService = Context.getService(ATDService.class);
 		String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounterId, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
-		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, patientForm);
-		if (stats == null || stats.size() == 0) {
-			return new ArrayList<PSFQuestionAnswer>();
+		boolean includeNullObs = true;
+		List<Statistics> stats = atdService.getStatsByEncounterForm(encounterId, patientForm, includeNullObs);
+		if (stats == null || stats.isEmpty()) {
+			return new ArrayList<>();
 		}
 		
 		for (Statistics stat : stats) {
@@ -115,6 +121,6 @@ public class GetPSFQuestionsAnswers implements Rule {
 			}
 		}
 		
-		return new ArrayList<PSFQuestionAnswer>();
+		return new ArrayList<>();
 	}
 }
