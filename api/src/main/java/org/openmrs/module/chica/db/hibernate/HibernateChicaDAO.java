@@ -38,6 +38,9 @@ import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDbmiageinf;
+import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDwtageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
@@ -80,7 +83,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		this.sessionFactory = sessionFactory;
 	}
 
-	public Percentile getWtageinf(double ageMos, int sex)
+	@Override
+    public Percentile getWtageinf(double ageMos, int sex)
 	{
 		try
 		{
@@ -98,7 +102,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public Bmiage getBmiage(double ageMos, int sex)
+	@Override
+    public Bmiage getBmiage(double ageMos, int sex)
 	{
 		try
 		{
@@ -116,7 +121,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public Hcageinf getHcageinf(double ageMos, int sex)
+	@Override
+    public Hcageinf getHcageinf(double ageMos, int sex)
 	{
 		try
 		{
@@ -134,7 +140,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public Lenageinf getLenageinf(double ageMos, int sex)
+	@Override
+    public Lenageinf getLenageinf(double ageMos, int sex)
 	{
 		try
 		{
@@ -152,7 +159,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Study> getActiveStudies()
+	@Override
+    public List<Study> getActiveStudies()
 	{
 		try
 		{
@@ -173,7 +181,8 @@ public class HibernateChicaDAO implements ChicaDAO
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributesByName(java.lang.String, boolean)
 	 */
-	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
+	@Override
+    public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired)
 	{
 		try
 		{
@@ -202,7 +211,8 @@ public class HibernateChicaDAO implements ChicaDAO
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyAttributeValues(java.util.List, java.util.List, boolean)
 	 */
-	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
+	@Override
+    public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
 			List<StudyAttribute> studyAttributeList, boolean includeRetired)
 	{
 		try
@@ -265,7 +275,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return studyAttrIds;
 	}
 
-	public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication)
+	@Override
+    public String getInsCategoryByCarrier(String carrierCode, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
@@ -284,7 +295,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication)
+	@Override
+    public String getInsCategoryByInsCode(String insCode, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
@@ -298,7 +310,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			List<String> list = qry.list();
 			// if result is not unique, return null
 			if (list.size() == 1){
-				return (String) list.get(0);
+				return list.get(0);
 			}
 		} catch (Exception e)
 		{
@@ -307,7 +319,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication)
+	@Override
+    public String getInsCategoryByName(String insuranceName, String sendingFacility,String sendingApplication)
 	{
 		try
 		{
@@ -326,7 +339,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 		return null;
 	}
-	public List<String> getInsCategories()
+	@Override
+    public List<String> getInsCategories()
 	{
 		try
 		{
@@ -337,7 +351,7 @@ public class HibernateChicaDAO implements ChicaDAO
 			qry.addScalar("category");
 
 			List<String> list = qry.list();
-			ArrayList<String> categories = new ArrayList<String>();
+			ArrayList<String> categories = new ArrayList<>();
 			for (String currResult : list)
 			{
 				categories.add(currResult);
@@ -351,7 +365,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public PatientFamily getPatientFamily(Integer patientId)
+	@Override
+    public PatientFamily getPatientFamily(Integer patientId)
 	{
 		try
 		{
@@ -368,7 +383,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public Obs getStudyArmObs(Integer familyId, Concept studyConcept)
+	@Override
+    public Obs getStudyArmObs(Integer familyId, Concept studyConcept)
 	{
 		try
 		{
@@ -386,9 +402,9 @@ public class HibernateChicaDAO implements ChicaDAO
 				PatientFamily patientFamily = patientFamilies.get(0);
 				Integer patientId = patientFamily.getPatientId();
 				Patient patient = patientService.getPatient(patientId);
-				List<Person> persons = new ArrayList<Person>();
+				List<Person> persons = new ArrayList<>();
 				persons.add(patient);
-				List<Concept> questions = new ArrayList<Concept>();
+				List<Concept> questions = new ArrayList<>();
 				questions.add(studyConcept);
 				List<Obs> obs = obsService.getObservations(persons, null,
 						questions, null, null, null, null, null, null, null,
@@ -407,7 +423,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public Family getFamilyByAddress(String address)
+	@Override
+    public Family getFamilyByAddress(String address)
 	{
 		try
 		{
@@ -424,7 +441,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public Family getFamilyByPhone(String phone)
+	@Override
+    public Family getFamilyByPhone(String phone)
 	{
 		try
 		{
@@ -441,7 +459,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public void savePatientFamily(PatientFamily patientFamily)
+	@Override
+    public void savePatientFamily(PatientFamily patientFamily)
 	{
 		try
 		{
@@ -452,7 +471,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 	}
 
-	public void saveFamily(Family family)
+	@Override
+    public void saveFamily(Family family)
 	{
 		try
 		{
@@ -463,7 +483,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 	}
 
-	public void updateFamily(Family family)
+	@Override
+    public void updateFamily(Family family)
 	{
 		try
 		{
@@ -474,7 +495,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 	}
 
-	public List<Chica1Patient> getChica1Patients()
+	@Override
+    public List<Chica1Patient> getChica1Patients()
 	{
 		try
 		{
@@ -490,7 +512,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Chica1Appointment> getChica1AppointmentsByPatient(
+	@Override
+    public List<Chica1Appointment> getChica1AppointmentsByPatient(
 			Integer patientId)
 	{
 		try
@@ -509,7 +532,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Chica1Appointment> getChica1AppointmentsByDate(
+	@Override
+    public List<Chica1Appointment> getChica1AppointmentsByDate(
 			Integer patientId, String date)
 	{
 		try
@@ -531,7 +555,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
+	@Override
+    public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,
 			Integer patientId)
 	{
 		try
@@ -552,7 +577,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,
+	@Override
+    public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,
 			Integer patientId)
 	{
 		try
@@ -573,7 +599,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Chica1PatientObsv> getUnloadedChicaPatientObs(
+	@Override
+    public List<Chica1PatientObsv> getUnloadedChicaPatientObs(
 			Integer patientId, String date)
 	{
 		try
@@ -595,7 +622,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public void updateChica1Patient(Chica1Patient patient)
+	@Override
+    public void updateChica1Patient(Chica1Patient patient)
 	{
 		try
 		{
@@ -606,7 +634,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 	}
 
-	public void updateChica1Appointment(Chica1Appointment appointment)
+	@Override
+    public void updateChica1Appointment(Chica1Appointment appointment)
 	{
 		try
 		{
@@ -617,7 +646,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 	}
 
-	public Integer getHighBP(Integer ageInYears, String sex,
+	@Override
+    public Integer getHighBP(Integer ageInYears, String sex,
 			Integer bpPercentile, String bpType, Integer heightPercentile)
 	{
 		try
@@ -650,7 +680,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public String getDDSTLeaf(String category, Integer ageInDays)
+	@Override
+    public String getDDSTLeaf(String category, Integer ageInDays)
 	{
 		try
 		{
@@ -674,12 +705,14 @@ public class HibernateChicaDAO implements ChicaDAO
 	
 	
 	
-	public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export){
-		sessionFactory.getCurrentSession().saveOrUpdate(export);
+	@Override
+    public ChicaHL7Export insertEncounterToHL7ExportQueue(ChicaHL7Export export){
+		this.sessionFactory.getCurrentSession().saveOrUpdate(export);
 		return export;
 	}
 	
-	public List <ChicaHL7Export> getPendingHL7Exports(){
+	@Override
+    public List <ChicaHL7Export> getPendingHL7Exports(){
 		
 		
 		SQLQuery qry = this.sessionFactory.getCurrentSession()
@@ -692,12 +725,14 @@ public class HibernateChicaDAO implements ChicaDAO
 	}
 
 	
-	public void saveChicaHL7Export(ChicaHL7Export export) {
+	@Override
+    public void saveChicaHL7Export(ChicaHL7Export export) {
 		this.sessionFactory.getCurrentSession().saveOrUpdate(export);
 		return;
 	}
 	
-	public List<ChicaHL7Export> getPendingHL7ExportsByEncounterId(Integer encounterId){
+	@Override
+    public List<ChicaHL7Export> getPendingHL7ExportsByEncounterId(Integer encounterId){
 		SQLQuery qry = this.sessionFactory.getCurrentSession()
 		.createSQLQuery("select * from chica_hl7_export where encounter_id = ? " + 
 				" and date_processed is null and voided = 0 order by date_inserted desc");
@@ -707,7 +742,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return exports;
 	}
 	
-	public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, 
+	@Override
+    public List<PatientState> getReprintRescanStatesByEncounter(Integer encounterId, Date optionalDateRestriction, 
 			Integer locationTagId,Integer locationId){
 		
 		try
@@ -748,7 +784,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId){
+	@Override
+    public Chica1Appointment getChica1AppointmentByEncounterId(Integer encId){
 		Chica1Appointment appt = null;
 		try {
 			String sql = "select * from chica1_appointments where openmrs_encounter_id = ?";
@@ -764,7 +801,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return appt;
 	}
 	
-	public void  saveHL7ExportMap (ChicaHL7ExportMap map){
+	@Override
+    public void  saveHL7ExportMap (ChicaHL7ExportMap map){
 		try
 		{
 			this.sessionFactory.getCurrentSession().save(map);
@@ -774,7 +812,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		}
 	}
 	
-	public ChicaHL7ExportMap getChicaExportMapByQueueId(Integer queueId){
+	@Override
+    public ChicaHL7ExportMap getChicaExportMapByQueueId(Integer queueId){
 		try {
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 			.createSQLQuery("select * from chica_hl7_export_map " +
@@ -791,7 +830,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public ChicaHL7ExportStatus getChicaExportStatusByName (String name){
+	@Override
+    public ChicaHL7ExportStatus getChicaExportStatusByName (String name){
 		/*try {
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
 			.createSQLQuery("select * from chica_hl7_export_status " +
@@ -808,7 +848,7 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;*/
 		
 		
-		Criteria crit = sessionFactory.getCurrentSession().createCriteria(ChicaHL7ExportStatus.class).add(
+		Criteria crit = this.sessionFactory.getCurrentSession().createCriteria(ChicaHL7ExportStatus.class).add(
 			    Restrictions.eq("name", name));
 			try {
 				if (crit.list().size() < 1) {
@@ -821,7 +861,8 @@ public class HibernateChicaDAO implements ChicaDAO
 			return (ChicaHL7ExportStatus) crit.list().get(0);
 	}
 	
-	public ChicaHL7ExportStatus getChicaExportStatusById (Integer id){
+	@Override
+    public ChicaHL7ExportStatus getChicaExportStatusById (Integer id){
 		
 		try {
 			SQLQuery qry = this.sessionFactory.getCurrentSession()
@@ -840,7 +881,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		
 	}
 	
-	public List<Object[]> getFormsPrintedByWeek(String formName, String locationName) {
+	@Override
+    public List<Object[]> getFormsPrintedByWeek(String formName, String locationName) {
 		try {
 			LocationService locationService = Context.getLocationService();
 			Integer locationId = locationService.getLocation(locationName).getLocationId();
@@ -864,7 +906,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public List<Object[]> getFormsScannedByWeek(String formName, String locationName) {
+	@Override
+    public List<Object[]> getFormsScannedByWeek(String formName, String locationName) {
 		try {
 			LocationService locationService = Context.getLocationService();
 			Integer locationId = locationService.getLocation(locationName).getLocationId();
@@ -889,7 +932,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public List<Object[]> getFormsScannedAnsweredByWeek(String formName, String locationName) {
+	@Override
+    public List<Object[]> getFormsScannedAnsweredByWeek(String formName, String locationName) {
 		try {
 			LocationService locationService = Context.getLocationService();
 			Integer locationId = locationService.getLocation(locationName).getLocationId();
@@ -915,7 +959,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public List<Object[]> getFormsScannedAnythingMarkedByWeek(String formName, String locationName) {
+	@Override
+    public List<Object[]> getFormsScannedAnythingMarkedByWeek(String formName, String locationName) {
 		try {
 			LocationService locationService = Context.getLocationService();
 			Integer locationId = locationService.getLocation(locationName).getLocationId();
@@ -941,7 +986,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 
-	public List<Object[]> getQuestionsScanned(String formName, String locationName) {
+	@Override
+    public List<Object[]> getQuestionsScanned(String formName, String locationName) {
 		try {
 			LocationService locationService = Context.getLocationService();
 			Integer locationId = locationService.getLocation(locationName).getLocationId();
@@ -967,7 +1013,8 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
+	@Override
+    public List<Object[]> getQuestionsScannedAnswered(String formName, String locationName) {
 		try {
 			LocationService locationService = Context.getLocationService();
 			Integer locationId = locationService.getLocation(locationName).getLocationId();
@@ -993,11 +1040,12 @@ public class HibernateChicaDAO implements ChicaDAO
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<Encounter> getEncountersForEnrolledPatients(Concept concept,
 			Date startDateTime, Date endDateTime){
 	
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class);
+		Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Encounter.class);
 		criteria.createAlias("obs", "obsv")
 			.add(Restrictions.eq("obsv.concept", concept));
 		criteria.add(Restrictions.between("encounterDatetime", startDateTime, endDateTime ));
@@ -1008,7 +1056,8 @@ public class HibernateChicaDAO implements ChicaDAO
 	/** (non-Javadoc)
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getEncountersForEnrolledPatientsExcludingConcepts(org.openmrs.Concept, org.openmrs.Concept, java.util.Date, java.util.Date)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public List<Encounter> getEncountersForEnrolledPatientsExcludingConcepts(Concept includeConcept, Concept excludeConcept,
 		Date startDateTime, Date endDateTime){
 		
@@ -1020,7 +1069,7 @@ public class HibernateChicaDAO implements ChicaDAO
 				.setProjection(Projections.distinct(Projections.property("obsv.encounter")));
 		
 		
-		criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class, "en")
+		criteria = this.sessionFactory.getCurrentSession().createCriteria(Encounter.class, "en")
 				.createAlias("en.obs", "obsv2")
 				.add(Restrictions.eq("obsv2.concept", includeConcept));
 				if (startDateTime != null ){
@@ -1041,13 +1090,14 @@ public class HibernateChicaDAO implements ChicaDAO
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudySubject(org.openmrs.Patient, org.openmrs.module.chica.hibernateBeans.Study)
 	 */
+    @Override
     @SuppressWarnings("unchecked")
     public StudySubject getStudySubject(Patient patient, Study study) {
     	if (patient == null || study == null) {
     		return null;
     	}
     	
-    	Session session = sessionFactory.getCurrentSession();
+    	Session session = this.sessionFactory.getCurrentSession();
     	Criteria criteria = session.createCriteria(StudySubject.class);
     	criteria.add(Restrictions.eq("patient", patient));
     	criteria.add(Restrictions.eq("study", study));
@@ -1067,13 +1117,14 @@ public class HibernateChicaDAO implements ChicaDAO
     /**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudyByTitle(java.lang.String)
 	 */
+    @Override
     @SuppressWarnings("unchecked")
     public Study getStudyByTitle(String studyTitle) {
 		if (studyTitle == null) {
     		return null;
     	}
 		
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
+		Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Study.class);
 		criteria.add(Restrictions.eq("title", studyTitle));
 		criteria.add(Restrictions.eq("retired", false));
 		
@@ -1088,13 +1139,14 @@ public class HibernateChicaDAO implements ChicaDAO
 	/**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#getStudiesByTitle(java.lang.String, boolean)
 	 */
+    @Override
     @SuppressWarnings("unchecked")
     public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired) {
 		if (studyTitle == null) {
     		return new ArrayList<>();
     	}
 		
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Study.class);
+		Criteria criteria = this.sessionFactory.getCurrentSession().createCriteria(Study.class);
 		criteria.add(Restrictions.eq("title", studyTitle));
 		criteria.add(Restrictions.eq("retired", includeRetired));
 		
@@ -1110,6 +1162,7 @@ public class HibernateChicaDAO implements ChicaDAO
      * DWE CHICA-761
      * @see org.openmrs.module.chica.db.ChicaDAO#getReprintRescanStatesBySessionId(Integer, Date, List, Integer)
      */
+    @Override
     public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException
     {
     	String dateRestriction = "";
@@ -1148,6 +1201,7 @@ public class HibernateChicaDAO implements ChicaDAO
     /**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#StudyAttribute(org.openmrs.module.chica.hibernateBeans.StudyAttribute)
 	 */
+    @Override
     public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) {
     	this.sessionFactory.getCurrentSession().save(studyAttribute);
 		return studyAttribute;
@@ -1156,6 +1210,7 @@ public class HibernateChicaDAO implements ChicaDAO
     /**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudyAttributeValue(org.openmrs.module.chica.hibernateBeans.StudyAttributeValue)
 	 */
+    @Override
     public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue) {
 		this.sessionFactory.getCurrentSession().save(studyAttributeValue);
 		return studyAttributeValue;
@@ -1164,9 +1219,88 @@ public class HibernateChicaDAO implements ChicaDAO
     /**
 	 * @see org.openmrs.module.chica.db.ChicaDAO#saveStudy(org.openmrs.module.chica.hibernateBeans.Study)
 	 */
+    @Override
     public Study saveStudy(Study study) {
 		this.sessionFactory.getCurrentSession().save(study);
 		return study;
 	}
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdlenageinf(double meanAge)
+     */
+    @Override
+    public MDlenageinf getMdlenageinf(double meanAge) {
+       return (MDlenageinf)this.sessionFactory.getCurrentSession().createCriteria(MDlenageinf.class).add(Restrictions.eq("meanAge", meanAge)).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdlenageLeftinf(double meanAge)
+     */
+    @Override
+    public MDlenageinf getMdlenageLeftinf(double meanAge) {
+       return (MDlenageinf)this.sessionFactory.getCurrentSession().createCriteria(MDlenageinf.class).add(Restrictions.lt("meanAge", meanAge))
+               .addOrder(Order.desc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdlenageRightinf(double meanAge)
+     */
+    @Override
+    public MDlenageinf getMdlenageRightinf(double meanAge) {
+        return (MDlenageinf)this.sessionFactory.getCurrentSession().createCriteria(MDlenageinf.class).add(Restrictions.gt("meanAge", meanAge))
+                .addOrder(Order.asc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdwtageinf(double meanAge)
+     */
+    @Override
+    public MDwtageinf getMdwtageinf(double meanAge) {
+       return (MDwtageinf)this.sessionFactory.getCurrentSession().createCriteria(MDwtageinf.class).add(Restrictions.eq("meanAge", meanAge)).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdwtageLeftinf(double meanAge)
+     */
+    @Override
+    public MDwtageinf getMdwtageLeftinf(double meanAge) {
+       return (MDwtageinf)this.sessionFactory.getCurrentSession().createCriteria(MDwtageinf.class).add(Restrictions.lt("meanAge", meanAge))
+               .addOrder(Order.desc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdwtageRightinf(double meanAge)
+     */
+    @Override
+    public MDwtageinf getMdwtageRightinf(double meanAge) {
+        return (MDwtageinf)this.sessionFactory.getCurrentSession().createCriteria(MDwtageinf.class).add(Restrictions.gt("meanAge", meanAge))
+                .addOrder(Order.asc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdbmiageinf(double meanAge)
+     */
+    @Override
+    public MDbmiageinf getMdbmiageinf(double meanAge) {
+       return (MDbmiageinf)this.sessionFactory.getCurrentSession().createCriteria(MDbmiageinf.class).add(Restrictions.eq("meanAge", meanAge)).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdbmiageLeftinf(double meanAge)
+     */
+    @Override
+    public MDbmiageinf getMdbmiageLeftinf(double meanAge) {
+       return (MDbmiageinf)this.sessionFactory.getCurrentSession().createCriteria(MDbmiageinf.class).add(Restrictions.lt("meanAge", meanAge))
+               .addOrder(Order.desc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
+    
+    /**
+     * @see org.openmrs.module.chica.db.ChicaDAO#getMdbmiageRightinf(double meanAge)
+     */
+    @Override
+    public MDbmiageinf getMdbmiageRightinf(double meanAge) {
+        return (MDbmiageinf)this.sessionFactory.getCurrentSession().createCriteria(MDbmiageinf.class).add(Restrictions.gt("meanAge", meanAge))
+                .addOrder(Order.asc("meanAge")).setFirstResult(0).setMaxResults(1).uniqueResult();
+    }
   
 }
