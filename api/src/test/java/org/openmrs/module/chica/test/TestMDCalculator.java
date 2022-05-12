@@ -117,10 +117,10 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
         
         boolean bmiAboveSD = calculator.isBMITwoBelowSD(new Double(5), date, "mdbmi2belowsd", Calendar.getInstance().getTime());
-        Assert.assertTrue(bmiAboveSD);
+        Assertions.assertTrue(bmiAboveSD);
         
         boolean bmiBelowSD = calculator.isBMITwoBelowSD(new Double(20), date, "mdbmi2belowsd", Calendar.getInstance().getTime());
-        Assert.assertFalse(bmiBelowSD);
+        Assertions.assertFalse(bmiBelowSD);
     }
     
     @Test
@@ -129,12 +129,12 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         LocalDate dobLeftNull = LocalDate.now().minusYears(2);
         Date dateLeftNull = Date.from(dobLeftNull.atStartOfDay(ZoneId.systemDefault()).toInstant());
         boolean bmiAboveSDLeftRowNull = calculator.isBMITwoBelowSD(new Double(5), dateLeftNull, "mdbmi2belowsd", Calendar.getInstance().getTime());
-        Assert.assertTrue(bmiAboveSDLeftRowNull);
+        Assertions.assertTrue(bmiAboveSDLeftRowNull);
         
         LocalDate dobRightNull = LocalDate.now().minusYears(12);
         Date dateRightNull = Date.from(dobRightNull.atStartOfDay(ZoneId.systemDefault()).toInstant());
         boolean bmiAboveSDRightRowNull = calculator.isBMITwoBelowSD(new Double(5), dateRightNull, "mdbmi2belowsd", Calendar.getInstance().getTime());
-        Assert.assertTrue(bmiAboveSDRightRowNull);
+        Assertions.assertTrue(bmiAboveSDRightRowNull);
     } 
  
 }

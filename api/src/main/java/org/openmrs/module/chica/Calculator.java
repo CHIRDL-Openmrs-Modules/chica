@@ -46,13 +46,9 @@ public class Calculator
     
     public static final String PERCENTILE_RIGHT = "right";
     
-<<<<<<< HEAD
     private static final Logger log = LoggerFactory.getLogger(Calculator.class);
-=======
+
     public static final String MD_BMI_TWO_BELOW_SD = "mdbmi2belowsd";
-    
-    private static Log log = LogFactory.getLog(Calculator.class);
->>>>>>> refs/remotes/origin/Prod_Release_18.0
   	
 	/**
 	 * 
