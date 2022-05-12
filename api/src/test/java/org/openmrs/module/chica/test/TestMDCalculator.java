@@ -109,6 +109,33 @@ public class TestMDCalculator extends BaseModuleContextSensitiveTest
         percentile = calculator.calculatePercentile(new Double(95), date, "mdbmi", Calendar.getInstance().getTime());
         Assertions.assertNotNull(percentile);
     }
+    
+    @Test
+    public void testIsBMITwoBelowSD() throws Exception {
+        Calculator calculator = new Calculator();
+        LocalDate dob = LocalDate.now().minusYears(10);
+        Date date = Date.from(dob.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        
+        boolean bmiAboveSD = calculator.isBMITwoBelowSD(new Double(5), date, "mdbmi2belowsd", Calendar.getInstance().getTime());
+        Assert.assertTrue(bmiAboveSD);
+        
+        boolean bmiBelowSD = calculator.isBMITwoBelowSD(new Double(20), date, "mdbmi2belowsd", Calendar.getInstance().getTime());
+        Assert.assertFalse(bmiBelowSD);
+    }
+    
+    @Test
+    public void testIsBMITwoBelowSDRowNull() throws Exception {
+        Calculator calculator = new Calculator();
+        LocalDate dobLeftNull = LocalDate.now().minusYears(2);
+        Date dateLeftNull = Date.from(dobLeftNull.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        boolean bmiAboveSDLeftRowNull = calculator.isBMITwoBelowSD(new Double(5), dateLeftNull, "mdbmi2belowsd", Calendar.getInstance().getTime());
+        Assert.assertTrue(bmiAboveSDLeftRowNull);
+        
+        LocalDate dobRightNull = LocalDate.now().minusYears(12);
+        Date dateRightNull = Date.from(dobRightNull.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        boolean bmiAboveSDRightRowNull = calculator.isBMITwoBelowSD(new Double(5), dateRightNull, "mdbmi2belowsd", Calendar.getInstance().getTime());
+        Assert.assertTrue(bmiAboveSDRightRowNull);
+    } 
  
 }
 
