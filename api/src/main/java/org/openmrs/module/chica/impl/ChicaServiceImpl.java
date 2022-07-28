@@ -501,7 +501,6 @@ public class ChicaServiceImpl implements ChicaService
 			languageResponse = maxLanguage;
 		}
 		
-		if (languageResponse != null) {
 			HashMap<Integer, String> answers = maxAnswers;
 			if (answers != null) {
 				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
@@ -524,7 +523,6 @@ public class ChicaServiceImpl implements ChicaService
 					}
 				}
 			}
-		}
 		
 		//save language response to preferred language
 		//language is determined by maximum number of answers
