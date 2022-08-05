@@ -501,26 +501,22 @@ public class ChicaServiceImpl implements ChicaService
 			languageResponse = maxLanguage;
 		}
 		
-		if (languageResponse != null) {
-			HashMap<Integer, String> answers = maxAnswers;
-			if (answers != null) {
-				String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter, ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
-				Integer formInstanceId = formInstance.getFormInstanceId();
-				Integer locationId = formInstance.getLocationId();
-				for (Integer currRuleId : answers.keySet())
-				{
-					String answer = answers.get(currRuleId);
-					List<Statistics> statistics = atdService
-							.getStatByIdAndRule(formInstanceId, currRuleId, patientForm, locationId);
-					if (statistics != null)
-					{
-						for (Statistics stat : statistics)
-						{
-							stat.setAnswer(answer);
-							stat.setLanguageResponse(languageResponse);
-		
-							atdService.updateStatistics(stat);
-						}
+		HashMap<Integer, String> answers = maxAnswers;
+		if (answers != null) {
+			String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter,
+					ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
+			Integer formInstanceId = formInstance.getFormInstanceId();
+			Integer locationId = formInstance.getLocationId();
+			for (Integer currRuleId : answers.keySet()) {
+				String answer = answers.get(currRuleId);
+				List<Statistics> statistics = atdService.getStatByIdAndRule(formInstanceId, currRuleId, patientForm,
+						locationId);
+				if (statistics != null) {
+					for (Statistics stat : statistics) {
+						stat.setAnswer(answer);
+						stat.setLanguageResponse(languageResponse);
+
+						atdService.updateStatistics(stat);
 					}
 				}
 			}
