@@ -4210,7 +4210,7 @@ from chica_insurance_category where ecw_ins_name is not null and category is not
         </description>
         <sql>
            	UPDATE concept_numeric
-			SET precise = 1
+			SET allow_decimal = 1
 			WHERE concept_id IN (SELECT concept_id FROM concept_name WHERE name IN ('TEMPERATURE CHICA', 'HEIGHT', 'WEIGHT', 'HC', 'HCCENTILE', 'HTCENTILE', 'WTCENTILE', 'BMICENTILE', 'BMI CHICA')); 
         </sql>
     </diff>

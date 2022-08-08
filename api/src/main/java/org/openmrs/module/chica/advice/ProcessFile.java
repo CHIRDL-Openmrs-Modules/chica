@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.module.atd.TeleformFileState;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -23,7 +23,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
  */
 public class ProcessFile implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ProcessFile.class);
 
 	private PatientState patientState = null;
 	private String filename = null;
@@ -62,8 +62,7 @@ public class ProcessFile implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
 			HashMap<String, Object> stateParameters = this.patientState
@@ -80,12 +79,11 @@ public class ProcessFile implements ChirdlRunnable
 		} 
 		catch (Exception e)
 		{
-			this.log.error("Error processing file", e);
+			log.error("Error processing file", e);
 		} 
 		finally
 		{
-			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );
 		}
 	}
 

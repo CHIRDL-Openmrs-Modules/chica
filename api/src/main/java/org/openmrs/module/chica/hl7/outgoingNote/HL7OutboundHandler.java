@@ -6,13 +6,13 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -22,7 +22,7 @@ import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
  */
 public class HL7OutboundHandler implements Runnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7OutboundHandler.class);
 	private String host;
 	private Integer port;
 	private Integer socketReadTimeout;
@@ -68,15 +68,15 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(ContextAuthenticationException e)
 		{
-			this.log.error("Error authenticating context.", e);
+			log.error("Error authenticating context.", e);
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error in " + this.getClass().getName() + ".", e);
+			log.error("Error in {}.", this.getClass().getName(), e);
 		}
 		finally
 		{
-			this.log.error("Shutting down " + this.getClass().getName() + ".");
+			log.error("Shutting down {}.", this.getClass().getName());
 		}	
 	}
 	
@@ -93,7 +93,7 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error getting pending HL7Outbound records.", e);
+			log.error("Error getting pending HL7Outbound records.", e);
 		}
 		
 		return null;
@@ -121,7 +121,7 @@ public class HL7OutboundHandler implements Runnable
 		}
 		catch(Exception e)
 		{
-			this.log.error("Error sending HL7Outbound message HL7OutQueueId: " + hl7Outbound.getHL7OutQueueId(), e);
+			log.error("Error sending HL7Outbound message HL7OutQueueId: {}", hl7Outbound.getHL7OutQueueId(), e);
 			return;
 		}
 
@@ -167,7 +167,7 @@ public class HL7OutboundHandler implements Runnable
 		} 
 		catch (Exception e) 
 		{
-			this.log.error("Open socket failed: " + e.getMessage());
+			log.error("Open socket failed: ", e);
 		}
 	} 
 	
@@ -190,7 +190,7 @@ public class HL7OutboundHandler implements Runnable
 		 }
 		 catch (Exception e) 
 		 {
-			 this.log.error("Error closing socket: " + e.getMessage());
+			 log.error("Error closing socket: ", e);
 		 }
 	 }
 	 
@@ -202,7 +202,7 @@ public class HL7OutboundHandler implements Runnable
 	 {
 		 try
 		 {
-			 StringBuffer stringbuffer = new StringBuffer();
+			 StringBuilder stringbuffer = new StringBuilder();
 			 int i = 0;
 			 while(i != 28)
 			 {
@@ -218,7 +218,7 @@ public class HL7OutboundHandler implements Runnable
 		 } 
 		 catch (Exception e) 
 		 {
-			 this.log.error("Error during readAck", e);
+			 log.error("Error during readAck", e);
 		 }
 		 
 		 return null;

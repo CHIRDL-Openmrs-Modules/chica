@@ -7,12 +7,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -20,7 +20,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
  */
 public class ChangeState implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChangeState.class);
 
 	private PatientState patientState = null;
 	private HashMap<String, Object> parameters = null;
@@ -53,8 +53,7 @@ public class ChangeState implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
 			BaseStateActionHandler.getInstance().changeState(this.patientState,
@@ -62,12 +61,11 @@ public class ChangeState implements ChirdlRunnable
 		} 
 		catch (Exception e)
 		{
-			this.log.error("Error processing file", e);
+			log.error("Exception processing changeState", e);
 		} 
 		finally
 		{
-			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		}
 	}
 

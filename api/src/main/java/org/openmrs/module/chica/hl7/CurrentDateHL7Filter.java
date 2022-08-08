@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -16,6 +14,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttri
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -32,7 +32,7 @@ public class CurrentDateHL7Filter implements HL7Filter {
 	
 	private static final String HL7_MESSAGE_TYPE_A08 = "A08";
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(CurrentDateHL7Filter.class);
 	
 	/**
 	 * @see org.openmrs.module.sockethl7listener.HL7Filter#ignoreMessage(

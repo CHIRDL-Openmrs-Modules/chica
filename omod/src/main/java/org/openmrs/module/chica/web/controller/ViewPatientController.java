@@ -31,7 +31,7 @@ public class ViewPatientController
 	@RequestMapping(method = RequestMethod.POST)
 	protected ModelAndView processSubmit(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
 		
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		return new ModelAndView(new RedirectView(FORM_VIEW), map);
 	}
 	

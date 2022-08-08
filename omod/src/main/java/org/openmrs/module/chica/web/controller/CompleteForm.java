@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -16,6 +14,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runs null priority rules for a patient/form and changes the state.
@@ -23,7 +23,8 @@ import org.openmrs.module.dss.service.DssService;
  * @author Steve McKee
  */
 public class CompleteForm implements Runnable {
-    private Log log = LogFactory.getLog(this.getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(CompleteForm.class);
     private Integer patientId;
     private Integer formId;
     private Map<String, Object> parameters;
@@ -67,15 +68,13 @@ public class CompleteForm implements Runnable {
                 }
             }
         } catch (Exception e) {
-            this.log.error(e.getMessage());
-            this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error("Exception processing non-prioritized rules.",e);
         } 
     
         try {
             changeState(this.formInstance, this.parameters);
         } catch (Exception e) {
-            this.log.error(e.getMessage());
-            this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+            log.error("Exception changing state for form instance {}.",formInstance.getFormInstanceId(),e);
         }
     }
     
@@ -100,8 +99,7 @@ public class CompleteForm implements Runnable {
                     BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
-                    this.log.error(e.getMessage());
-                    this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+                    log.error("Exception changing state for session {} ",formInstState.getSessionId(),e);
                 }
             }
         }

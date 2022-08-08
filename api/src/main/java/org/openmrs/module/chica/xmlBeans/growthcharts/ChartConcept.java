@@ -14,7 +14,7 @@ public class ChartConcept {
      * @return the conceptXAxis
      */
     public ConceptXAxis getConceptXAxis() {
-    	return conceptXAxis;
+    	return this.conceptXAxis;
     }
 	
     /**
@@ -28,7 +28,7 @@ public class ChartConcept {
      * @return the conceptYAxis
      */
     public ConceptYAxis getConceptYAxis() {
-    	return conceptYAxis;
+    	return this.conceptYAxis;
     }
 	
     /**

@@ -5,8 +5,6 @@ package org.openmrs.module.chica.xmlBeans;
 
 import java.util.ArrayList;
 
-import org.openmrs.module.chica.xmlBeans.Field;
-
 /**
  * Object representation of <pws_prompt_answer_errs> xml
  *
@@ -21,7 +19,7 @@ public class PWSPromptAnswerErrs
 	 */
 	public PWSPromptAnswerErrs()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**

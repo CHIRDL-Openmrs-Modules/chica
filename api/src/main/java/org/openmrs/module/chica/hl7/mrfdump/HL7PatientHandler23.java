@@ -9,29 +9,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAddress;
 import org.openmrs.PersonName;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.sockethl7listener.HL7PatientHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
 import ca.uhn.hl7v2.model.v23.datatype.IS;
 import ca.uhn.hl7v2.model.v23.datatype.ST;
-import ca.uhn.hl7v2.model.v23.datatype.XPN;
-import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.model.v25.datatype.CE;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.datatype.TS;
 import ca.uhn.hl7v2.model.v23.datatype.XAD;
-import ca.uhn.hl7v2.model.v23.segment.NK1;
+import ca.uhn.hl7v2.model.v23.datatype.XPN;
 import ca.uhn.hl7v2.model.v23.datatype.XTN;
+import ca.uhn.hl7v2.model.v23.message.ORU_R01;
+import ca.uhn.hl7v2.model.v23.segment.NK1;
+import ca.uhn.hl7v2.model.v23.segment.PID;
 
 /**
  * @author tmdugan
@@ -40,8 +38,9 @@ import ca.uhn.hl7v2.model.v23.datatype.XTN;
 public class HL7PatientHandler23 implements HL7PatientHandler
 {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7PatientHandler23.class);
 	
+	@Override
 	public String getMothersName(Message message)
 	{
 		return null;
@@ -66,8 +65,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				}
 			} catch (RuntimeException e1)
 			{
-				this.logger
-						.debug("Warning: SSN information not available in PID segment.");
+				log.debug("Warning: SSN information not available in PID segment.");
 			}
 		}
 		return ssn;
@@ -85,8 +83,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				religion = religionCE.getValue();
 			} catch (RuntimeException e1)
 			{
-				this.logger
-						.debug("Warning: religion information not available in PID segment.");
+				log.debug("Warning: religion information not available in PID segment.");
 			}
 		}
 		return religion;
@@ -106,8 +103,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 			} catch (RuntimeException e1)
 			{
-				this.logger
-						.debug("Warning: marital information not available in PID segment.");
+				log.debug("Warning: marital information not available in PID segment.");
 			}
 
 		}
@@ -132,8 +128,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 				}
 			} catch (RuntimeException e1)
 			{
-				this.logger
-						.debug("Warning: maiden information not available in PID segment.");
+				log.debug("Warning: maiden information not available in PID segment.");
 			}
 
 		}
@@ -169,13 +164,14 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return null;
 	}
 
+	@Override
 	public List<PersonAddress> getAddresses(Message message)
 	{
 		// ***For Newborn screening we are using the next-of-kin address
 		// and not the patient address from PID
 		PID pid = getPID(message);
 		NK1 nk1 = getNK1(message);
-		List<PersonAddress> addresses = new ArrayList<PersonAddress>();
+		List<PersonAddress> addresses = new ArrayList<>();
 		try
 		{
 			XAD[] xadAddresses = pid.getPatientAddress(); // PID address
@@ -197,7 +193,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to collect  address from PID);", e);
+			log.warn("Unable to collect address from PID.", e);
 		}
 		return addresses;
 	}
@@ -237,6 +233,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return address;
 	}
 
+	@Override
 	public Date getBirthdate(Message message)
 	{
 		PID pid = getPID(message);
@@ -248,6 +245,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return HL7ObsHandler23.TranslateDate(date);
 	}
 
+	@Override
 	public String getBirthplace(Message message)
 	{
 		PID pid = getPID(message);
@@ -261,26 +259,27 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			}
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse birthplace from PID. Message: ", e);
+			log.warn("Unable to parse birthplace from PID.", e);
 		}
 		return birthPlace;
 	}
 
+	@Override
 	public String getCitizenship(Message message)
 	{
 		PID pid = getPID(message);
 		IS ceCitizen = null;
 		ceCitizen = pid.getCitizenship();
-		String citizenString = ceCitizen.getValue();
-
-		return citizenString;
+		return ceCitizen.getValue();
 	}
 
+	@Override
 	public Date getDateChanged(Message message)
 	{
 		return null;
 	}
 
+	@Override
 	public Date getDeathDate(Message message)
 	{
 		PID pid = getPID(message);
@@ -293,6 +292,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return ddt;
 	}
 
+	@Override
 	public String getGender(Message message)
 	{
 		// Gender -- Based on meeting 04/10/2007
@@ -312,17 +312,18 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			}
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse gender from PID. Message: ", e);
+			log.warn("Unable to parse gender from PID. Message: ", e);
 		}
 		return null;
 	}
 
+	@Override
 	public Set<PatientIdentifier> getIdentifiers(Message message)
 	{
 		PID pid = getPID(message);
 		CX[] identList = null;
 		PatientService patientService = Context.getPatientService();
-		Set<PatientIdentifier> identifiers = new TreeSet<org.openmrs.PatientIdentifier>();
+		Set<PatientIdentifier> identifiers = new TreeSet<>();
 
 		try
 		{
@@ -331,13 +332,12 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		} catch (RuntimeException e2)
 		{
 			// Unable to extract identifier from PID segment
-			this.logger
-					.error("Error extracting identifier from PID segment (MRN). ");
+			log.error("Error extracting identifier from PID segment (MRN). ");
 			// Still need to continue. Execute find match without the identifer
 		}
 		if (identList == null)
 		{
-			this.logger.warn(" No patient identifier available for this message.");
+			log.warn(" No patient identifier available for this message.");
 			// Still need to continue. Execute find match without the identifer
 			return identifiers;
 		}
@@ -366,14 +366,6 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 					{
 						pit = patientService
 								.getPatientIdentifierTypeByName("MRN_OTHER");
-						// this is temporary for gathering data
-						this.logger
-								.error("insert into patient_identifier_type"
-										+ "(name, description, format, check_digit, "
-										+ "creator, date_created, required, format_description) "
-										+ "values('MRN_" + assignAuth + "', '"
-										+ assignAuth
-										+ "',null,0,1,'2008-07-03',0,null);");
 					}
 					pi.setIdentifierType(pit);
 					pi.setIdentifier(stIdent);
@@ -383,7 +375,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 
 				} else
 				{
-					this.logger.error("No MRN in PID segement. ");
+					log.error("No MRN in PID segement.");
 				}
 
 			}
@@ -391,6 +383,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return identifiers;
 	}
 
+	@Override
 	public String[] getPatientIdentifierList(Message message)
 	{
 		if (!(message instanceof ORU_R01))
@@ -410,6 +403,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return patientIdentsAsString;
 	}
 
+	@Override
 	public PersonName getPatientName(Message message)
 	{
 		PersonName name = new PersonName();
@@ -445,22 +439,22 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 					mn = mnvalue;
 			}
 
-			name.setFamilyName(ln.replaceAll("\"", ""));
-			name.setGivenName(fn.replaceAll("\"", ""));
-			name.setMiddleName(mn.replaceAll("\"", ""));
+			name.setFamilyName(ln.replace("\"", ""));
+			name.setGivenName(fn.replace("\"", ""));
+			name.setMiddleName(mn.replace("\"", ""));
 			// set preferred to true because this method
 			// deliberately just processes the first person name
 			name.setPreferred(true);
 
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse patient name. Message: "
-					+ e.getMessage());
+			log.warn("Unable to parse patient name.", e);
 		}
 
 		return name;
 	}
 
+	@Override
 	public String getRace(Message message)
 	{
 		IS ceRace = null;
@@ -470,8 +464,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			ceRace = pid.getRace();
 		} catch (RuntimeException e)
 		{
-			this.logger.warn("Unable to parse race from PID. Message: "
-					+ e.getMessage());
+			log.warn("Unable to parse race from PID.", e);
 		}
 
 		if (ceRace != null)
@@ -479,14 +472,14 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 			try
 			{
 				return ceRace.getValue();
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				this.logger
-						.debug("Warning: Race information not available in PID segment.");
+				log.debug("Warning: Race information not available in PID segment.", e);
 			}
 		}
 		return null;
 	}
+	@Override
 	public String getTelephoneNumber(Message message)
 	{
 		PID pid = getPID(message);
@@ -506,6 +499,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 		return tNumber;
 	}
 
+	@Override
 	public Boolean isDead(Message message)
 	{
 		PID pid = getPID(message);
@@ -536,6 +530,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	 * DWE CHICA-406
 	 * @param message
 	 */
+	@Override
 	public String getAccountNumber(Message message)
 	{
 		return null;
@@ -544,7 +539,8 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	/**
 	 * @see org.openmrs.module.sockethl7listener.HL7PatientHandler#getNextOfKin(ca.uhn.hl7v2.model.Message)
 	 */
-    public String getNextOfKin(Message arg0) {
+    @Override
+	public String getNextOfKin(Message arg0) {
 	    return null;
     }
     
@@ -557,6 +553,7 @@ public class HL7PatientHandler23 implements HL7PatientHandler
 	 * @param message
 	 * @return ethnicity code
 	 */
+	@Override
 	public String getEthnicity(Message message)
 	{
 		// Intentionally left empty

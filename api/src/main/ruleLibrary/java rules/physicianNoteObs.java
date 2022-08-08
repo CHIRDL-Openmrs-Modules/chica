@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
@@ -43,7 +43,7 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
  */
 public class physicianNoteObs implements Rule {
 	
-	private Log log = LogFactory.getLog(physicianNoteObs.class);
+	private static final Logger log = LoggerFactory.getLogger(physicianNoteObs.class);
 	
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
@@ -53,14 +53,14 @@ public class physicianNoteObs implements Rule {
 		long startTime = System.currentTimeMillis();
 		Patient patient = Context.getPatientService().getPatient(patientId);
 		if (patient == null) {
-			this.log.error("Patient cannot be found with ID: " + patientId);
+			log.error("Patient cannot be found with ID: " + patientId);
 			System.out.println("chicaNoteObs: " + (System.currentTimeMillis() - startTime) + "ms");
 			return Result.emptyResult();
 		}
 		
 		Integer encounterId = Util.getIntegerFromMap(parameters, ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
 		if (encounterId == null) {
-			this.log.error("Cannot determine encounter ID.  No note will be created.");
+			log.error("Cannot determine encounter ID.  No note will be created.");
 			return Result.emptyResult();
 		}
 		
@@ -118,7 +118,7 @@ public class physicianNoteObs implements Rule {
     	StringBuilder noteBuffer = new StringBuilder();  
     	Concept noteConcept = Context.getConceptService().getConceptByName("CHICA_Note");
 		if (noteConcept == null) {
-			this.log.error(
+			log.error(
 				"Physician note observations cannot be constructed because concept \"CHICA_Note\" does not exist.");
 			return noteBuffer.toString();
 		}

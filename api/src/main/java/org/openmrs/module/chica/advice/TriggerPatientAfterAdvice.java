@@ -4,13 +4,13 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.atd.TeleformFileState;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.AfterReturningAdvice;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.aop.AfterReturningAdvice;
  */
 public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(TriggerPatientAfterAdvice.class);
 
 	@Override
 	public void afterReturning(Object returnValue, Method method,
@@ -42,9 +42,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				}
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util
-						.getStackTrace(e));
+				log.error("Exception during patient checkin after hl7 message processing.", e);
 			}
 		}
 		else if (method.getName().equals("fileProcessed"))
@@ -64,7 +62,7 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 					Iterator<TeleformFileState> iter = tfStates.iterator();
 					if(tfStates.size() > 0)
 					{
-						this.log.info("!!!! FOUND TF STATES to PROCESS!!!");
+						log.info("!!!! FOUND TF STATES to PROCESS!!!");
 						while(iter.hasNext())
 						{
 							tfState = iter.next();
@@ -74,14 +72,12 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				} 
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util
-						.getStackTrace(e));
+				log.error("Exception after processing teleform file.",e);
 			}
 		}
 		else if(method.getName().equals("cleanCache")) 
 		{
-            this.log.info("clear regenObs and medicationList");
+            log.info("Clear regenObs and medicationList.");
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
 
         }

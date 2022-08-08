@@ -9,8 +9,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
@@ -18,6 +16,8 @@ import org.openmrs.logic.result.Result;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "module/chica/chicaNoteTester.form")
 public class ChicaNoteTesterController {
 	
-    protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChicaNoteTesterController.class);
 	
 	private static final String PHYSICIAN_NOTE = "PhysicianNote";
 	
@@ -86,8 +86,7 @@ public class ChicaNoteTesterController {
 				
 			}
 			catch (Exception e) {
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+				log.error("Error intializing form.",e);
 			}
 		}
 		

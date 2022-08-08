@@ -6,16 +6,14 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.hibernateBeans.Study;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.randomizer.Randomizer;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -24,6 +22,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -31,11 +31,12 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class Randomize implements ProcessStateAction
 {
-	private static Log log = LogFactory.getLog(Randomize.class);
+	private static final Logger log = LoggerFactory.getLogger(Randomize.class);
 
 	/* (non-Javadoc)
 	 * @see org.openmrs.module.chica.action.ProcessStateAction#processAction(org.openmrs.module.atd.hibernateBeans.StateAction, org.openmrs.Patient, org.openmrs.module.atd.hibernateBeans.PatientState, java.util.HashMap)
 	 */
+	@Override
 	public void processAction(StateAction stateAction, Patient patient,
 			PatientState patientState, HashMap<String, Object> parameters)
 	{
@@ -76,10 +77,7 @@ public class Randomize implements ProcessStateAction
 					randomizer = (Randomizer) theClass.newInstance();
 				} catch (Exception e)
 				{
-					log.error("Error creating custom randomizer: "
-							+ randomizerClassName);
-					log.error(e.getMessage());
-					log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+					log.error("Error creating custom randomizer: {}", randomizerClassName, e);
 				}
 			} else
 			{
@@ -88,7 +86,7 @@ public class Randomize implements ProcessStateAction
 
 			if (randomizer != null)
 			{
-				EncounterService encounterService = Context.getService(EncounterService.class);
+				EncounterService encounterService = Context.getEncounterService();
 				randomizer.randomize(currActiveStudy, patient, encounterService.getEncounter(encounterId));
 			}
 		}
@@ -98,6 +96,7 @@ public class Randomize implements ProcessStateAction
 
 	}
 
+	@Override
 	public void changeState(PatientState patientState,
 			HashMap<String, Object> parameters) {
 		//deliberately empty because processAction changes the state

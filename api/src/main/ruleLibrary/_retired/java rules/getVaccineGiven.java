@@ -35,7 +35,6 @@ import org.openmrs.logic.Rule;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.immunization.Vaccine;
 import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
@@ -88,7 +87,7 @@ public class getVaccineGiven implements Rule
 	public Result eval(LogicContext context, Integer patientId,
 	       			Map<String, Object> parameters) throws LogicException
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		ChirdlUtilBackportsService service = Context.getService(ChirdlUtilBackportsService.class);
 		LocationService locationService = Context.getLocationService();
 		ConceptService conceptService = Context.getConceptService();

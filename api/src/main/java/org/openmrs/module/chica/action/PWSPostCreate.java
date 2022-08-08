@@ -3,8 +3,6 @@ package org.openmrs.module.chica.action;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -15,6 +13,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -23,7 +23,7 @@ import org.openmrs.module.dss.service.DssService;
  */
 public class PWSPostCreate implements ProcessStateAction
 {
-	private Log log = LogFactory.getLog(PWSPostCreate.class);
+	private static final Logger log = LoggerFactory.getLogger(PWSPostCreate.class);
 	private static final String PWS_POST_CREATE = "PWS_post_create";
 
 	@Override

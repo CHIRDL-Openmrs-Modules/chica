@@ -15,7 +15,7 @@ public class ChartConcepts {
      * @return the chartConcepts
      */
     public ArrayList<ChartConcept> getChartConcepts() {
-    	return chartConcepts;
+    	return this.chartConcepts;
     }
 
     /**

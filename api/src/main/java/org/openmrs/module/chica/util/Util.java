@@ -29,13 +29,12 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IUnmarshallingContext;
 import org.jibx.runtime.JiBXException;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
@@ -44,9 +43,9 @@ import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.EmptyResult;
 import org.openmrs.logic.result.Result;
@@ -54,8 +53,6 @@ import org.openmrs.module.DaemonToken;
 import org.openmrs.module.atd.hibernateBeans.Statistics;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chica.Calculator;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.FormsToDisplay;
 import org.openmrs.module.chica.xmlBeans.viewEncountersConfig.ViewEncountersConfig;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
@@ -65,6 +62,7 @@ import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClient;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileClients;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.MobileForm;
 import org.openmrs.module.chirdlutil.xmlBeans.serverconfig.ServerConfig;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
@@ -81,6 +79,8 @@ import org.openmrs.module.dss.xmlBeans.physiciannote.PhysicianNoteConfig;
 import org.openmrs.module.sockethl7listener.hibernateBeans.HL7Outbound;
 import org.openmrs.module.sockethl7listener.service.SocketHL7ListenerService;
 import org.openmrs.parameter.EncounterSearchCriteria;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Tammy Dugan
@@ -99,7 +99,7 @@ public class Util {
 	
 	public static final String DAY_ABBR = "do";
 	
-	private static Log log = LogFactory.getLog(Util.class);
+	private static final Logger log = LoggerFactory.getLogger(Util.class);
 	
 	public static final Random GENERATOR = new Random();
 	
@@ -133,7 +133,7 @@ public class Util {
 		String formName = null;
 		if (formInstance != null) {
 			if (formInstance.getFormId() == null) {
-				log.error("Could not find form for statistics update");
+				log.error("Could not find form for statistics update.");
 				return null;
 			}
 			
@@ -186,7 +186,7 @@ public class Util {
 			if (baseUrl == null || baseUrl.length() == 0 || pagerNumber == null || pagerNumber.length() == 0
 			        || message == null || message.length() == 0 || idParam == null || idParam.length() == 0
 			        || textParam == null || textParam.length() == 0) {
-				log.error("Page was not sent due to null url string or null parameters. " + urlStr);
+				log.error("Page was not sent due to null url string or null parameters. URL string: {}", urlStr);
 				return "";
 			}
 			
@@ -194,7 +194,7 @@ public class Util {
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
 			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			String line;
 			while ((line = rd.readLine()) != null) {
 				sb.append(line);
@@ -203,8 +203,7 @@ public class Util {
 			return sb.toString();
 		}
 		catch (Exception e) {
-			log.error("Could not send page: " + message + " to " + pagerNumber + " " + e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Could not send page: {} to {}.", message, pagerNumber, e);
 		}
 		finally {
 			if (rd != null) {
@@ -212,7 +211,7 @@ public class Util {
 					rd.close();
 				}
 				catch (Exception e) {
-					log.error("Error closing the reader.");
+					log.error("Error closing the reader.", e);
 				}
 			}
 		}
@@ -353,20 +352,19 @@ public class Util {
 		
 		List<MobileClient> mobileClients = mobileClientsConfig.getMobileClients();
 		if (mobileClients == null || mobileClients.size() == 0) {
-			log.error("Server config contains no entry for mobileClients with mobileClient elements.  "
-			        + "No patients will be returned.");
+			log.error("Server config contains no entry for mobileClients with mobileClient elements. No patients will be returned.");
 			return null;
 		}
 		
 		String username = user.getUsername();
 		MobileClient userClient = config.getMobileClient(username);
 		if (userClient == null) {
-			log.error("Server config contains no mobile clients for username: " + username + ".");
+			log.error("Server config contains no mobile clients for username: {}.",  username);
 			return null;
 		}
 		
 		ChirdlUtilBackportsService chirdlUtilBackportsService = Context.getService(ChirdlUtilBackportsService.class);
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		
 		Calendar todaysDate = Calendar.getInstance();
 		
@@ -392,7 +390,7 @@ public class Util {
 			}
 			catch(Exception e)
 			{
-				log.error("Error occurred while generating a list of all patients for location (locationId: " + locationId + ").", e);
+				log.error("Error occurred while generating a list of all patients for location (locationId: {}.", locationId, e);
 				return null;
 			}	
 		}
@@ -603,7 +601,7 @@ public class Util {
 			}
 			
 			// Filter out forms based on weight
-			Set<FormInstance> formInstances = new LinkedHashSet<FormInstance>(row.getFormInstances());
+			Set<FormInstance> formInstances = new LinkedHashSet<>(row.getFormInstances());
 			row.getFormInstances().clear();
 			Iterator<FormInstance> iter = formInstances.iterator();
 			while (iter.hasNext() && accumWeight < maxWeight) {
@@ -644,7 +642,7 @@ public class Util {
 						
 			Encounter encounter = encounterMap.get(encounterId);
 			if (encounter == null) {
-			    encounter = (Encounter) encounterService.getEncounter(encounterId);
+			    encounter = encounterService.getEncounter(encounterId);
 			    encounterMap.put(encounterId, encounter);
 			}
 			
@@ -698,7 +696,7 @@ public class Util {
 			Integer formId = patientState.getFormId();
 			List<PatientState> foundStates = formIdToPatientStateMap.get(formId);
 			if (foundStates == null) {
-				foundStates = new ArrayList<PatientState>();
+				foundStates = new ArrayList<>();
 			}
 			
 			foundStates.add(patientState);
@@ -707,16 +705,15 @@ public class Util {
 	}
 	
 	public static void calculatePercentiles(Integer encounterId, Patient patient, Integer locationTagId) {
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-		ObsService obsService = Context.getObsService();
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = encounterService.getEncounter(encounterId);
 		ATDService atdService = Context.getService(ATDService.class);
-		List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+		List<Encounter> encounters = new ArrayList<>();
 		encounters.add(encounter);
-		List<Concept> questions = new ArrayList<Concept>();
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
+		List<Concept> questions = new ArrayList<>();
+		HashMap<String, Object> parameters = new HashMap<>();
 		Calculator calculator = new Calculator();
-		parameters.put("encounterId", encounterId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConcept("BMICentile");
 		questions.add(concept);
@@ -735,12 +732,12 @@ public class Util {
 			}
 		}
 		
-		questions = new ArrayList<Concept>();
+		questions = new ArrayList<>();
 		concept = conceptService.getConcept("HCCentile");
 		questions.add(concept);
 		
-		parameters.put("concept", "HC");
-		result = atdService.evaluateRule("conceptRule", patient, parameters);
+		parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, "HC");
+		result = atdService.evaluateRule(ChicaConstants.RULE_NAME_CONCEPT, patient, parameters);
 		if (!(result instanceof EmptyResult)) {
 			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
 			    patient.getBirthdate(), "hc", null);
@@ -752,12 +749,12 @@ public class Util {
 			}
 		}
 		
-		questions = new ArrayList<Concept>();
+		questions = new ArrayList<>();
 		concept = conceptService.getConcept("HtCentile");
 		questions.add(concept);
 		
-		parameters.put("concept", "HEIGHT");
-		result = atdService.evaluateRule("conceptRule", patient, parameters);
+		parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, "HEIGHT");
+		result = atdService.evaluateRule(ChicaConstants.RULE_NAME_CONCEPT, patient, parameters);
 		if (!(result instanceof EmptyResult)) {
 			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
 			    patient.getBirthdate(), "length", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_IN);
@@ -769,12 +766,12 @@ public class Util {
 			}
 		}
 		
-		questions = new ArrayList<Concept>();
+		questions = new ArrayList<>();
 		concept = conceptService.getConcept("WtCentile");
 		questions.add(concept);
 		
-		parameters.put("concept", "WEIGHT");
-		result = atdService.evaluateRule("conceptRule", patient, parameters);
+		parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, "WEIGHT");
+		result = atdService.evaluateRule(ChicaConstants.RULE_NAME_CONCEPT, patient, parameters);
 		if (!(result instanceof EmptyResult)) {
 			Double percentile = calculator.calculatePercentile(result.toNumber(), patient.getGender(),
 			    patient.getBirthdate(), "weight", org.openmrs.module.chirdlutil.util.Util.MEASUREMENT_LB);
@@ -787,7 +784,7 @@ public class Util {
 		}
 		
 		//save BP
-		questions = new ArrayList<Concept>();
+		questions = new ArrayList<>();
 		concept = conceptService.getConcept("BP");
 		questions.add(concept);
 		
@@ -798,7 +795,7 @@ public class Util {
 		}
 		
 		//save BMI
-		questions = new ArrayList<Concept>();
+		questions = new ArrayList<>();
 		concept = conceptService.getConcept("BMI CHICA");
 		questions.add(concept);
 		
@@ -818,19 +815,37 @@ public class Util {
 	public static Integer getLocationTagId(Encounter encounter) {
 		if (encounter != null) {
 			// lookup location tag id that matches printer location
-			if (encounter.getPrinterLocation() != null) {
-				Location location = encounter.getLocation();
-				Set<LocationTag> tags = location.getTags();
-
-				if (tags != null) {
-					for (LocationTag tag : tags) {
-						if (tag.getName().equalsIgnoreCase(
-								encounter.getPrinterLocation())) {
-							return tag.getLocationTagId();
-						}
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			
+			EncounterAttributeValue printerEncounterAttributeValue  = chirdlutilbackportsService.
+					getEncounterAttributeValueByName( encounter.getEncounterId(), ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			
+			if (printerEncounterAttributeValue == null) {
+				log.error("Encounter attribute value for {} does not exist for encounter id: {}.", 
+						ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, encounter.getEncounterId());
+				return null;
+			}
+		
+			String printerLocation = printerEncounterAttributeValue.getValueText();
+			
+			if (printerLocation == null) {
+				log.error("Encounter attribute value for {} has no value for printer location. Encounter id: {}.", 
+						ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, encounter.getEncounterId());
+				return null;
+			}
+			
+			Location location = encounter.getLocation();
+			Set<LocationTag> tags = location.getTags();
+			
+			if (tags != null) {
+				for (LocationTag tag : tags) {
+					if (tag.getName().equalsIgnoreCase(printerLocation)) {
+						return tag.getLocationTagId();
 					}
 				}
 			}
+			
+			
 		}
 		return null;
 	}
@@ -847,7 +862,7 @@ public class Util {
 		Date endDate = Calendar.getInstance().getTime();
 		List<org.openmrs.Encounter> encounters = Context.getEncounterService().getEncounters(patient, null, startDate, endDate, null, 
 				null, null, null, null, false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
-		if (encounters == null || encounters.size() == 0) {
+		if (encounters == null || encounters.isEmpty()) {
 			return null;
 		} else if (encounters.size() == 1) {
 			return encounters.get(0);
@@ -860,7 +875,7 @@ public class Util {
 			// Passing the enounterId instead of encounter to prevent possible ClassCastException while iterating through list of encounters.
 			String patientForm = org.openmrs.module.chica.util.Util.getPrimaryFormNameByLocationTag(encounter.getEncounterId(), ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PATIENT_FORM);
 			List<Statistics> stats = atdService.getStatsByEncounterForm(encounter.getEncounterId(), patientForm);
-			if (stats == null || stats.size() == 0) {
+			if (stats == null || stats.isEmpty()) {
 				continue;
 			}
 			
@@ -890,7 +905,7 @@ public class Util {
     		return false;
     	}
     	
-    	if (latestResult.getResultObject() == null || !(latestResult.getResultObject() instanceof Obs)) {
+    	if (!(latestResult.getResultObject() instanceof Obs)) {
     		return false;
     	}
     	
@@ -924,16 +939,23 @@ public class Util {
 
 		if (encounterId != null)
 		{
-			EncounterService encounterService = Context
-					.getService(EncounterService.class);
-			Encounter encounter = (Encounter) encounterService
-					.getEncounter(encounterId);
+			EncounterService encounterService = Context.getEncounterService();
+			Encounter encounter = encounterService.getEncounter(encounterId);
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 
 			if (encounter != null)
 			{
 				// see if the encounter has a printer location
 				// this will give us the location tag id
-				printerLocation = encounter.getPrinterLocation();
+				EncounterAttributeValue encounterAttributeValue =  chirdlutilbackportsService
+						.getEncounterAttributeValueByName( encounter.getEncounterId(), ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+				
+				if (encounterAttributeValue != null) {
+					printerLocation = encounterAttributeValue.getValueText();
+				} else{
+					log.error("Encounter attribute {} does not exist for encounter id: {} ",
+							ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, encounter.getEncounterId());
+				}
 
 				// if the printer location is null, pick
 				// any location tag id for the given location
@@ -944,13 +966,14 @@ public class Util {
 					{
 						Set<LocationTag> tags = location.getTags();
 
-						if (tags != null && tags.size() > 0)
+						if (tags != null && !tags.isEmpty())
 						{
 							printerLocation = ((LocationTag) tags.toArray()[0])
 									.getName(); // CHICA-1151 replace getTag() with getName()
 						}
 					}
 				}
+				
 				if (printerLocation != null)
 				{
 					LocationService locationService = Context
@@ -991,21 +1014,21 @@ public class Util {
 			try{
 				stylesheetFile = new File(formAttributeValue.getValue());
 			}catch (Exception e){
-				log.error("The file path in the form attribute is not defined correctly. "+ e);
+				log.error("The file path in the form attribute is not defined correctly for form id: {} formInstanceId: {} location id: {} location tag id: {} ",
+						formId, formInstanceId, locationId, locationTagId, e);
 			}				
 		} else {
 			stylesheetFile = XMLUtil.findStylesheet(strStylesheet);
 		}
 		if (stylesheetFile == null) {
-			log.error("Error finding stylesheet to format the form: " + strStylesheet);
+			log.error("Error finding stylesheet to format the form: {}.", strStylesheet);
 		}
 		
 		if (XmlFile != null && stylesheetFile != null) {
 			try {
 				strOutput = XMLUtil.transformFile(XmlFile, stylesheetFile);
 			} catch (Exception e) {
-				log.error("Error transforming xml: " + XmlFile.getAbsolutePath() + " xslt: " + 
-					stylesheetFile.getAbsolutePath(), e);
+				log.error("Error transforming xml: {} xslt: {}.", XmlFile.getAbsolutePath(), stylesheetFile.getAbsolutePath(),  e);
 			}
 		}
 		return strOutput;
@@ -1020,13 +1043,13 @@ public class Util {
 		Integer formTimeLimit = null;
 		String formTimeLimitStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT);
 		if (formTimeLimitStr == null || formTimeLimitStr.trim().length() == 0) {
-			log.error("No value set for global property: "+ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT+". A default of 2 days will be used.");
+			log.error("No value set for global property: {}. A default of 2 days will be used.", ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT);
 			formTimeLimitStr = "2";
 		}
 		try {
 			formTimeLimit = Integer.parseInt(formTimeLimitStr);
 		} catch (NumberFormatException e) {
-			log.error("Invalid number format for global property "+ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT+". A default of 2 days will be used.");
+			log.error("Invalid number format for global property {}. A default of 2 days will be used.", ChirdlUtilConstants.GLOBAL_PROP_FORM_TIME_LIMIT, e);
 			formTimeLimit = 2;
 		}
 		return formTimeLimit;
@@ -1044,13 +1067,13 @@ public class Util {
 	 */
 	public static void createHL7OutboundRecord(String message, Integer encounterId, String host, Integer port) throws Exception
 	{
-			EncounterService encounterService = Context.getService(EncounterService.class);
-			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
+		EncounterService encounterService = Context.getEncounterService();
+			Encounter openmrsEncounter = encounterService.getEncounter(encounterId);
 			SocketHL7ListenerService socketHL7ListenerService = Context.getService(SocketHL7ListenerService.class);
 			
 			if(openmrsEncounter == null)
 			{
-				log.error("Error creating HL7Outbound record. Unable to locate encounterId: " + encounterId);
+				log.error("Error creating HL7Outbound record. Unable to locate encounterId: {}.", encounterId);
 				return;
 			}
 			
@@ -1094,8 +1117,8 @@ public class Util {
 	 */
 	public static String getPrimaryFormNameByLocationTag(Integer encounterId, String attributeName)
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = encounterService.getEncounter(encounterId);
 		
 		return getPrimaryFormNameByLocationTag(encounter, attributeName);
 	}
@@ -1114,9 +1137,7 @@ public class Util {
  		} else if (printOptionString.equalsIgnoreCase(ChirdlUtilConstants.OPTION_PRINT_PHYSICIAN_FORM)) {
  			locTagAttrName = ChirdlUtilConstants.LOC_TAG_ATTR_PRIMARY_PHYSICIAN_FORM;
  		}
-		
-		String formName = getPrimaryFormNameByLocationTag(encounter, locTagAttrName);
-		return formName;
+		return getPrimaryFormNameByLocationTag(encounter, locTagAttrName);
 	}
 	
 	/**
@@ -1127,8 +1148,8 @@ public class Util {
 	 */
 	public static String getFormNameByPrintOptionString(Integer encounterId, String printOptionString)
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = encounterService.getEncounter(encounterId);
 		
 		return getFormNameByPrintOptionString(encounter, printOptionString);
 	}
@@ -1166,8 +1187,8 @@ public class Util {
 	 */
 	public static String getStartStateName(Integer encounterId, Integer formId)
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = encounterService.getEncounter(encounterId);
 		
 		return getStartStateName(encounter, formId);
 	}
@@ -1205,8 +1226,8 @@ public class Util {
 	 */
 	public static String getReprintStateName(Integer encounterId, Integer formId)
 	{
-		EncounterService encounterService = Context.getService(EncounterService.class);
-		Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
+		EncounterService encounterService = Context.getEncounterService();
+		Encounter encounter = encounterService.getEncounter(encounterId);
 		
 		return getReprintStateName(encounter, formId);
 	}
@@ -1225,14 +1246,13 @@ public class Util {
     		lastUpdatedViewEncountersConfig = currentTime;
 			String configFileStr = Context.getAdministrationService().getGlobalProperty(GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
 			if (configFileStr == null) {
-				log.error("You must set a value for global property: " + GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
+				log.error("You must set a value for global property: {}",  GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
 				return null;
 			}
 			
 			File configFile = new File(configFileStr);
 			if (!configFile.exists()) {
-				log.error("The file location specified for the global property "
-					+ GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG + " does not exist.");
+				log.error("The file location specified for the global property {} does not exist. ", GLOBAL_PROP_VIEW_ENCOUNTERS_CONFIG);
 				return null;
 			}
 			
@@ -1443,7 +1463,7 @@ public class Util {
 			try {
 				value = Integer.valueOf(valueStr);
 			} catch (NumberFormatException e) {
-				log.error("Error parsing value " + valueStr + " into an integer.", e);
+				log.error("Error parsing value {} to an integer.", valueStr, e);
 				return null;
 			}
 		}
@@ -1620,7 +1640,7 @@ public class Util {
 		while (iter.hasNext()) {
 			String ruleId = iter.next();
 			List<Obs> obsList = obsMap.get(ruleId);
-			if (obsList != null && obsList.size() > 0) {
+			if (obsList != null && !obsList.isEmpty()) {
 				Set<String> noteSet = new HashSet<>();
 				for (Obs ob : obsList) {
 					String value = ob.getValueText();
@@ -1657,14 +1677,14 @@ public class Util {
 			AdministrationService adminService = Context.getAdministrationService();
 			String configFileStr = adminService.getGlobalProperty("dss.physicianNoteConfigFile");
 			if (configFileStr == null) {
-				log.error("You must set a value for global property: " + "dss.physicianNoteConfigFile");
+				log.error("You must set a value for global property: dss.physicianNoteConfigFile.");
 				return physicianNoteConfig;
 			}
 			
 			File configFile = new File(configFileStr);
 			if (!configFile.exists()) {
 				log.error(
-				    "The file location specified for the global property " + "dss.physicianNoteConfigFile does not exist.");
+				    "The file location specified for the global property dss.physicianNoteConfigFile does not exist.");
 				return physicianNoteConfig;
 			}
 			

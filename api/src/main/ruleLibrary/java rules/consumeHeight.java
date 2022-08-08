@@ -3,34 +3,32 @@ package org.openmrs.module.chica.rule;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.openmrs.Concept;
 import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.api.ConceptService;
-import org.openmrs.Concept;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicContext;
 import org.openmrs.logic.LogicCriteria;
-import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.LogicException;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.Rule;
+import org.openmrs.logic.impl.LogicCriteriaImpl;
 import org.openmrs.logic.op.Operator;
 import org.openmrs.logic.result.Result;
 import org.openmrs.logic.result.Result.Datatype;
 import org.openmrs.logic.rule.RuleParameterInfo;
+import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.dss.logic.op.OperandObject;
-import org.openmrs.module.chica.impl.ChicaServiceImpl;
-import org.openmrs.module.chica.util.Util;
-import org.openmrs.module.atd.service.ATDService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class consumeHeight implements Rule
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(consumeHeight.class);
 	private LogicService logicService = Context.getLogicService();
 
 	/**
@@ -38,6 +36,7 @@ public class consumeHeight implements Rule
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList()
 	{
 		return null;
@@ -48,6 +47,7 @@ public class consumeHeight implements Rule
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies()
 	{
 		return new String[]
@@ -59,6 +59,7 @@ public class consumeHeight implements Rule
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL()
 	{
 		return 0; // 60 * 30; // 30 minutes
@@ -69,10 +70,12 @@ public class consumeHeight implements Rule
 	 * 
 	 * @see org.openmrs.logic.rule.Rule#getDatatype(String)
 	 */
+	@Override
 	public Datatype getDefaultDatatype()
 	{
 		return Datatype.CODED;
 	}
+	@Override
 	public Result eval(LogicContext context, Integer patientId,
 			Map<String, Object> parameters) throws LogicException
 	{
@@ -82,7 +85,6 @@ public class consumeHeight implements Rule
 		String fieldName = null;
 		String conceptName  = null;
 		Integer encounterId = null;
-		ATDService atdService = Context.getService(ATDService.class);
 		Integer ruleId = null;
 		Integer locationTagId = null;
 		Integer formFieldId = null;

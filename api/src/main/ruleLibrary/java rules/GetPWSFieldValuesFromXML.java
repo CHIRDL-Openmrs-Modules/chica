@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -36,13 +34,15 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DWE CHICA-612 Reads the PWS xml file to get values to populate the PDF version of the PWS
  */
 public class GetPWSFieldValuesFromXML implements Rule{
 
-	private Log log = LogFactory.getLog(GetPWSFieldValuesFromXML.class);
+	private static final Logger log = LoggerFactory.getLogger(GetPWSFieldValuesFromXML.class);
 	private static final String PWS_PDF = "PWS_PDF";
 	private static final String RESULT_DELIM = "^^";
 	private static final String AT_CHAR = "@";
@@ -71,6 +71,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	/**
 	 * @see org.openmrs.logic.Rule#eval(org.openmrs.logic.LogicContext, java.lang.Integer, java.util.Map)
 	 */
+	@Override
 	public Result eval(LogicContext logicContext, Integer patientId, Map<String, Object> parameters) throws LogicException {
 		FormService fs =Context.getFormService();
 		Integer encounterId = (Integer) parameters.get(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID);
@@ -80,7 +81,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 		if(form != null)
 		{
 			if (encounterId == null) {
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate encounterId.");
+				log.error("Error while creating {}. Unable to locate encounterId.",PWS_PDF);
 				return Result.emptyResult();
 			}
 
@@ -89,13 +90,13 @@ public class GetPWSFieldValuesFromXML implements Rule{
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			State state = chirdlutilbackportsService.getStateByName(Util.getStartStateName(encounterId, form.getFormId()));
 			if(state == null){
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate " + ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE + ".");
+				log.error("Error while creating {}. Unable to locate {}.",PWS_PDF,ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE);
 				return Result.emptyResult();
 			}
 			
 			List<PatientState> states = Context.getService(ChirdlUtilBackportsService.class).getPatientStateByEncounterState(encounterId, state.getStateId());
 			if (states == null || states.size() == 0) {
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to locate patient state for encounterId: " + encounterId + ".");
+				log.error("Error while creating {}. Unable to locate patient state for encounterId: {}.",PWS_PDF,encounterId);
 				return Result.emptyResult();
 			}
 
@@ -112,8 +113,8 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						.getFormAttributeValue(form.getFormId(), ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY, locationTagId, locationId));
 
 				if (mergeDirectory == null || mergeDirectory.length() == 0) {
-					log.error("No " + ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY + " found for Form: " + formInstance.getFormId() + " Location ID: " + locationId + 
-							" Location Tag ID: " + locationTagId + ".");
+					log.error("No {} found for Form: {} Location ID: {} Location Tag ID:{}.",
+							 ChirdlUtilConstants.FORM_ATTR_DEFAULT_MERGE_DIRECTORY,formInstance.getFormId(),locationId,locationTagId);
 					return Result.emptyResult();
 				}
 
@@ -142,7 +143,8 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						}
 
 						if(numTries == MAX_TRIES){
-							log.error("Unable to locate " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+							log.error("Unable to locate {} while creating {} (formInstanceId: {} locationId: {} locationTagId: {})",
+									physicianForm,PWS_PDF,formInstanceId,locationId,locationTagId);
 							return Result.emptyResult();
 						}
 					}
@@ -164,9 +166,8 @@ public class GetPWSFieldValuesFromXML implements Rule{
 						log.error("Interrupted thread error", ie);
 					}
 					catch(IOException ioe){
-						log.error("Unable to read " + physicianForm + " while creating " + PWS_PDF + "(formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
-						this.log.error(ioe.getMessage());
-						this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(ioe));
+						log.error("Unable to read {} while creating {} (formInstanceId: {} locationId:{} locationTagId: {})",
+								physicianForm,PWS_PDF,formInstanceId,locationId,locationTagId,ioe);
 					}
 				}			
 
@@ -174,14 +175,16 @@ public class GetPWSFieldValuesFromXML implements Rule{
 				{
 					Record record = records.getRecord();
 					if (record == null) {
-						this.log.error("Error while creating " + PWS_PDF + ". Unable to locate record in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						log.error("Error while creating {}. Unable to locate record in xml for (formInstanceId: {} locationId: {} locationTagId: {})",
+								PWS_PDF,formInstanceId,locationId,locationTagId);
 						return Result.emptyResult();
 					}
 
 					// Get the <field> elements found within the file
 					List<Field> currentFieldsInFile = record.getFields();
 					if (currentFieldsInFile == null) {
-						this.log.error("Error while creating " + PWS_PDF + ". Unable to locate fields in xml for (formInstanceId: " + formInstanceId + " locationId: " + locationId + " locationTagId: " + locationTagId + ")");
+						log.error("Error while creating {}. Unable to locate fields in xml for (formInstanceId: {} locationId: {} locationTagId: {})",
+								PWS_PDF,formInstanceId,locationId,locationTagId);
 						return Result.emptyResult();
 					}
 
@@ -191,12 +194,13 @@ public class GetPWSFieldValuesFromXML implements Rule{
 				}	
 			}
 			else{
-				this.log.error("Error while creating " + PWS_PDF + ". Unable to get form instance id from PatientState: " + patientState.getPatientStateId());
+				log.error("Error while creating {}. Unable to get form instance id from PatientState: {}",
+						PWS_PDF, patientState.getPatientStateId());
 				return Result.emptyResult();
 			}
 		}
 
-		this.log.error("Error while creating " + PWS_PDF + ".");
+		log.error("Error while creating {}.", PWS_PDF);
 		return Result.emptyResult();	
 	}
 
@@ -389,6 +393,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	/**
 	 * @see org.openmrs.logic.Rule#getDefaultDatatype()
 	 */
+	@Override
 	public Datatype getDefaultDatatype() {
 		return Datatype.TEXT;
 	}
@@ -396,6 +401,7 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	/**
 	 * @see org.openmrs.logic.Rule#getDependencies()
 	 */
+	@Override
 	public String[] getDependencies() {
 		return new String[]{};
 	}
@@ -403,13 +409,15 @@ public class GetPWSFieldValuesFromXML implements Rule{
 	/**
 	 * @see org.openmrs.logic.Rule#getParameterList()
 	 */
+	@Override
 	public Set<RuleParameterInfo> getParameterList() {
-		return new HashSet<RuleParameterInfo>();
+		return new HashSet<>();
 	}
 
 	/**
 	 * @see org.openmrs.logic.Rule#getTTL()
 	 */
+	@Override
 	public int getTTL() {
 		return 0;
 	}

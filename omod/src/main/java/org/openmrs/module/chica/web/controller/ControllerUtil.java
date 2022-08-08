@@ -11,9 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.FieldType;
 import org.openmrs.Form;
 import org.openmrs.FormField;
@@ -22,6 +21,7 @@ import org.openmrs.LocationTag;
 import org.openmrs.Patient;
 import org.openmrs.PersonName;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
@@ -35,12 +35,15 @@ import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.ChirdlLocationAttributeValue;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -51,7 +54,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class ControllerUtil {
 
-	private static final Log log = LogFactory.getLog(ControllerUtil.class);
+	private static final Logger log = LoggerFactory.getLogger(ControllerUtil.class);
 	
 	/**
 	 * Private constructor
@@ -144,9 +147,8 @@ public class ControllerUtil {
 		if (providerId != null && providerId.trim().length() > 0) {
 			saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientId
-					+ " encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: "
-					+ formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
+			log.error("Error saving viewing provider ID for form ID: {} patient ID: {} encounter ID: {} provider ID: {} form instance ID:{} location ID: {} location tag ID: {}",
+					formId,patientId,encounterId,providerId,formInstanceId,locationId,locationTagId);
 		}
 
 		map.put(ChicaConstants.PARAMETER_SESSION_TIMEOUT_WARNING, getSessionTimeoutWarning());
@@ -167,7 +169,7 @@ public class ControllerUtil {
 		Object submittedFormInstancesObj = session
 				.getAttribute(ChicaConstants.SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
 
-		if (submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List) {
+		if (submittedFormInstancesObj instanceof List) {
 			submittedFormInstances = (List<String>) submittedFormInstancesObj;
 			if (submittedFormInstances.contains(formInstance)) {
 				return true;
@@ -256,7 +258,7 @@ public class ControllerUtil {
 		ConceptService conceptService = Context.getConceptService();
 		Concept concept = conceptService.getConceptByName(conceptName);
 		if (concept == null) {
-			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
+			log.error("Could not log provider info.  Concept {} not found.",conceptName);
 			return;
 		}
 		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(), formInstTag.getFormId(),
@@ -353,8 +355,8 @@ public class ControllerUtil {
 	 * @param map              Map that will be returned to the client
 	 * @return Encounter object or null if one is not found.
 	 */
-	public static org.openmrs.module.chica.hibernateBeans.Encounter getPhysicianEncounterWithoutScannedTimeStamp(
-			List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService,
+	public static Encounter getPhysicianEncounterWithoutScannedTimeStamp(
+			List<Encounter> encounters, ChirdlUtilBackportsService backportsService,
 			Map<String, Object> map) {
 		return getEncounterWithoutScannedTimeStamp(encounters, backportsService, map, true);
 	}
@@ -368,8 +370,8 @@ public class ControllerUtil {
 	 * @param map              Map that will be returned to the client
 	 * @return Encounter object or null if one is not found.
 	 */
-	public static org.openmrs.module.chica.hibernateBeans.Encounter getPatientEncounterWithoutScannedTimeStamp(
-			List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService,
+	public static Encounter getPatientEncounterWithoutScannedTimeStamp(
+			List<Encounter> encounters, ChirdlUtilBackportsService backportsService,
 			Map<String, Object> map) {
 		return getEncounterWithoutScannedTimeStamp(encounters, backportsService, map, false);
 	}
@@ -383,21 +385,19 @@ public class ControllerUtil {
 	 * @param map              Map that will be returned to the client
 	 * @return Encounter object or null if one is not found.
 	 */
-	private static org.openmrs.module.chica.hibernateBeans.Encounter getEncounterWithoutScannedTimeStamp(
-			List<org.openmrs.Encounter> encounters, ChirdlUtilBackportsService backportsService,
+	private static Encounter getEncounterWithoutScannedTimeStamp(
+			List<Encounter> encounters, ChirdlUtilBackportsService backportsService,
 			Map<String, Object> map, boolean physicianForm) {
-		org.openmrs.module.chica.service.EncounterService encounterService = Context
-				.getService(org.openmrs.module.chica.service.EncounterService.class);
+		    EncounterService encounterService = Context.getEncounterService();
 		for (int i = encounters.size() - 1; i >= 0; i--) {
 			// Look up the encounter through the CHICA encounter service to prevent class
 			// cast exceptions.
 			Integer encounterId = encounters.get(i).getEncounterId();
-			org.openmrs.module.chica.hibernateBeans.Encounter chicaEncounter = 
-					(org.openmrs.module.chica.hibernateBeans.Encounter) encounterService.getEncounter(encounterId);
+			Encounter encounter = encounterService.getEncounter(encounterId);
 			if (physicianForm) {
-				setPhysicianFormURLAttributes(chicaEncounter, map);
+				setPhysicianFormURLAttributes(encounter, map);
 			} else {
-				setPatientFormURLAttributes(chicaEncounter, map);
+				setPatientFormURLAttributes(encounter, map);
 			}
 			
 			String formName = (String) map.get(ChirdlUtilConstants.PARAMETER_FORM_NAME);
@@ -407,7 +407,7 @@ public class ControllerUtil {
 
 			if (StringUtils.isBlank(formName) || StringUtils.isBlank(formPage) || StringUtils.isBlank(startStateStr)
 					|| StringUtils.isBlank(endStateStr)) {
-				return chicaEncounter;
+				return encounter;
 			}
 
 			Map<Integer, List<PatientState>> formIdToPatientStateMapStart = new HashMap<>();
@@ -427,7 +427,7 @@ public class ControllerUtil {
 				boolean containsEndState = formIdToPatientStateMapEnd.containsKey(form.getFormId());
 
 				if (containsStartState && !containsEndState) {
-					return chicaEncounter;
+					return encounter;
 				}
 			}
 		}
@@ -441,7 +441,7 @@ public class ControllerUtil {
 	 * @param encounter Patient encounter object.
 	 * @param map       Map that will be returned to the client.
 	 */
-	public static void setPhysicianFormURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter,
+	public static void setPhysicianFormURLAttributes(Encounter encounter,
 			Map<String, Object> map) {
 		setURLAttributes(encounter, map, true);
 	}
@@ -452,7 +452,7 @@ public class ControllerUtil {
 	 * @param encounter Patient encounter object.
 	 * @param map       Map that will be returned to the client.
 	 */
-	public static void setPatientFormURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter,
+	public static void setPatientFormURLAttributes(Encounter encounter,
 			Map<String, Object> map) {
 		setURLAttributes(encounter, map, false);
 	}
@@ -464,19 +464,32 @@ public class ControllerUtil {
 	 * @param map       Map that will be returned to the client.
 	 * @param formName  The form name used to load URL attributes.
 	 */
-	private static void setURLAttributes(org.openmrs.module.chica.hibernateBeans.Encounter encounter,
+	private static void setURLAttributes(Encounter encounter,
 			Map<String, Object> map, boolean physicianForm) {
+		
+		ChirdlUtilBackportsService chirdlUtilBackportsService = Context
+				.getService(ChirdlUtilBackportsService.class);
+		
 		Location location = encounter.getLocation();
 		if (location == null) {
 			return;
 		}
 
 		Integer locationId = location.getLocationId();
-		String locationTagString = encounter.getPrinterLocation();
+		
+		EncounterAttributeValue attributeValue = chirdlUtilBackportsService
+				.getEncounterAttributeValueByName( encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+
+		String printerLocation =  null;	
+		
+		if (attributeValue != null) {
+			printerLocation =  attributeValue.getValueText();	
+		}
+			
 		LocationTag locationTag = null;
-		if (StringUtils.isNotBlank(locationTagString)) {
+		if (StringUtils.isNotBlank(printerLocation)) {
 			LocationService locationService = Context.getLocationService();
-			locationTag = locationService.getLocationTagByName(locationTagString);
+			locationTag = locationService.getLocationTagByName(printerLocation);
 		}
 
 		if (locationTag == null) {
@@ -532,7 +545,7 @@ public class ControllerUtil {
 			}
 
 			Set<LocationTag> tags = location.getTags();
-			if (tags != null && tags.size() > 0) {
+			if (tags != null && !tags.isEmpty()) {
 				LocationTag tag = tags.iterator().next();
 				map.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, tag.getLocationTagId());
 			} else {
@@ -540,7 +553,7 @@ public class ControllerUtil {
 			}
 
 			List<Session> sessions = backportsService.getSessionsByEncounter(handoutsEncounter.getEncounterId());
-			if (sessions != null && sessions.size() > 0) {
+			if (sessions != null && !sessions.isEmpty()) {
 				map.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, sessions.get(0).getSessionId());
 			} else {
 				return;
@@ -604,15 +617,12 @@ public class ControllerUtil {
 		String sessionTimeoutWarningStr = Context.getAdministrationService()
 				.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
 		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
-			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
-					+ " global property does not have a " + "value set.  180 seconds will be used as a default value.");
+			log.warn("The {} global property does not have a value set.  180 seconds will be used as a default value.",ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
 		} else {
 			try {
 				sessionTimeoutWarning = Integer.valueOf(sessionTimeoutWarningStr);
 			} catch (NumberFormatException e) {
-				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING
-						+ " global property is not a " + "valid Integer.  180 seconds will be used as a default value",
-						e);
+				log.error("The {} global property is not a valid Integer.  180 seconds will be used as a default value", ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING,e);
 				sessionTimeoutWarning = new Integer(180);
 			}
 		}
@@ -631,8 +641,7 @@ public class ControllerUtil {
                 Context.getService(ChirdlUtilBackportsService.class).getLocationAttributeValue(
                     locationId, ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
         if (attrVal == null || StringUtils.isBlank(attrVal.getValue())) {
-            log.error("No location attribute value specified for location " + locationId + " and attribute name " 
-                    + ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
+            log.error("No location attribute value specified for location {} and attribute name {}.",locationId,ChirdlUtilConstants.LOCATION_ATTRIBUTE_PDF_VIEWER);
             return null;
         }
         return attrVal.getValue();

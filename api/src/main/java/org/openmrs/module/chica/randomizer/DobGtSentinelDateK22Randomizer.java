@@ -20,8 +20,6 @@ public class DobGtSentinelDateK22Randomizer extends BasicRandomizer implements R
 	public void randomize(Study study, Patient patient,Encounter encounter)
 	{
 		//first see if the patient should be randomized
-		
-		//if(dob >= (studyStartDate - 9 months)) then randomize
 		Date studyStartDate = study.getStartDate();
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(studyStartDate);

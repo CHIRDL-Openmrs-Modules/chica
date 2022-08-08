@@ -8,19 +8,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.Patient;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Program;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -28,7 +31,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class CheckinPatient implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(CheckinPatient.class);
 	private Integer encounterId = null; // Use encounterId instead of an encounter object to prevent lazy initialization errors
 
 	public CheckinPatient(Integer encounterId)
@@ -44,37 +47,44 @@ public class CheckinPatient implements ChirdlRunnable
 	@Override
 	public void run()
 	{
-		this.log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		
 		try
 		{
 			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 			
-			org.openmrs.module.chica.service.EncounterService encounterService = Context
-								        .getService(org.openmrs.module.chica.service.EncounterService.class);
-			Encounter chicaEncounter = (Encounter) encounterService.getEncounter(this.encounterId);
-			
-			if(chicaEncounter == null){
+			EncounterService encounterService = Context.getEncounterService();
+			Encounter encounter = encounterService.getEncounter(this.encounterId);
+					
+			if(encounter == null){
 				return;
 			}
-								
-			Patient patient = chicaEncounter.getPatient();
+
+			Patient patient = encounter.getPatient();
 
 			//The session is unique because only 1 session exists at checkin
-			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(chicaEncounter.getEncounterId());
+			List<Session> sessions = chirdlutilbackportsService.getSessionsByEncounter(encounter.getEncounterId());
 			Session session = sessions.get(0);
 			
 			Integer sessionId = session.getSessionId();
 			
 			Integer locationTagId = null;
 			Integer locationId = null;
+			String printerLocation =  null;	
 			
 			// lookup location tag id by printer location
-			String printerLocation = chicaEncounter.getPrinterLocation();
-			if (printerLocation != null)
-			{
-				Location location = chicaEncounter.getLocation();
+			EncounterAttributeValue encounterAttributeValue = chirdlutilbackportsService
+					.getEncounterAttributeValueByName(encounter.getEncounterId(),ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);	
+			
+			if (encounterAttributeValue != null) {
+				printerLocation =  encounterAttributeValue.getValueText();	
+				
+			} else {
+				log.error("Encounter attribute value not found. EncounterAttribute: {} Encounter id: {}.", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION, this.encounterId );
+			}
+						
+			if (printerLocation != null){
+				Location location = encounter.getLocation();
 				Set<LocationTag> tags = location.getTags();
 				for(LocationTag tag:tags){
 					if(printerLocation.equalsIgnoreCase(tag.getName())){ // CHICA-1151 replaced getTag() with getName()
@@ -91,11 +101,9 @@ public class CheckinPatient implements ChirdlRunnable
 					locationTagId,locationId,BaseStateActionHandler.getInstance());
 		} catch (Exception e)
 		{
-			this.log.error(e.getMessage());
-			this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception checking in patient. Encounter id: {}", this.encounterId, e);
 		}finally{
-			this.log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );
 		}
 	}
 	

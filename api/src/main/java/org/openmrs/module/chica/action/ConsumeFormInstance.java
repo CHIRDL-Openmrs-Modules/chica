@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.FormField;
 import org.openmrs.Patient;
@@ -20,7 +18,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.util.Util;
+import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
 import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
@@ -29,6 +27,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -36,7 +36,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class ConsumeFormInstance implements ProcessStateAction
 {	
-	private static Log log = LogFactory.getLog(ConsumeFormInstance.class);
+	private static final Logger log = LoggerFactory.getLogger(ConsumeFormInstance.class);
 
 
 	/* (non-Javadoc)
@@ -65,7 +65,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 		consume(sessionId,formInstance,patient,
 				parameters,null,locationTagId);
 		StateManager.endState(patientState);
-		System.out.println("Consume: Total time to consume "+form.getName()+": "+(System.currentTimeMillis()-totalTime));
+		log.info("Consume: Total time to consume {}: {}",form.getName(), System.currentTimeMillis()-totalTime);
 		BaseStateActionHandler.changeState(patient, sessionId, currState,
 				stateAction,parameters,locationTagId,locationId);
 
@@ -85,7 +85,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 		String exportFilename = null;
 		
 		if (parameters != null) {
-			exportFilename = (String) parameters.get("filename");
+			exportFilename = (String) parameters.get(ChirdlUtilConstants.PARAMETER_FILE_NAME);
 		}
 		try {
 			InputStream input = new FileInputStream(exportFilename);
@@ -93,9 +93,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 			input.close();
 		}
 		catch (Exception e) {
-			log.error("Error consuming chica file: " + exportFilename);
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Error consuming chica file: {} ", exportFilename, e);
 		}
 		
 		// remove the parsed xml from the xml datasource
@@ -113,8 +111,7 @@ public class ConsumeFormInstance implements ProcessStateAction
 			}
 		}
 		catch (Exception e) {
-			log.error(e.getMessage());
-			log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception removing parsed xml from datasource.", e);
 		}
 	}
 }

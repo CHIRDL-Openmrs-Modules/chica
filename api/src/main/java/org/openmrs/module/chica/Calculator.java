@@ -7,11 +7,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Tammy Dugan
@@ -46,9 +46,9 @@ public class Calculator
     
     public static final String PERCENTILE_RIGHT = "right";
     
+    private static final Logger log = LoggerFactory.getLogger(Calculator.class);
+
     public static final String MD_BMI_TWO_BELOW_SD = "mdbmi2belowsd";
-    
-    private static Log log = LogFactory.getLog(Calculator.class);
   	
 	/**
 	 * 
@@ -554,7 +554,7 @@ public class Calculator
         }
         
         Double meanAge = Util.getFractionalAgeInUnits(birthdate, currDate, Util.YEAR_ABBR);
-        log.debug("Mean Age in Years - "+ meanAge);
+        log.debug("Mean Age in Years - {}", meanAge);
         
         Double p10;
         Double p25;
@@ -664,8 +664,8 @@ public class Calculator
         }
         
         double percentile = 0;
-        log.debug("10th_for_age - "+p10+"\n25th_for_age - "+p25+"\n50th_for_age - "
-                            +p50+"\n75th_for_age - "+p75+"\n90th_for_age - "+p90);
+        log.debug("10th_for_age - {}\n25th_for_age - {}\n50th_for_age - {}\n75th_for_age - {}\n90th_for_age - {}", 
+                                    p10, p25, p50, p75, p90);
 
         if (measurement < p10) {
             percentile = 1;

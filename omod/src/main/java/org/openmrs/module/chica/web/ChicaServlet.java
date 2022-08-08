@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.atd.util.AtdConstants;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.util.PatientRow;
@@ -23,6 +21,8 @@ import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.cache.ApplicationCacheManager;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet giving access to CHICA information.
@@ -39,7 +39,7 @@ public class ChicaServlet extends HttpServlet {
 	
 	private static final String WILL_KEEP_ALIVE = "OK";
 	
-	private static final Log LOG = LogFactory.getLog(ChicaServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(ChicaServlet.class);
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -63,7 +63,7 @@ public class ChicaServlet extends HttpServlet {
     			ServletUtil.getForcePrintFormHeader(request, response);
     		}
 	    }catch(IOException e){
-	        LOG.error("IOException in ChicaServlet.", e);
+	        log.error("IOException in ChicaServlet.", e);
 	    }
 	}
 	
@@ -119,7 +119,7 @@ public class ChicaServlet extends HttpServlet {
 		        transformFormXMLToHTML(request, response);
 		    }
 		}catch(IOException ioe){
-		    LOG.error("IOException in ChicaServlet.", ioe);
+		    log.error("IOException in ChicaServlet.", ioe);
 		}
 	}
 	
@@ -131,7 +131,7 @@ public class ChicaServlet extends HttpServlet {
 		try{
 		    doGet(request, response);
 		}catch(ServletException e){
-            LOG.error("ServletException in ChicaServlet", e);
+            log.error("ServletException in ChicaServlet", e);
         }
 	}
 	
@@ -202,7 +202,7 @@ public class ChicaServlet extends HttpServlet {
     	String cacheName = request.getParameter(ServletUtil.PARAM_CACHE_NAME);
     	if (cacheName == null || cacheName.isEmpty()) {
     		String message = "Please specify a " + ServletUtil.PARAM_CACHE_NAME + " parameter";
-    		LOG.error(message);
+    		log.error(message);
     		pw.write(message);
     		return;
     	}
@@ -210,7 +210,7 @@ public class ChicaServlet extends HttpServlet {
     	String cacheKeyType = request.getParameter(ServletUtil.PARAM_CACHE_KEY_TYPE);
     	if (cacheKeyType == null || cacheKeyType.isEmpty()) {
     		String message = "Please specify a " + ServletUtil.PARAM_CACHE_KEY_TYPE + " parameter";
-    		LOG.error(message);
+    		log.error(message);
     		pw.write(message);
     		return;
     	}
@@ -218,7 +218,7 @@ public class ChicaServlet extends HttpServlet {
     	String cacheValueType = request.getParameter(ServletUtil.PARAM_CACHE_VALUE_TYPE);
     	if (cacheValueType == null || cacheValueType.isEmpty()) {
     		String message = "Please specify a " + ServletUtil.PARAM_CACHE_VALUE_TYPE + " parameter";
-    		LOG.error(message);
+    		log.error(message);
     		pw.write(message);
     		return;
     	}
@@ -231,7 +231,7 @@ public class ChicaServlet extends HttpServlet {
     	catch (LinkageError | ClassNotFoundException e) {
     		String message = "Error creating class from reflection using parameter " + 
     				ServletUtil.PARAM_CACHE_KEY_TYPE + " " + keyType + " for cache " + cacheName;
-    		LOG.error(message, e);
+    		log.error(message, e);
     		pw.write(message);
     		return;
     	}
@@ -242,7 +242,7 @@ public class ChicaServlet extends HttpServlet {
     	catch (LinkageError | ClassNotFoundException e) {
     		String message = "Error creating class from reflection using parameter " + 
     				ServletUtil.PARAM_CACHE_VALUE_TYPE + " " + valueType + " for cache " + cacheName;
-    		LOG.error(message, e);
+    		log.error(message, e);
     		pw.write(message);
     		return;
     	}
@@ -253,7 +253,7 @@ public class ChicaServlet extends HttpServlet {
     	}
     	catch (Exception e) {
     		String message = "Error clearing cache " + cacheName;
-    		LOG.error(message, e);
+    		log.error(message, e);
     		pw.write(message);
     		return;
     	}
@@ -283,14 +283,14 @@ public class ChicaServlet extends HttpServlet {
 			} catch (Exception e) {
 				String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + 
 						" cache.  Cannot successfully parse the form instance provided.";
-	    		LOG.error(message, e);
+	    		log.error(message, e);
 	    		pw.write(message);
 			}
 		} else {
 			String messagePart1 = "Error clearing form instance from the " + AtdConstants.CACHE_FORM_DRAFT + 
 					" cache: form instance tag parameter not found.";
 			String messagePart2 = "Please contact support.";
-			ServletUtil.writeHtmlErrorMessage(pw, null, LOG, messagePart1, messagePart2);
+			ServletUtil.writeHtmlErrorMessage(pw, null, log, messagePart1, messagePart2);
     		return;
 		}
 		
@@ -304,12 +304,12 @@ public class ChicaServlet extends HttpServlet {
 				pw.write(String.valueOf(existed));
 			} else {
 				String message = "The " + AtdConstants.CACHE_FORM_DRAFT + " cache cannot be located.";
-				LOG.error(message);
+				log.error(message);
 	    		pw.write(message);
 			}
 		} catch (Exception e) {
 			String message = "Error clearing form instance " + formInstance + " from the " + AtdConstants.CACHE_FORM_DRAFT + " cache.";
-    		LOG.error(message, e);
+    		log.error(message, e);
     		pw.write(message);
 		}
 	}
@@ -333,7 +333,7 @@ public class ChicaServlet extends HttpServlet {
 				IOUtil.createFormNotAvailablePDF(response.getOutputStream(), null);
 			}
 			catch (Exception e) {
-				LOG.error("Error creating Form Not Available PDF", e);
+				log.error("Error creating Form Not Available PDF", e);
 			}
 			
 			return;
@@ -343,12 +343,12 @@ public class ChicaServlet extends HttpServlet {
 			IOUtil.convertTifToPDF(tiffFileLocation, response.getOutputStream());
 		}
 		catch (Exception e) {
-			LOG.error("Error converting tiff to PDF: " + tiffFileLocation, e);
+			log.error("Error converting tiff to PDF: " + tiffFileLocation, e);
 			try {
 				IOUtil.createFormNotAvailablePDF(response.getOutputStream(), tiffFileLocation);
 			}
 			catch (Exception e1) {
-				LOG.error("Error creating Form Not Available PDF", e1);
+				log.error("Error creating Form Not Available PDF", e1);
 			}
 		}
 	}
@@ -376,7 +376,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			formId = Integer.valueOf(formIdStr);
 		} catch (NumberFormatException e) {
-			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_ID + " is invalid: " + formIdStr, e);
+			log.error("Parameter {} is invalid: {}",ChirdlUtilConstants.PARAMETER_FORM_ID,formIdStr,e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -385,7 +385,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			locationTagId = Integer.valueOf(locationTagIdStr);
 		} catch (NumberFormatException e) {
-			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID + " is invalid: " + locationTagIdStr, e);
+			log.error("Parameter {} is invalid: {}",ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID,locationTagIdStr,  e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -394,7 +394,7 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			locationId = Integer.valueOf(locationIdStr);
 		} catch (NumberFormatException e) {
-			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_LOCATION_ID + " is invalid: " + locationIdStr, e);
+			log.error("Parameter {} is invalid: {}",ChirdlUtilConstants.PARAMETER_LOCATION_ID,locationIdStr, e);
 			pw.write(errorHtml);
 			return;
 		}
@@ -403,14 +403,14 @@ public class ChicaServlet extends HttpServlet {
 		try {
 			formInstanceId = Integer.valueOf(formInstanceIdStr);
 		} catch (NumberFormatException e) {
-			LOG.error("Parameter " + ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID + " is invalid: " + formInstanceIdStr, e);
+			log.error("Parameter{} is invalid: {}", ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID,formInstanceIdStr,e);
 			pw.write(errorHtml);
 			return;
 		}
 		
 		stylesheet = request.getParameter(ServletUtil.STYLESHEET);
 		if (StringUtils.isBlank(stylesheet)) {
-			LOG.error("Parameter " + ServletUtil.STYLESHEET + " is invalid: " + stylesheet);
+			log.error("Parameter {} is invalid: {}", ServletUtil.STYLESHEET,stylesheet);
 			pw.write(errorHtml);
 			return;
 		}
@@ -418,7 +418,7 @@ public class ChicaServlet extends HttpServlet {
 		String formDirectory = request.getParameter(ServletUtil.FORM_DIRECTORY);
 		if(StringUtils.isBlank(formDirectory))
 		{
-			LOG.error("Parameter " + ServletUtil.FORM_DIRECTORY + " is invalid: " + ServletUtil.FORM_DIRECTORY);
+			log.error("Parameter {} is invalid: {}",ServletUtil.FORM_DIRECTORY,ServletUtil.FORM_DIRECTORY);
 			pw.write(errorHtml);
 			return;
 		}
@@ -426,8 +426,8 @@ public class ChicaServlet extends HttpServlet {
 		String output = org.openmrs.module.chica.util.Util.displayStylesheet(formId, locationTagId, locationId, formInstanceId, 
 			stylesheet, formDirectory); // CHICA-1125 Changed to use the directory specified in the config file
 		if (StringUtils.isBlank(output)) {
-			LOG.info("Transformation is empty for form ID: " + formIdStr + " location tag ID: " + locationTagIdStr + 
-				" location ID: " + locationIdStr + " form instance ID: " + formInstanceIdStr + " stylesheet: " + stylesheet);
+			log.info("Transformation is empty for form ID: {} location tag ID: {} location ID: {} form instance ID: {} stylesheet: {}",
+				formIdStr,locationTagIdStr,locationIdStr,formInstanceIdStr,stylesheet);
 			pw.write(errorHtml);
 			return;
 		}
