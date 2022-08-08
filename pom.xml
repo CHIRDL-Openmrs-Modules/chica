@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chica</artifactId>
-	<version>1.86.0-SNAPSHOT</version>
+	<version>1.86.0</version>
 	<packaging>pom</packaging>
 	<name>Chica</name>
 	<description>Parent project for Chica</description>
@@ -33,31 +33,31 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>chirdlutilbackports-api</artifactId>
-				<version>2.13.0-SNAPSHOT</version>
+				<version>2.13.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>chirdlutil-api</artifactId>
-				<version>1.21.0-SNAPSHOT</version>
+				<version>1.21.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>sockethl7listener-api</artifactId>
-				<version>1.14.0-SNAPSHOT</version>
+				<version>1.14.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>dss-api</artifactId>
-				<version>3.2.0-SNAPSHOT</version>
+				<version>3.2.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>atd-api</artifactId>
-				<version>2.17.0-SNAPSHOT</version>
+				<version>2.17.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -127,7 +127,7 @@
 			<dependency>
 				<groupId>com.itextpdf</groupId>
 				<artifactId>itextpdf</artifactId>
-				<version>5.5.12</version>
+				<version>5.5.13.3</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
