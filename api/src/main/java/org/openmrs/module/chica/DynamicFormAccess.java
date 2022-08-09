@@ -174,7 +174,7 @@ public class DynamicFormAccess {
 				// check to see if the current field has already been populated
 				PatientATD patientATD = fieldIdToPatientATDMap.get(currField.getFieldId());
 				if (patientATD != null) {
-					if (++populatedElements == maxDssElements) {
+					if (populatedElements++ == maxDssElements) {
 						break;
 					}
 					
