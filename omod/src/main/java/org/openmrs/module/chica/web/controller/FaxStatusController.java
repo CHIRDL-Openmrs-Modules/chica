@@ -9,8 +9,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
