@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Encounter;
@@ -41,6 +39,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.logic.LogicService;
 import org.openmrs.logic.result.Result;
 import org.openmrs.module.atd.FormWriter;
@@ -53,7 +52,6 @@ import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
-import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.Util;
@@ -66,6 +64,8 @@ import org.openmrs.module.dss.DssManager;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class used to access the specific portions of form on the fly.
@@ -74,12 +74,13 @@ import org.openmrs.module.dss.service.DssService;
  */
 public class DynamicFormAccess {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(DynamicFormAccess.class);
 	
 	/**
 	 * Default Constructor
 	 */
 	public DynamicFormAccess() {
+		 // This constructor is intentionally left empty.
 	}
 	
 	/**
@@ -93,7 +94,7 @@ public class DynamicFormAccess {
 	 */
 	public List<Field> getPrioritizedElements(Integer formId, Integer formInstanceId, Integer encounterId,
 	                                          Integer maxElements) {
-		List<Field> fields = new ArrayList<Field>(maxElements);
+		List<Field> fields = new ArrayList<>(maxElements);
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter encounter = encounterService.getEncounter(encounterId);
 		Integer locationId = encounter.getLocation().getLocationId();
@@ -110,43 +111,43 @@ public class DynamicFormAccess {
 		        .getProducePatientStateByFormInstanceAction(formInstance);
 		Integer locationTagId = patientState.getLocationTagId();
 		
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("sessionId", patientState.getSessionId());
-		parameters.put("formInstance", new FormInstance(locationId, formId, formInstanceId));
-		parameters.put("locationTagId", locationTagId);
-		parameters.put("locationId", locationId);
-		parameters.put("location", location.getName());
-		parameters.put("encounterId", encounterId);
-		parameters.put("mode", "PRODUCE");
+		HashMap<String, Object> parameters = new HashMap<>();
+		parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, patientState.getSessionId());
+		parameters.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, new FormInstance(locationId, formId, formInstanceId));
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, locationTagId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION, location.getName());
+		parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
 		
 		Patient patient = patientState.getPatient();
 		DssManager dssManager = new DssManager(patient);
 		
-		FieldType mergeType = getFieldType("Merge Field");
-		FieldType priorMergeType = getFieldType("Prioritized Merge Field");
-		LinkedHashMap<FormField, Object> fieldToResult = new LinkedHashMap<FormField, Object>();
-		Map<String, Integer> dssMergeCounters = new HashMap<String, Integer>();
-		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		FieldType mergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_MERGE_FIELD);
+		FieldType priorMergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_PRIORITIZED_MERGE_FIELD);
+		LinkedHashMap<FormField, Object> fieldToResult = new LinkedHashMap<>();
+		Map<String, Integer> dssMergeCounters = new HashMap<>();
+		List<FieldType> fieldTypes = new ArrayList<>();
 		fieldTypes.add(mergeType);
 		fieldTypes.add(priorMergeType);
 		List<FormField> formFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, fieldTypes, 
 			true);
-		List<Integer> fieldIds = new ArrayList<Integer>();
+		List<Integer> fieldIds = new ArrayList<>();
 		for (FormField formField : formFields) {
 			fieldIds.add(formField.getField().getFieldId());
 		}
 		
 		Map<Integer, PatientATD> fieldIdToPatientATDMap = org.openmrs.module.atd.util.Util.getPatientATDs(
 			formInstance, fieldIds);
-		List<DssElement> elementList = new ArrayList<DssElement>();
+		List<DssElement> elementList = new ArrayList<>();
 		ATDService atdService = Context.getService(ATDService.class);
 		Integer startPriority = getStartPriority(atdService, formInstanceId, locationId, formName);
-		Map<Integer, PatientATD> waitForScanFieldIdToAtdMap = new HashMap<Integer, PatientATD>();
+		Map<Integer, PatientATD> waitForScanFieldIdToAtdMap = new HashMap<>();
 		
 		String numPrompts = org.openmrs.module.chirdlutilbackports.util.Util.getFormAttributeValue(formId,
-		    "numPrompts", locationTagId, locationId);
+				ChirdlUtilConstants.FORM_ATTRIBUTE_NUMBER_OF_PROMPTS, locationTagId, locationId);
 		if (numPrompts == null) {
-			log.error("Missing form attribute 'numPrompts' for form: " + formId);
+			log.error("Missing form attribute 'numPrompts' for form: {} ", formId);
 			return fields;
 		}
 		
@@ -168,20 +169,19 @@ public class DynamicFormAccess {
 			HashMap<String, Object> ruleParameters = new HashMap<String, Object>(parameters);
 			
 			//fix lazy initialization error
-			//currField = formService.getField(currField.getFieldId());
 			
 			if (currFieldType.equals(priorMergeType)) {
 				// check to see if the current field has already been populated
 				PatientATD patientATD = fieldIdToPatientATDMap.get(currField.getFieldId());
 				if (patientATD != null) {
-					if (++populatedElements == maxDssElements) {
+					if (populatedElements++ == maxDssElements) {
 						break;
 					}
 					
 					// check to see if it's been answered yet
 					List<Statistics> stats = atdService.getStatByIdAndRule(formInstanceId, patientATD.getRule().getRuleId(),
 					    formName, locationId);
-					if (stats != null && stats.size() > 0) {
+					if (stats != null && !stats.isEmpty()) {
 						Statistics stat = stats.get(0);
 						if (stat.getScannedTimestamp() != null) {
 							// add null as a place keeper so we can keep the position for the atd statistics.
@@ -198,13 +198,14 @@ public class DynamicFormAccess {
 				if (concept != null) {
 					try {
 						String elementString = ((ConceptName) concept.getNames().toArray()[0]).getName();
-						ruleParameters.put("concept", elementString);
+						ruleParameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, elementString);
 					}
 					catch (Exception e) {
-						ruleParameters.put("concept", null);
+						ruleParameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, null);
+						log.error("Error getting concept name for form field: {} ",  currField.getFieldId(), e);
 					}
 				} else {
-					ruleParameters.put("concept", null);
+					ruleParameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, null);
 				}
 				//---------end set concept rule parameter
 				
@@ -224,12 +225,9 @@ public class DynamicFormAccess {
 				
 				dssManager.getPrioritizedDssElements(ruleType, startPriority, maxElements, ruleParameters);
 				//get the result for this field
-				Result result = processDssElements(dssManager, dssMergeCounter, currField.getFieldId(), ruleType);
-				//				if (result != null) {
-				
+				Result result = processDssElements(dssManager, dssMergeCounter, currField.getFieldId(), ruleType);	
 				elementList.add(dssManager.getDssElement(dssMergeCounter, ruleType));
-				//				}
-				
+			
 				dssMergeCounter++;
 				dssMergeCounters.put(ruleType, dssMergeCounter);
 				
@@ -249,7 +247,6 @@ public class DynamicFormAccess {
 			String resultString = null;
 			
 			//fix lazy initialization error
-			//org.openmrs.Field currField = formService.getField(currFormField.getField().getFieldId());
 			org.openmrs.Field currField = currFormField.getField();
 			String fieldName = currField.getName();
 			Object fieldResult = fieldToResult.get(currFormField);
@@ -273,9 +270,7 @@ public class DynamicFormAccess {
 						
 						if (parentResult != null) {
 							resultString = parentResult.get(leafPos).toString();
-						} else {
-							resultString = null;
-						}
+						} 
 					}
 					catch (NumberFormatException e) {}
 				}
@@ -306,7 +301,7 @@ public class DynamicFormAccess {
 		
 		saveDssElementsToDatabase(patient, formInstance, elementList, encounter, locationTagId, formName,
 		    waitForScanFieldIdToAtdMap);
-		serializeFields(formInstance, locationTagId, fields, new ArrayList<String>()); // DWE CHICA-430 Add new ArrayList<String>()
+		serializeFields(formInstance, locationTagId, fields, new ArrayList<>()); // DWE CHICA-430 Add new ArrayList<String>()
 		
 		return fields;
 	}
@@ -320,7 +315,7 @@ public class DynamicFormAccess {
 	 * @return List of Field object containing field information as well the results of populating the fields.
 	 */
 	public List<Field> getMergeElements(Integer formId, Integer formInstanceId, Integer encounterId) {
-		List<Field> fields = new ArrayList<Field>();
+		List<Field> fields = new ArrayList<>();
 		EncounterService encounterService = Context.getEncounterService();
 		Encounter encounter = encounterService.getEncounter(encounterId);
 		Integer locationId = encounter.getLocation().getLocationId();
@@ -336,35 +331,46 @@ public class DynamicFormAccess {
 		        .getProducePatientStateByFormInstanceAction(formInstance);
 		Integer locationTagId = patientState.getLocationTagId();
 		
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("sessionId", patientState.getSessionId());
-		parameters.put("formInstance", new FormInstance(locationId, formId, formInstanceId));
-		parameters.put("locationTagId", locationTagId);
-		parameters.put("locationId", locationId);
-		parameters.put("location", location.getName());
-		parameters.put("encounterId", encounterId);
-		parameters.put("mode", "PRODUCE");
+		HashMap<String, Object> parameters = new HashMap<>();
+		parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, patientState.getSessionId());
+		parameters.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, new FormInstance(locationId, formId, formInstanceId));
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, locationTagId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION, location.getName());
+		parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+		parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
 		
 		Patient patient = patientState.getPatient();
 		ATDService atdService = Context.getService(ATDService.class);
-		FieldType mergeType = getFieldType("Merge Field");
-		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		FieldType mergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_MERGE_FIELD);
+		List<FieldType> fieldTypes = new ArrayList<>();
 		fieldTypes.add(mergeType);
-		LinkedHashMap<FormField, Object> fieldToResult = new LinkedHashMap<FormField, Object>();
+		LinkedHashMap<FormField, Object> fieldToResult = new LinkedHashMap<>();
 		List<FormField> formFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, fieldTypes, false);
 		for (FormField currFormField : formFields) {
 			org.openmrs.Field currField = currFormField.getField();
 			
 			//fix lazy initialization error
-			//currField = formService.getField(currField.getFieldId());
 			
 			String defaultValue = currField.getDefaultValue();
 			if (defaultValue == null) {
 				continue;
 			}
 			
-			parameters.put("formFieldId", currFormField.getFormFieldId()); // DWE CHICA-437
-			
+			parameters.put(ChirdlUtilConstants.PARAMETER_FORM_FIELD_ID, currFormField.getFormFieldId()); // DWE CHICA-437
+			Concept currConcept = currField.getConcept();
+            if (currConcept != null) {
+                try {
+                    String elementString = ((ConceptName) currConcept.getNames().toArray()[0]).getName();
+                    parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, elementString);
+                }
+                catch (Exception e) {
+                    parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, null);
+                    log.error("Error getting concept name for form field: {} ", currField.getFieldId(), e);
+                }
+            } else {
+                parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, null);
+            }
 			//store the leaf index as the result if the
 			//current field has a parent
 			if (currFormField.getParent() == null) {
@@ -374,12 +380,12 @@ public class DynamicFormAccess {
 		}
 		
 		//process Results
-		LinkedHashMap<String, String> fieldNameResult = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> fieldNameResult = new LinkedHashMap<>();
 		for (FormField currFormField : fieldToResult.keySet()) {
 			String resultString = null;
 			
 			//fix lazy initialization error
-			//org.openmrs.Field currField = formService.getField(currFormField.getField().getFieldId());
+
 			org.openmrs.Field currField = currFormField.getField();
 			String fieldName = currField.getName();
 			Object fieldResult = fieldToResult.get(currFormField);
@@ -434,7 +440,7 @@ public class DynamicFormAccess {
 			}
 		}
 		
-		serializeFields(formInstance, locationTagId, fields, new ArrayList<String>()); // DWE CHICA-430 Add new ArrayList<String>()
+		serializeFields(formInstance, locationTagId, fields, new ArrayList<>()); // DWE CHICA-430 Add new ArrayList<String>()
 		return fields;
 	}
 	
@@ -451,16 +457,16 @@ public class DynamicFormAccess {
 	public void saveExportElements(FormInstance formInstance, Integer locationTagId, Integer encounterId,
 	                                    Patient patient, Map<String, String[]> formFieldMap,
 	                                    ParameterHandler parameterHandler) {
-		HashMap<String, Field> fieldMap = new HashMap<String, Field>();
+		HashMap<String, Field> fieldMap = new HashMap<>();
 		FormService formService = Context.getFormService();
 		Form form = formService.getForm(formInstance.getFormId());
-		LinkedHashMap<FormField, String> formFieldToValue = new LinkedHashMap<FormField, String>();
-		FieldType exportType = getFieldType("Export Field");
-		List<FieldType> fieldTypes = new ArrayList<FieldType>();
+		LinkedHashMap<FormField, String> formFieldToValue = new LinkedHashMap<>();
+		FieldType exportType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
+		List<FieldType> fieldTypes = new ArrayList<>();
 		fieldTypes.add(exportType);
 		List<FormField> formFields = Context.getService(ChirdlUtilBackportsService.class).getFormFields(form, fieldTypes, 
 			false);
-		List<Integer> fieldIds = new ArrayList<Integer>();
+		List<Integer> fieldIds = new ArrayList<>();
 		for (FormField formField : formFields) {
 			fieldIds.add(formField.getField().getFieldId());
 		}
@@ -512,23 +518,19 @@ public class DynamicFormAccess {
 	                     HashMap<String, Field> fieldMap, LinkedHashMap<FormField, String> formFieldToValue, 
 	                     ParameterHandler parameterHandler, Form form) {
 		ATDService atdService = Context.getService(ATDService.class);
-		Integer locationId = formInstance.getLocationId();
 		PatientState patientState = org.openmrs.module.atd.util.Util
 		        .getProducePatientStateByFormInstanceAction(formInstance);
-		Integer sessionId = patientState.getSessionId();
-		FieldType prioritizedMergeType = getFieldType("Prioritized Merge Field");
+		FieldType prioritizedMergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_PRIORITIZED_MERGE_FIELD);
 		
-		String mode = "CONSUME";
-		LinkedHashMap<String, LinkedHashMap<String, Rule>> rulesToRunByField = new LinkedHashMap<String, LinkedHashMap<String, Rule>>();
+		String mode = ChirdlUtilConstants.PARAMETER_VALUE_CONSUME;
+		LinkedHashMap<String, LinkedHashMap<String, Rule>> rulesToRunByField = new LinkedHashMap<>();
 		LogicService logicService = Context.getLogicService();
-		FormDatasource formDatasource = (FormDatasource) logicService.getLogicDataSource("form");
+		FormDatasource formDatasource = (FormDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.PARAMETER_FORM);
 		try {
 			formInstance = formDatasource.setFormFields(fieldMap, formInstance, locationTagId);
 		}
 		catch (Exception e) {
-			this.log.error("Error setting form fields to be consumed");
-			this.log.error(e.getMessage());
-			this.log.error(Util.getStackTrace(e));
+			log.error("Error setting form fields to be consumed for form = {}", form.getFormId(), e);
 			return;
 		}
 		
@@ -538,22 +540,22 @@ public class DynamicFormAccess {
 		}
 		
 		Encounter encounter = Context.getEncounterService().getEncounter(encounterId);
-		locationId = encounter.getLocation().getLocationId();
+		Integer locationId = encounter.getLocation().getLocationId();
 		Location location = Context.getLocationService().getLocation(locationId);
 		String locationName = null;
 		if (location != null) {
 			locationName = location.getName();
 		}
 		
-		List<Field> fieldsToAdd = new ArrayList<Field>();
-		Map<Integer, PatientATD> fieldIdToPatientAtdMap = new HashMap<Integer, PatientATD>();
+		List<Field> fieldsToAdd = new ArrayList<>();
+		Map<Integer, PatientATD> fieldIdToPatientAtdMap = new HashMap<>();
 		for (FormField currField : formFieldToValue.keySet()) {
 			org.openmrs.Field field = currField.getField();
 			String fieldName = field.getName();
 			Concept currConcept = field.getConcept();
 			String ruleName = field.getDefaultValue();
 			LinkedHashMap<String, Rule> rulesToRun = null;
-			Map<String, Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<>();
 			
 			FormField parentField = currField.getParent();
 			
@@ -593,7 +595,7 @@ public class DynamicFormAccess {
 			if (ruleName != null) {
 				rulesToRun = rulesToRunByField.get(lookupFieldName);
 				if (rulesToRun == null) {
-					rulesToRun = new LinkedHashMap<String, Rule>();
+					rulesToRun = new LinkedHashMap<>();
 					rulesToRunByField.put(lookupFieldName, rulesToRun);
 				}
 				
@@ -613,31 +615,32 @@ public class DynamicFormAccess {
 			}
 			
 			//------------start set rule parameters
-			parameters.put("sessionId", sessionId);
-			parameters.put("formInstance", formInstance);
-			parameters.put("locationTagId", locationTagId);
-			parameters.put("locationId", locationId);
-			parameters.put("location", locationName);
-			parameters.put("mode", mode);
-			parameters.put("encounterId", encounterId);
+			parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, patientState.getSessionId());
+			parameters.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstance);
+			parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, locationTagId);
+			parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
+			parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION, location.getName());
+			parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
+			parameters.put(ChirdlUtilConstants.PARAMETER_MODE, mode);
+
 			if (rule != null) {
-				parameters.put("ruleId", rule.getRuleId());
+				parameters.put(ChirdlUtilConstants.PARAMETER_RULE_ID, rule.getRuleId());
 			}
 			
 			if (currConcept != null) {
 				try {
 					String elementString = ((ConceptName) currConcept.getNames().toArray()[0]).getName();
-					parameters.put("concept", elementString);
+					parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, elementString);
 				}
 				catch (Exception e) {
-					parameters.put("concept", null);
+					parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, null);
 				}
 			} else {
-				parameters.put("concept", null);
+				parameters.put(ChirdlUtilConstants.PARAMETER_CONCEPT, null);
 			}
 			
 			if (fieldName != null) {
-				parameters.put("fieldName", lookupFieldName);
+				parameters.put(ChirdlUtilConstants.PARAMETER_FIELD_NAME, lookupFieldName);
 				String value = formFieldToValue.get(currField);
 				parameters.put(lookupFieldName, value);
 				Field saveField = new Field();
@@ -649,17 +652,17 @@ public class DynamicFormAccess {
 			// DWE CHICA-437 
 			if(formFieldId != null)
 			{
-				parameters.put("formFieldId", formFieldId);
+				parameters.put(ChirdlUtilConstants.PARAMETER_FORM_FIELD_ID, formFieldId);
 			}
 						
 			//----------end set rule parameters
 		}
 		
-		HashMap<String, Integer> childIndex = new HashMap<String, Integer>();
+		HashMap<String, Integer> childIndex = new HashMap<>();
 		
 		for (FormField currField : formFieldToValue.keySet()) {
 			LinkedHashMap<String, Rule> rulesToRun = null;
-			Map<String, Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<>();
 			FormField parentField = currField.getParent();
 			
 			//look for parentField
@@ -689,7 +692,7 @@ public class DynamicFormAccess {
 				if (parentRuleName != null) {
 					rulesToRun = rulesToRunByField.get(parentFieldName);
 					if (rulesToRun == null) {
-						rulesToRun = new LinkedHashMap<String, Rule>();
+						rulesToRun = new LinkedHashMap<>();
 						rulesToRunByField.put(parentFieldName, rulesToRun);
 					}
 					
@@ -981,8 +984,7 @@ public class DynamicFormAccess {
 	 */
 	private void serializeFields(FormInstance formInstance, Integer locationTagId, List<Field> fields, List<String> elementsToRemoveList) {
 		ChirdlRunnable runnable = new FormWriter(formInstance, locationTagId, fields, elementsToRemoveList); // DWE CHICA-430 Add elementsToRemoveList;
-		ThreadManager manager = ThreadManager.getInstance();
-		manager.execute(runnable, formInstance.getLocationId());
+		Daemon.runInDaemonThread(runnable, org.openmrs.module.chica.util.Util.getDaemonToken());
 	}
 	
 	/**
@@ -1009,12 +1011,11 @@ public class DynamicFormAccess {
 			{
 				List<String> elementsToRemoveList = new ArrayList<String>();
 				ATDService atdService = Context.getService(ATDService.class);
-				//ObsService obsService = Context.getObsService();
-				List<org.openmrs.Encounter> encounters = new ArrayList<org.openmrs.Encounter>();
+				List<org.openmrs.Encounter> encounters = new ArrayList<>();
 				encounters.add(encounter);
 				
 				FieldType mergeType = getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
-				List<FieldType> fieldTypes = new ArrayList<FieldType>();
+				List<FieldType> fieldTypes = new ArrayList<>();
 				fieldTypes.add(mergeType);
 				
 				// Get the list of export fields for this form
@@ -1047,7 +1048,7 @@ public class DynamicFormAccess {
 			catch(Exception e)
 			{
 				log.error("Unable to create list of xml elements to remove (formId = " + form.getId() + " formInstanceId = " + formInstanceId + ").", e);
-				return new ArrayList<String>();
+				return new ArrayList<>();
 			}	
 		}
 		else
@@ -1075,7 +1076,7 @@ public class DynamicFormAccess {
 			EncounterService encounterService = Context.getEncounterService();
 			Encounter encounter = encounterService.getEncounter(encounterId);
 			Integer locationId = encounter.getLocation().getId();
-			List<Field> fields = new ArrayList<Field>();
+			List<Field> fields = new ArrayList<>();
 			FormService formService = Context.getFormService();
 			Form form = formService.getForm(formId);
 
@@ -1092,18 +1093,16 @@ public class DynamicFormAccess {
 
 				if (scanDirectory == null) 
 				{
-					log.info("No " + XMLUtil.DEFAULT_EXPORT_DIRECTORY + " found for Form: " + formId + " Location ID: " + locationId + 
-							" Location Tag ID: " + locationTagId + ".");
-					return new ArrayList<Field>();
+					log.info("No {} found for Form: {} Location ID: {} Location Tag ID: {}." , XMLUtil.DEFAULT_EXPORT_DIRECTORY, formId, locationId, locationTagId);
+					return new ArrayList<>();
 				}
 
 				File file = new File(scanDirectory, formInstance.toString() + ChirdlUtilConstants.FILE_EXTENSION_20);
-				if (file.exists() && file.length() > 0) 
-				{
+				if (file.exists() && file.length() > 0) {
 					try
 					{
 						Records records = (Records) XMLUtil.deserializeXML(Records.class, new FileInputStream(file));
-						Map<String, Field> fieldMap = new HashMap<String, Field>();
+						Map<String, Field> fieldMap = new HashMap<>();
 						List<Field> currentFields = records.getRecord().getFields();
 
 						// Create a map with the current fields so the map can be used to lookup field values
@@ -1138,11 +1137,11 @@ public class DynamicFormAccess {
 							fields.add(field);
 						}	
 					}
-					catch(IOException ioe)
+					catch(IOException e)
 					{
-						log.error(ioe.getMessage() + "(length = " + file.length() + ")");
-						log.error(Util.getStackTrace(ioe));
-						return new ArrayList<Field>();
+						log.error("Exception getting the export fields from file: {} file length: {})", 
+								file.getName(), file.length(), e);
+						return new ArrayList<>();
 					}
 
 					return fields;
@@ -1157,11 +1156,11 @@ public class DynamicFormAccess {
 				return new ArrayList<Field>();
 			}
 		}
-		catch(APIException apie)
+		catch(APIException e)
 		{
-			log.error(apie.getMessage());
-			log.error(Util.getStackTrace(apie));
-			return new ArrayList<Field>();
+			log.error("Exception getting export elements for form id: {} form instance: {} encounter id: {}",
+					formId, formInstanceId, encounterId, e );
+			return new ArrayList<>();
 		}
 	}
 }

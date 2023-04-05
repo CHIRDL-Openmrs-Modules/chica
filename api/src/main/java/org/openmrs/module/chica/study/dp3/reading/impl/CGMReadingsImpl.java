@@ -23,7 +23,7 @@ public class CGMReadingsImpl implements Readings
 	 */
 	public CGMReadingsImpl()
 	{
-		
+		// This constructor is intentionally left empty.
 	}
 	
 	/**
@@ -32,16 +32,16 @@ public class CGMReadingsImpl implements Readings
 	 */
 	public List<Object> getCgmReadings()
 	{
-		return cgmReadings;
+		return this.cgmReadings;
 	}
 	
 	@Override
 	public List<GenericReading> getGenericReadingList() throws Exception{
-		if(genericReadingsList == null)
+		if(this.genericReadingsList == null)
 		{
-			genericReadingsList = new ArrayList<GenericReading>();
+			this.genericReadingsList = new ArrayList<>();
 			
-			for(Object obj : cgmReadings)
+			for(Object obj : this.cgmReadings)
 			{	
 				@SuppressWarnings({ "rawtypes", "unchecked" })
 				HashMap<String, Object> map = (HashMap)obj;
@@ -54,11 +54,11 @@ public class CGMReadingsImpl implements Readings
 				String units = map.get(GlookoConstants.PARAMETER_UNITS) == null ? null : (String) map.get(GlookoConstants.PARAMETER_UNITS);
 				String trendArrow = map.get(GlookoConstants.PARAMETER_TREND_ARROW) == null ? null : (String) map.get(GlookoConstants.PARAMETER_TREND_ARROW);
 
-				genericReadingsList.add(new GenericReading(timestamp, displayTime, syncTimestamp, guid, updatedAt, value, units, trendArrow));
+				this.genericReadingsList.add(new GenericReading(timestamp, displayTime, syncTimestamp, guid, updatedAt, value, units, trendArrow));
 			}
 		}
 		
-		return genericReadingsList;
+		return this.genericReadingsList;
 	}
 
 }

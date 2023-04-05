@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.pdfbox.debugger.ui.ImageUtil;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -63,7 +63,7 @@ import com.itextpdf.text.pdf.PdfStamper;
 
 public class getGrowthChartFilename implements Rule {
     
-    private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(getGrowthChartFilename.class);
     
     private static final String HEAD_CIRCUMFERENCE = "HC";
     

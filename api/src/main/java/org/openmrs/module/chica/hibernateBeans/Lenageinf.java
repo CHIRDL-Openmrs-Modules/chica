@@ -3,13 +3,17 @@ package org.openmrs.module.chica.hibernateBeans;
 import org.openmrs.module.chica.Percentile;
 
 /**
- * Holds information to store in the lenageinf table
+ * Holds information to store in the chica_lenageinf table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
 public class Lenageinf implements java.io.Serializable, Percentile
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer lenageinfId = null;
 	private Double s = null;
@@ -120,4 +124,5 @@ public class Lenageinf implements java.io.Serializable, Percentile
 	{
 		this.sex = sex;
 	}
+
 }

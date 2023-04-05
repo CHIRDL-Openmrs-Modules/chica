@@ -20,12 +20,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterRole;
@@ -39,11 +36,13 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutil.util.MailSender;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.notification.MessageException;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.tasks.AbstractTask;
 import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Steve McKee
@@ -52,7 +51,7 @@ import org.openmrs.util.OpenmrsConstants.PERSON_TYPE;
  */
 public class CareTransitionFollowUpTask extends AbstractTask {
 	
-    protected Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(CareTransitionFollowUpTask.class);
 	
 	protected static final String GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS = 
             "chica.careTransitionFollowUpEmailBackupRecipients";
@@ -87,10 +86,10 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		List<EmailInfo> emailInfoList = new ArrayList<>();
 		try {
 			String mailHost = 
-					Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_EMAIL_SMTP_HOST);
+					Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_MAIL_SMTP_HOST);
 			if (StringUtils.isBlank(mailHost)) {
 				log.error("SMTP mail host not specified in global property " + 
-				    ChirdlUtilConstants.GLOBAL_PROP_EMAIL_SMTP_HOST + ".  No Care Transition follow up emails will be sent.");
+				    ChirdlUtilConstants.GLOBAL_PROPERTY_MAIL_SMTP_HOST + ".  No Care Transition follow up emails will be sent.");
 				return;
 			}
 			
@@ -240,15 +239,15 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	    String timeSpanStr = getTaskDefinition().getProperty(PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN);
         Integer timeSpan = null;
         if (StringUtils.isBlank(timeSpanStr)) {
-            log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + "' does not exist.  " +
-                    "The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.");
+            log.error("The task property {} does not exist. The default value of {} months will be used.",  
+            		PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN,  DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN );
         }
         
         try {
             timeSpan = Integer.valueOf(timeSpanStr);
         } catch (NumberFormatException e) {
-            log.error("The task property '" + PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN + " contains an invalid value.  " +
-                    "The default value of " + DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN + " months will be used.", e);
+    		log.error("The task property {} contains an invalid value. The default value of {} months will be used.", 
+    				PROPERTY_CARE_TRANSITION_FOLLOW_UP_SPAN, DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN, e);
             timeSpan = DEFAULT_CARE_TRANSITION_FOLLOW_UP_TIME_SPAN;
         }
         
@@ -408,9 +407,6 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 	private void sendCareTransitionEmail(EmailInfo emailInfo, String mailHost, String fromEmailAddress, String emailSubject, 
 	        Concept transitionConcept) {
 		List<Encounter> encounters = emailInfo.getEncounters();
-		Properties mailProps = new Properties();
-		mailProps.put(ChirdlUtilConstants.EMAIL_SMTP_HOST_PROPERTY, mailHost);
-		MailSender mailSender = new MailSender(mailProps);
 		StringBuilder body = new StringBuilder("The following ");
 		body.append(encounters.size() == 1 ? "patient was" : "patients were");
 		body.append(" counseled for adult care transition six months ago.  ");
@@ -449,19 +445,20 @@ public class CareTransitionFollowUpTask extends AbstractTask {
 		body.append(ChirdlUtilConstants.GENERAL_INFO_CARRIAGE_RETURN_LINE_FEED);
 		body.append("CHICA Care Transition");
 		
-		boolean success = mailSender.sendMail(fromEmailAddress, emailInfo.getProviderEmails(), 
-		    emailSubject, body.toString());
 		Integer providerId = emailInfo.getProvider().getProviderId();
-		if (!success) {
-			log.error("An error occurred sending Care Transition followup email for provider ID " + providerId + ".");
+		String[] emailArray = emailInfo.getProviderEmails();
+		String emails = String.join(ChirdlUtilConstants.GENERAL_INFO_COMMA, emailArray);
+		
+		try {
+            Context.getMessageService().sendMessage(emails, fromEmailAddress, emailSubject, body.toString());
+    		log.info("Care Transition Follow Up Email sent for provider ID {} containing {} patient(s).", providerId, successfulSaves);
+        } catch (MessageException e) {
+        	log.error("An error occurred sending Care Transition followup email for provider ID {}.", providerId, e);
 			ObsService obsService = Context.getObsService();
 			for (Obs obs : savedObs) {
 				obsService.voidObs(obs, "Care Transition follow up email was unable to be sent.");
 			}
-		} else {
-			log.info("Care Transition Follow Up Email sent for provider ID " + providerId + " containing " + 
-					successfulSaves + " patient(s).");
-		}
+        }
 	}
 	
 	/**
@@ -489,14 +486,14 @@ public class CareTransitionFollowUpTask extends AbstractTask {
          * @return the provider
          */
         public Provider getProvider() {
-        	return provider;
+        	return this.provider;
         }
         
         /**
          * @return the encounters
          */
         public List<Encounter> getEncounters() {
-        	return encounters;
+        	return this.encounters;
         }
         
         /**
@@ -507,21 +504,20 @@ public class CareTransitionFollowUpTask extends AbstractTask {
          * @return Array of email addresses
          */
         public String[] getProviderEmails() {
-            Integer providerId = provider.getProviderId();
-            Person person = provider.getPerson();
+            Integer providerId = this.provider.getProviderId();
+            Person person = this.provider.getPerson();
             if (person != null) {
                 PersonAttribute emailAttribute = person.getAttribute(ChirdlUtilConstants.PERSON_ATTRIBUTE_EMAIL);
                 if (emailAttribute != null && StringUtils.isNotBlank(emailAttribute.getValue())) {
                     return emailAttribute.getValue().split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
                 }
                 
-                log.error("There is no email person attribute specified for provider ID " + providerId + ".  Email " +
-                    " will be sent to the personnel stored in the " + 
-                    GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS + " global property.");
+                log.error("There is no email person attribute specified for provider ID {}. Email will be sent to personnel stored in {} global property.",
+                		providerId, GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS);
                 return getDefaultEmails();
             }
             
-            log.error("No person object found for provider ID " + providerId);
+            log.error("No person object found for provider ID {}.",  providerId);
             return getDefaultEmails();
         }
         
@@ -537,8 +533,7 @@ public class CareTransitionFollowUpTask extends AbstractTask {
             if (StringUtils.isNotBlank(defaultEmails)) {
                 emails = defaultEmails.split(ChirdlUtilConstants.GENERAL_INFO_COMMA); 
             } else {
-                log.error("No value specified for global property: " + 
-                    GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS);
+                log.error("No value specified for global property: {} ", GLOBAL_PROPERTY_CARE_TRANSITION_FOLLOWUP_EMAIL_BACKUP_RECIPIENTS);
             }
             
             return emails;

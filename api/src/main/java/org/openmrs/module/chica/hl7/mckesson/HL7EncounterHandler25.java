@@ -7,9 +7,9 @@ import java.util.Date;
 
 import org.openmrs.PersonName;
 import org.openmrs.module.chica.hl7.ZPV;
-import org.openmrs.module.chirdlutil.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.datatype.FN;
 import ca.uhn.hl7v2.model.v25.datatype.ST;
@@ -31,6 +31,7 @@ public class HL7EncounterHandler25 extends
 	org.openmrs.module.sockethl7listener.HL7EncounterHandler25
 {
 	//-----Set additional chica only encounter attributes
+	private static final Logger log = LoggerFactory.getLogger(HL7EncounterHandler25.class);
 	
 	public Date getAppointmentTime(Message message)
 	{
@@ -110,8 +111,7 @@ public class HL7EncounterHandler25 extends
 			doctor = pv1.getAttendingDoctor(0);
 		} catch (Exception e)
 		{
-			logger.warn("Unable to parse doctor name from PV1. Message: "
-					+ e.getMessage());
+			log.warn("Unable to parse doctor name from PV1.", e);
 		}
 		if (doctor != null)
 		{
@@ -174,8 +174,7 @@ public class HL7EncounterHandler25 extends
 			}
 		} catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			logger.error(Util.getStackTrace(e));
+			log.error("Error parsing insurance name from IN1 segment.", e);
 		}
 		return null;
 	}
@@ -190,8 +189,7 @@ public class HL7EncounterHandler25 extends
 			}
 		} catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			logger.error(Util.getStackTrace(e));
+			log.error("Error parsing insurance carrier from IN1 segment", e);
 		}
 		return null;
 	}
@@ -229,13 +227,13 @@ public class HL7EncounterHandler25 extends
 			if (timeStamp != null && timeStamp.getTime()!= null) { 
 				datetime = TranslateDate(timeStamp);
 			}else {
-				logger.error("A valid encounter date time stamp could not be " +
+				log.error("A valid encounter date timestamp could not be " +
 						"determined from MSH segment (for ADT messages)" +
 						" or OBR segment (for ORU messages)");
 			}
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			log.error("Exception occurred parsing encounter date time from Hl7.",e);
 		}
 
 		return datetime;

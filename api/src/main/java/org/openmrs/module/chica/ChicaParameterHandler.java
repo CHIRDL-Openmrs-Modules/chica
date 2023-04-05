@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.LogicService;
 import org.openmrs.module.atd.ParameterHandler;
@@ -16,6 +14,8 @@ import org.openmrs.module.atd.datasource.FormDatasource;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -24,7 +24,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 public class ChicaParameterHandler implements ParameterHandler
 {
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChicaParameterHandler.class);
 	
 	/**
 	 * @see org.openmrs.module.atd.ParameterHandler#addParameters(java.util.Map)

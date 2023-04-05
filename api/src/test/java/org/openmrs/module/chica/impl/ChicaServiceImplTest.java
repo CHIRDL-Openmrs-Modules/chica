@@ -1,6 +1,6 @@
 package org.openmrs.module.chica.impl;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,34 +9,35 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
-import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
-import org.openmrs.api.UserService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.service.ATDService;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
+import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
+import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chica.test.TestUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutil.util.XMLUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
-import org.openmrs.test.SkipBaseSetup;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 
 /**
  * This Class tests the ChicaServiceImpl class.
@@ -50,10 +51,6 @@ import org.openmrs.test.SkipBaseSetup;
  */
 public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 {
-	/**
-	 * @verifies {@link ChicaServiceImpl#getHighBP(Patient,Integer,String,Encounter)}
-	 *           test = should checkHighBP
-	 */
 	@Test
 	public void getHighBP_shouldCheckHighBP() throws Exception
 	{
@@ -77,13 +74,13 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setGender("F");
 		Double highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// test M
 		patient.setGender("M");
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(98, highBP, 2);
+		assertEquals(98, highBP, 2);
 
 		// test age
 		// 0 years
@@ -96,7 +93,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97, highBP, 0);
+		assertEquals(97, highBP, 0);
 
 		// 9 months
 		birthDate = Calendar.getInstance();
@@ -104,7 +101,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97, highBP, 0);
+		assertEquals(97, highBP, 0);
 
 		// 1 year
 		birthDate = Calendar.getInstance();
@@ -112,7 +109,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97, highBP, 0);
+		assertEquals(97, highBP, 0);
 
 		// 15 months
 		birthDate = Calendar.getInstance();
@@ -120,7 +117,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(97.5, highBP, 0);
+		assertEquals(97.5, highBP, 0);
 
 		// 16.5 years
 		birthDate = Calendar.getInstance();
@@ -128,7 +125,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(122, highBP, 0);
+		assertEquals(122, highBP, 0);
 
 		// 17 years
 		birthDate = Calendar.getInstance();
@@ -136,7 +133,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(122, highBP, 0);
+		assertEquals(122, highBP, 0);
 
 		// 18 years
 		birthDate = Calendar.getInstance();
@@ -144,7 +141,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		patient.setBirthdate(birthDate.getTime());
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(null, highBP);
+		assertEquals(null, highBP);
 
 		// test systolic/diastolic
 		// systolic
@@ -156,13 +153,13 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		bpType = "systolic";
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// diastolic
 		bpType = "diastolic";
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(57, highBP, 0);
+		assertEquals(57, highBP, 0);
 
 		// test height percentile
 		patient.setBirthdate(baseBirthDate.getTime());
@@ -174,43 +171,43 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		heightPercentile = 0.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 3 height percentile
 		heightPercentile = 3.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 5 height percentile
 		heightPercentile = 5.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 7 height percentile
 		heightPercentile = 7.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 10 height percentile
 		heightPercentile = 10.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 95 height percentile
 		heightPercentile = 95.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(105, highBP, 0);
+		assertEquals(105, highBP, 0);
 
 		// 97 height percentile
 		heightPercentile = 97.0;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(105, highBP, 0);
+		assertEquals(105, highBP, 0);
 
 		// test BP percentile
 		// 90
@@ -222,16 +219,16 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		bpPercentile = 90;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(99, highBP, 0);
+		assertEquals(99, highBP, 0);
 
 		// 95
 		bpPercentile = 95;
 		highBP = chicaService.getHighBP(patient, bpPercentile, bpType,
 				heightPercentile, onDate.getTime());
-		Assert.assertEquals(102, highBP, 0);
+		assertEquals(102, highBP, 0);
 	}
 
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception
 	{
 		// create the basic user and give it full rights
@@ -241,12 +238,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		authenticate();
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#produce(OutputStream,PatientState,Patient,Integer,String,int)}
-	 *           test = should testPSFProduce
-	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void produce_shouldTestPSFProduce() throws Exception
 	{
 		LocationService locationService = Context.getLocationService();
@@ -261,28 +254,23 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		Integer formInstanceId = 1;
 		Integer sessionId = 1;
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		PatientService patientService = Context.getPatientService();
 
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter encounter = new Encounter();
 		encounter.setEncounterType(new EncounterType(3));
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
 
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
 		encounter.setPatient(patient);
-		Calendar scheduledTime = Calendar.getInstance();
-		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		encounter.setScheduledTime(scheduledTime.getTime());
 		encounterService.saveEncounter(encounter);
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;
 		String booleanString = adminService
 				.getGlobalProperty("atd.mergeTestCaseXML");
 		boolean merge = Boolean.parseBoolean(booleanString);
-		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
-
 		String PSFMergeDirectory = null;
 		FormService formService = Context.getFormService();
 
@@ -290,157 +278,138 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		Integer locationTagId = 1;
 		Integer locationId = 1;
 		
-		try
+
+		FormAttributeValue formAttributeValue = chirdlutilbackportsService
+				.getFormAttributeValue(psfFormId,
+						"defaultMergeDirectory", locationTagId,locationId);
+
+		if (formAttributeValue != null)
 		{
-				FormAttributeValue formAttributeValue = chirdlutilbackportsService
-						.getFormAttributeValue(psfFormId,
-								"defaultMergeDirectory", locationTagId,locationId);
-
-				if (formAttributeValue != null)
-				{
-					PSFMergeDirectory = formAttributeValue.getValue();
-				}
-
-				String PSFFilename = "test/testFiles/PSF.xml";
-				String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
-
-				ATDService atdService = Context.getService(ATDService.class);
-				PatientState patientState = new PatientState();
-				patientState.setPatient(patient);
-
-				// test create PSF merge file
-				String state = "PSF_create";
-				LocationTagAttributeValue locTagAttrValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
-				
-				Integer formId = null;
-				
-				if(locTagAttrValue != null){
-					String value = locTagAttrValue.getValue();
-					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
-					}
-				}
-				FormInstance formInstance = new FormInstance();
-				formInstance.setFormInstanceId(formInstanceId);
-
-				formInstance.setFormId(formId);
-				formInstance.setLocationId(locationId);
-				patientState.setSessionId(sessionId);
-				OutputStream generatedXML = new ByteArrayOutputStream();
-				formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
-						psfFormId, "numPrompts", locationTagId,locationId);
-				int maxDssElements = 0;
-
-				if (formAttributeValue != null)
-				{
-					maxDssElements = Integer.parseInt(formAttributeValue.getValue());
-				}
-
-				atdService.produce(generatedXML, patientState, patient,
-						encounterId, "PSF", maxDssElements,sessionId);
-				OutputStream targetXML = new ByteArrayOutputStream();
-				IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
-						targetXML);
-				generatedOutput = generatedXML.toString();
-				if (merge && PSFMergeDirectory != null)
-				{
-					FileWriter writer = new FileWriter(PSFMergeDirectory
-							+ "file1.xml");
-					writer.write(generatedOutput);
-					writer.close();
-				}
-				generatedXML = new ByteArrayOutputStream();
-				XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
-						.getBytes()), generatedXML, new FileInputStream(
-						removeCurrentTimeXSLT), null);
-				assertEquals(targetXML.toString(), generatedXML.toString());
-
-				// test forms with younger child
-				Calendar calendar = Calendar.getInstance();
-				calendar.set(2007, Calendar.JANUARY, 1);
-				patient.setBirthdate(calendar.getTime());
-				PSFFilename = "test/testFiles/PSF_younger.xml";
-
-				// test create PSF merge file
-				state = "PSF_create";
-				locTagAttrValue = 
-					chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
-				
-				if(locTagAttrValue != null){
-					String value = locTagAttrValue.getValue();
-					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
-					}
-				}
-				formInstance = new FormInstance();
-				formInstance.setFormInstanceId(formInstanceId);
-
-				formInstance.setFormId(formId);
-				formInstance.setLocationId(locationId);
-				generatedXML = new ByteArrayOutputStream();
-				atdService.produce(generatedXML, patientState, patient,
-						encounterId, "PSF", maxDssElements,sessionId);
-				targetXML = new ByteArrayOutputStream();
-				IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
-						targetXML);
-				generatedOutput = generatedXML.toString();
-				if (merge && PSFMergeDirectory != null)
-				{
-					FileWriter writer = new FileWriter(PSFMergeDirectory
-							+ "file2.xml");
-					writer.write(generatedOutput);
-			writer.flush();
-					writer.close();
-				}
-				generatedXML = new ByteArrayOutputStream();
-				XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
-						.getBytes()), generatedXML, new FileInputStream(
-						removeCurrentTimeXSLT), null);
-				assertEquals(targetXML.toString(), generatedXML.toString());
-			
-		} catch (Exception e)
-		{
-
+			PSFMergeDirectory = formAttributeValue.getValue();
 		}
+
+		String PSFFilename = "test/testFiles/PSF.xml";
+		String removeCurrentTimeXSLT = "test/testFiles/removeCurrentTime.xslt";
+
+		ATDService atdService = Context.getService(ATDService.class);
+		PatientState patientState = new PatientState();
+		patientState.setPatient(patient);
+
+		// test create PSF merge file
+		String state = "PSF_create";
+		LocationTagAttributeValue locTagAttrValue = 
+			chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
+		
+		Integer formId = null;
+		
+		if(locTagAttrValue != null){
+			String value = locTagAttrValue.getValue();
+			if(value != null){
+				try
+				{
+					formId = Integer.parseInt(value);
+				} catch (Exception e)
+				{
+				}
+			}
+		}
+		FormInstance formInstance = new FormInstance();
+		formInstance.setFormInstanceId(formInstanceId);
+
+		formInstance.setFormId(formId);
+		formInstance.setLocationId(locationId);
+		patientState.setSessionId(sessionId);
+		OutputStream generatedXML = new ByteArrayOutputStream();
+		formAttributeValue = chirdlutilbackportsService.getFormAttributeValue(
+				psfFormId, "numPrompts", locationTagId,locationId);
+		int maxDssElements = 0;
+
+		if (formAttributeValue != null)
+		{
+			maxDssElements = Integer.parseInt(formAttributeValue.getValue());
+		}
+
+		atdService.produce(generatedXML, patientState, patient,
+				encounterId, "PSF", maxDssElements,sessionId);
+		OutputStream targetXML = new ByteArrayOutputStream();
+		IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
+				targetXML);
+		generatedOutput = generatedXML.toString();
+		if (merge && PSFMergeDirectory != null)
+		{
+			FileWriter writer = new FileWriter(PSFMergeDirectory
+					+ "file1.xml");
+			writer.write(generatedOutput);
+			writer.close();
+		}
+		generatedXML = new ByteArrayOutputStream();
+		XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
+				.getBytes()), generatedXML, new FileInputStream(
+				removeCurrentTimeXSLT), null);
+		assertEquals(targetXML.toString(), generatedXML.toString());
+
+		// test forms with younger child
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2007, Calendar.JANUARY, 1);
+		patient.setBirthdate(calendar.getTime());
+		PSFFilename = "test/testFiles/PSF_younger.xml";
+
+		// test create PSF merge file
+		state = "PSF_create";
+		locTagAttrValue = 
+			chirdlutilbackportsService.getLocationTagAttributeValue(locationTagId, chirdlutilbackportsService.getStateByName(state).getFormName(), locationId);
+		
+		if(locTagAttrValue != null){
+			String value = locTagAttrValue.getValue();
+			if(value != null){
+				formId = Integer.parseInt(value);
+			}
+		}
+		formInstance = new FormInstance();
+		formInstance.setFormInstanceId(formInstanceId);
+
+		formInstance.setFormId(formId);
+		formInstance.setLocationId(locationId);
+		generatedXML = new ByteArrayOutputStream();
+		atdService.produce(generatedXML, patientState, patient,
+				encounterId, "PSF", maxDssElements,sessionId);
+		targetXML = new ByteArrayOutputStream();
+		IOUtil.bufferedReadWrite(new FileInputStream(PSFFilename),
+				targetXML);
+		generatedOutput = generatedXML.toString();
+		if (merge && PSFMergeDirectory != null)
+		{
+			FileWriter writer = new FileWriter(PSFMergeDirectory
+					+ "file2.xml");
+			writer.write(generatedOutput);
+			writer.flush();
+			writer.close();
+		}
+		generatedXML = new ByteArrayOutputStream();
+		XMLUtil.transformXML(new ByteArrayInputStream(generatedOutput
+				.getBytes()), generatedXML, new FileInputStream(
+				removeCurrentTimeXSLT), null);
+		assertEquals(targetXML.toString(), generatedXML.toString());
+		
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#produce(OutputStream,PatientState,Patient,Integer,String,int)}
-	 *           test = should testPWSProduce
-	 */
 	@Test
-	@Ignore
+	@Disabled
 	public void produce_shouldTestPWSProduce() throws Exception
 	{
 		LocationService locationService = Context.getLocationService();
 		int patientId = 30520;
 		Integer formInstanceId = 1;
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		PatientService patientService = Context.getPatientService();
 		ATDService atdService = Context.getService(ATDService.class);
-		org.openmrs.module.chica.hibernateBeans.Encounter encounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter encounter = new Encounter();
 		encounter.setEncounterType(new EncounterType(3));
 		encounter.setEncounterDatetime(new java.util.Date());
 		Patient patient = patientService.getPatient(patientId);
-
 		encounter.setLocation(locationService.getLocation("Unknown Location"));
 		encounter.setPatient(patient);
-		Calendar scheduledTime = Calendar.getInstance();
-		scheduledTime.set(2007, Calendar.NOVEMBER, 20, 8, 12);
-		encounter.setScheduledTime(scheduledTime.getTime());
 		encounterService.saveEncounter(encounter);
 		Integer encounterId = encounter.getEncounterId();
 		String generatedOutput = null;
@@ -481,13 +450,8 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 				Integer formId = null;
 				if(locTagAttrValue != null){
 					String value = locTagAttrValue.getValue();
-					if(value != null){
-						try
-						{
-							formId = Integer.parseInt(value);
-						} catch (Exception e)
-						{
-						}
+					if(value != null){				
+						formId = Integer.parseInt(value);				
 					}
 				}
 				FormInstance formInstance = new FormInstance();
@@ -519,7 +483,7 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 					FileWriter writer = new FileWriter(PWSMergeDirectory
 							+ "file1.xml");
 					writer.write(generatedOutput);
-			writer.flush();
+					writer.flush();
 					writer.close();
 				}
 				generatedXML = new ByteArrayOutputStream();
@@ -581,25 +545,49 @@ public class ChicaServiceImplTest extends BaseModuleContextSensitiveTest
 		}
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#consume(InputStream,Patient,Integer,Integer,Integer,Integer)}
-	 *           test = should testPSFConsume
-	 */
 	@Test
 	public void consume_shouldTestPSFConsume() throws Exception
 	{
 //		// TODO auto-generated
-//		Assert.fail("Not yet implemented");
+//		Assertions.fail("Not yet implemented");
 	}
 
-	/**
-	 * @verifies {@link ChicaServiceImpl#consume(InputStream,Patient,Integer,Integer,Integer,Integer)}
-	 *           test = should testPWSConsume
-	 */
 	@Test
 	public void consume_shouldTestPWSConsume() throws Exception
 	{
 //		// TODO auto-generated
-//		Assert.fail("Not yet implemented");
+//		Assertions.fail("Not yet implemented");
+	}
+	
+	@Test
+	@Disabled
+	public void testSaveStudyAttribute() throws Exception	{
+		executeDataSet(TestUtil.STUDY_FILE);
+		
+		ChicaService chicaService = Context.getService(ChicaService.class);
+		Study study = chicaService.getStudyByTitle("K22STUDY1");
+		StudyAttribute studyAtt = new StudyAttribute();
+
+		studyAtt.setName("TEST NAME");
+		studyAtt.setDescription("DESCRIPTION");
+		studyAtt.setCreator(Context.getAuthenticatedUser());
+		studyAtt.setDateCreated(new Date());
+		studyAtt.setRetired(false);
+		studyAtt.setUuid(UUID.randomUUID().toString());
+		chicaService.saveStudyAttribute(studyAtt);
+		
+		StudyAttributeValue studyAttVal = new StudyAttributeValue();
+		
+		studyAttVal.setStudyId(study.getStudyId());
+		studyAttVal.setValue("DobGtSentinelDateK22Randomizer");
+		studyAttVal.setStudyAttributeId(1);
+		studyAttVal.setCreator(Context.getAuthenticatedUser());
+		studyAttVal.setDateCreated(new Date());
+		studyAttVal.setRetired(false);
+		studyAttVal.setUuid(UUID.randomUUID().toString());
+		chicaService.saveStudyAttributeValue(studyAttVal);
+		
+		StudyAttributeValue studyAttr = chicaService.getStudyAttributeValue(chicaService.getStudyByTitle("K22STUDY1"), "TEST NAME");
+		assertEquals("DobGtSentinelDateK22Randomizer",studyAttr.getValue());
 	}
 }

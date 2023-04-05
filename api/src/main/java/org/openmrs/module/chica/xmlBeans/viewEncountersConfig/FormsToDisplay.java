@@ -13,7 +13,7 @@ public class FormsToDisplay {
 	 * @return the forms
 	 */
 	public ArrayList<ViewEncounterForm> getForms() {
-		return forms;
+		return this.forms;
 	}
 
 	/**
@@ -28,8 +28,8 @@ public class FormsToDisplay {
 	 * @return
 	 */
 	public List<String> getFormNames(){
-		ArrayList<String> formDisplayNames = new ArrayList<String>();
-		for(ViewEncounterForm form : forms){
+		ArrayList<String> formDisplayNames = new ArrayList<>();
+		for(ViewEncounterForm form : this.forms){
 			formDisplayNames.add(form.getName());
 		}
 		return formDisplayNames;
@@ -42,7 +42,7 @@ public class FormsToDisplay {
 	public Map<String, ViewEncounterForm> getViewEncounterFormMap(){
 		Map<String, ViewEncounterForm> viewEncounterFormMap = new HashMap<>();
 		
-		for(ViewEncounterForm form : forms){
+		for(ViewEncounterForm form : this.forms){
 			viewEncounterFormMap.put(form.getName(), form);
 		}
 		
@@ -56,7 +56,7 @@ public class FormsToDisplay {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((forms == null) ? 0 : forms.hashCode());
+		result = prime * result + ((this.forms == null) ? 0 : this.forms.hashCode());
 		return result;
 	}
 
@@ -75,11 +75,11 @@ public class FormsToDisplay {
 			return false;
 		}
 		FormsToDisplay other = (FormsToDisplay) obj;
-		if (forms == null) {
+		if (this.forms == null) {
 			if (other.forms != null) {
 				return false;
 			}
-		} else if (!forms.equals(other.forms)) {
+		} else if (!this.forms.equals(other.forms)) {
 			return false;
 		}
 		return true;
@@ -90,6 +90,6 @@ public class FormsToDisplay {
 	 */
 	@Override
 	public String toString() {
-		return "FormsToDisplay [forms=" + forms + "]";
+		return "FormsToDisplay [forms=" + this.forms + "]";
 	}
 }

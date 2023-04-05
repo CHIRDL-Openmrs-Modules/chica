@@ -9,19 +9,20 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.FaxStatus;
 import org.openmrs.module.chica.web.ChicaServlet;
+import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
 import org.openmrs.module.chirdlutil.util.IOUtil;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,7 +45,7 @@ import com.biscom.MessageStatus;
 @RequestMapping(value = "module/chica/faxStatus.form") 
 public class FaxStatusController {
 	
-	private final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(FaxStatusController.class);
 	
 	private static final String FORM_VIEW = "/module/chica/faxStatus";
 	private static final boolean ASCENDING = false;
@@ -56,7 +57,7 @@ public class FaxStatusController {
 
 	@ModelAttribute("faxStatusRows")
 	public List<FaxStatus> getFaxStatuses(){
-		return new ArrayList<FaxStatus>();
+		return new ArrayList<>();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -233,13 +234,13 @@ public class FaxStatusController {
 
 			try {
 				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
-				uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
+				uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ServletUtil.PARAM_TIFF_FILE_LOCATION, imagefile.getPath());
 
 				String imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 				status.setImageFileLocation(imageFilename);
 			} catch (Exception e) {
-				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF
+				log.error("Error generating URI form image filename for action: " + ServletUtil.CONVERT_TIFF_TO_PDF
 						+ " tiff file location: " + imagefile.getPath(), e);
 			}
 		}

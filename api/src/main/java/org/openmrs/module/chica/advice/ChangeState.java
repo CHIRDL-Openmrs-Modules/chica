@@ -7,14 +7,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -22,7 +20,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
  */
 public class ChangeState implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ChangeState.class);
 
 	private PatientState patientState = null;
 	private HashMap<String, Object> parameters = null;
@@ -52,45 +50,39 @@ public class ChangeState implements ChirdlRunnable
 	 * @see java.lang.Runnable#run()
 	 */
 
+	@Override
 	public void run()
 	{
-		log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
-		Context.openSession();
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
-			AdministrationService adminService = Context
-					.getAdministrationService();
-			Context.authenticate(adminService
-					.getGlobalProperty("scheduler.username"), adminService
-					.getGlobalProperty("scheduler.password"));
-			BaseStateActionHandler.getInstance().changeState(patientState,
-					parameters);
+			BaseStateActionHandler.getInstance().changeState(this.patientState,
+					this.parameters);
 		} 
 		catch (Exception e)
 		{
-			log.error("Error processing file", e);
+			log.error("Exception processing changeState", e);
 		} 
 		finally
 		{
-			Context.closeSession();
-			log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		}
 	}
 
 	/**
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
 	 */
-    public String getName() {
-	    return "Change State (State: " + stateName + " Patient: " + patientId + " Patient State: " + 
-	    	patientState.getPatientStateId() + ")";
+    @Override
+	public String getName() {
+	    return "Change State (State: " + this.stateName + " Patient: " + this.patientId + " Patient State: " + 
+	    	this.patientState.getPatientStateId() + ")";
     }
 
 	/**
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
 	 */
-    public int getPriority() {
+    @Override
+	public int getPriority() {
     	return ChirdlRunnable.PRIORITY_ONE;
     }
 }

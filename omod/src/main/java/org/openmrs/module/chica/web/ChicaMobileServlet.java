@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -13,18 +11,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.ParameterHandler;
-import org.openmrs.module.atd.xmlBeans.Field;
-import org.openmrs.module.chica.ChicaParameterHandler;
-import org.openmrs.module.chica.DynamicFormAccess;
 import org.openmrs.module.chica.util.PatientRow;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet giving access to CHICA Mobile clients
@@ -41,19 +34,10 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String VERIFY_PASSCODE = "verifyPasscode";
 	private static final String IS_AUTHENTICATED = "isAuthenticated";
 	private static final String AUTHENTICATE_USER = "authenticateUser";
-	private static final String GET_PRIORITIZED_ELEMENTS = "getPrioritizedElements";
-	private static final String SAVE_EXPORT_ELEMENTS = "saveExportElements";
 	
 	private static final String PARAM_ACTION = "action";
-	private static final String PARAM_ENCOUNTER_ID = "encounterId";
 	private static final String PARAM_SESSION_ID = "sessionId";
 	private static final String PARAM_PASSCODE = "passcode";
-	private static final String PARAM_FORM_ID = "formId";
-	private static final String PARAM_FORM_INSTANCE_ID = "formInstanceId";
-	private static final String PARAM_MAX_ELEMENTS = "maxElements";
-	private static final String PARAM_PATIENT_ID = "patientId";
-	private static final String PARAM_LOCATION_ID = "locationId";
-	private static final String PARAM_LOCATION_TAG_ID = "locationTagId";
 	
 	private static final String XML_PATIENTS_WITH_FORMS_START = "<patientsWithForms>";
 	private static final String XML_PATIENTS_WITH_FORMS_END = "</patientsWithForms>";
@@ -61,21 +45,11 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_ERROR_END = "</error>";
 	private static final String XML_PATIENT_START = "<patient>";
 	private static final String XML_PATIENT_END = "</patient>";
-	private static final String XML_ID = "id";
 	private static final String XML_MRN = "mrn";
 	private static final String XML_FIRST_NAME = "firstName";
 	private static final String XML_LAST_NAME = "lastName";
-	private static final String XML_APPOINTMENT = "appointment";
-	private static final String XML_CHECKIN = "checkin";
-	private static final String XML_DATE_OF_BIRTH = "dob";
-	private static final String XML_AGE = "age";
-	private static final String XML_MD_NAME = "mdName";
-	private static final String XML_SEX = "sex";
-	private static final String XML_STATION = "station";
-	private static final String XML_STATUS = "status";
 	private static final String XML_SESSION_ID = "sessionId";
 	private static final String XML_ENCOUNTER_ID = "encounterId";
-	private static final String XML_REPRINT_STATUS = "reprintStatus";
 	private static final String XML_FORM_INSTANCES_START = "<formInstances>";
 	private static final String XML_FORM_INSTANCES_END = "</formInstances>";
 	private static final String XML_FORM_INSTANCE_START = "<formInstance>";
@@ -88,23 +62,14 @@ public class ChicaMobileServlet extends HttpServlet {
 	private static final String XML_PASSCODE_RESULT_END = "</passcodeResult>";
 	private static final String XML_RESULT_START = "<result>";
 	private static final String XML_RESULT_END = "</result>";
-	private static final String XML_RECORDS_START = "<Records>";
-	private static final String XML_RECORDS_END = "</Records>";
-	private static final String XML_RECORD_START = "<Record>";
-	private static final String XML_RECORD_END = "</Record>";
-	private static final String XML_VALUE = "Value";
-	private static final String XML_FIELD = "Field";
-	private static final String XML_FIELD_END = "</Field>";
-	private static final String XML_SAVE_RESULT_START = "<saveResult>";
-	private static final String XML_SAVE_RESULT_END = "</saveResult>";
-	private static final String XML_RESULT = "result";
 	private static final String XML_AGE_IN_YEARS = "ageInYears";
 	
-	private static final Log LOG = LogFactory.getLog(ChicaMobileServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(ChicaMobileServlet.class);
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 	    try{
 	        boolean authenticated = ServletUtil.authenticateUser(request);
@@ -125,24 +90,25 @@ public class ChicaMobileServlet extends HttpServlet {
 	            ServletUtil.isUserAuthenticated(response);
 	        } else if (AUTHENTICATE_USER.equals(action)) {
 	            ServletUtil.authenticateUser(request, response);
-	        } else if (GET_PRIORITIZED_ELEMENTS.equals(action)) {
-	            getPrioritizedElements(request, response);
-	        } else if (SAVE_EXPORT_ELEMENTS.equals(action)) {
-	            saveExportElements(request, response);
+	        } else if (ServletUtil.GET_PRIORITIZED_ELEMENTS.equals(action)) {
+	            ServletUtil.getPrioritizedElements(request, response);
+	        } else if (ServletUtil.SAVE_EXPORT_ELEMENTS.equals(action)) {
+	            ServletUtil.saveExportElements(request, response);
 	        }
 	    }catch(IOException ioe){
-	        LOG.error("IOException in ChicaMobileServlet.", ioe);
+	        log.error("IOException in ChicaMobileServlet.", ioe);
 	    }
 	}
 	
 	/**
 	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) {
 		try{
 		    doGet(request, response);
 		}catch(ServletException e){
-		    LOG.error("ServletException in ChicaMobileServlet", e);
+		    log.error("ServletException in ChicaMobileServlet", e);
 		}
 	}
 	
@@ -184,7 +150,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			try {
 				sessionId = Integer.valueOf(sessionIdStr);
 			} catch(NumberFormatException e) {
-			    LOG.error("Error parsing sessionId: " + sessionIdStr, e);
+			    log.error("Error parsing sessionId: {} ", sessionIdStr, e);
 			}
 		}
 		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
@@ -230,23 +196,20 @@ public class ChicaMobileServlet extends HttpServlet {
 						{
 							if(formInstance.getFormId() == null || formInstance.getFormInstanceId() == null || formInstance.getLocationId() == null)
 							{
-							    LOG.error("Error getting forms for patientId: " + row.getPatientId() + " formId: " 
-										+ formInstance.getFormId() 
-										+ " formInstanceId: " + formInstance.getFormInstanceId() 
-										+ " locationId: " + formInstance.getLocationId() 
-										+ ". The patient will not be added to the mobile greaseBoard.");
+							    log.error("Error getting forms for patientId: {} formId:{} formInstanceId: {} locationId: {}. The patient will not be added to the mobile greaseBoard.",  
+										row.getPatientId(),formInstance.getFormId(),formInstance.getFormInstanceId(),formInstance.getLocationId() );
 								continue PatientRowLoop;
 							}
 						}
 					}
 					else
 					{
-					    LOG.error("Error getting forms for patientId: " + row.getPatientId() + ". The patient will not be added to the mobile greaseBoard.");
+					    log.error("Error getting forms for patientId: {}. The patient will not be added to the mobile greaseBoard.", row.getPatientId());
 						continue;
 					}
 					
 					printWriter.write(XML_PATIENT_START);
-					ServletUtil.writeTag(XML_ID, row.getPatientId(), printWriter);
+					ServletUtil.writeTag(ServletUtil.XML_ID, row.getPatientId(), printWriter);
 					ServletUtil.writeTag(XML_MRN, row.getMrn(), printWriter);
 					ServletUtil.writeTag(XML_FIRST_NAME, ServletUtil.escapeXML(row.getFirstName()), printWriter);
 					ServletUtil.writeTag(XML_LAST_NAME, ServletUtil.escapeXML(row.getLastName()), printWriter);
@@ -279,7 +242,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			pw.write(stringWriter.toString());
 		}
 		catch (Exception e) {
-		    LOG.error("Error generating patients with forms", e);
+		    log.error("Error generating patients with forms", e);
 			pw.write(XML_ERROR_START + "An error occurred retrieving the patient list" + XML_ERROR_END);
 		}
 		
@@ -308,7 +271,7 @@ public class ChicaMobileServlet extends HttpServlet {
 			String systemPasscode = Context.getAdministrationService().getGlobalProperty(
 				ChirdlUtilConstants.GLOBAL_PROP_PASSCODE);
 			if (systemPasscode == null) {
-			    LOG.error("Please specify global propery chica.passcode");
+			    log.error("Please specify global propery chica.passcode");
 				pw.write("Passcode not properly set on server.");
 			} else {
 				if (systemPasscode.equals(passcode)) {
@@ -321,73 +284,5 @@ public class ChicaMobileServlet extends HttpServlet {
 		
 		pw.write(XML_RESULT_END);
 		pw.write(XML_PASSCODE_RESULT_END);
-	}
-	
-	/**
-	 * Retrieves prioritized elements for a form.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
-	private void getPrioritizedElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
-		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
-		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
-		Integer maxElements = Integer.parseInt(request.getParameter(PARAM_MAX_ELEMENTS));
-		
-		DynamicFormAccess formAccess = new DynamicFormAccess();
-		List<Field> fields = formAccess.getPrioritizedElements(formId, formInstanceId, encounterId, maxElements);
-		
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
-		PrintWriter pw = response.getWriter();
-		pw.write(XML_RECORDS_START);
-		pw.write(XML_RECORD_START);
-		for(Field field : fields){
-			pw.write(ChirdlUtilConstants.XML_START_TAG + XML_FIELD + " " + XML_ID + "=\"" + field.getId() + "\"" + 
-					ChirdlUtilConstants.XML_END_TAG);
-			ServletUtil.writeTag(XML_VALUE, ServletUtil.escapeXML(field.getValue()), pw);
-			pw.write(XML_FIELD_END);
-		}
-		
-		pw.write(XML_RECORD_END);
-		pw.write(XML_RECORDS_END);
-	}
-	
-	/**
-	 * Saves a form's export elements to the database.
-	 * 
-	 * @param request HttServletRequest
-	 * @param response HttpServletResponse
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unchecked")
-    private void saveExportElements(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		Integer patientId = Integer.parseInt(request.getParameter(PARAM_PATIENT_ID));
-		Integer formId = Integer.parseInt(request.getParameter(PARAM_FORM_ID));
-		Integer formInstanceId = Integer.parseInt(request.getParameter(PARAM_FORM_INSTANCE_ID));
-		Integer locationId = Integer.parseInt(request.getParameter(PARAM_LOCATION_ID));
-		Integer locationTagId = Integer.parseInt(request.getParameter(PARAM_LOCATION_TAG_ID));
-		Integer encounterId = Integer.parseInt(request.getParameter(PARAM_ENCOUNTER_ID));
-		
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		response.setContentType(ChirdlUtilConstants.HTTP_CONTENT_TYPE_TEXT_XML);
-		response.setHeader(ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL, ChirdlUtilConstants.HTTP_HEADER_CACHE_CONTROL_NO_CACHE);
-		PrintWriter pw = response.getWriter();
-		pw.write(XML_SAVE_RESULT_START);
-		try {
-			ParameterHandler parameterHandler = new ChicaParameterHandler();
-			DynamicFormAccess formAccess = new DynamicFormAccess();
-			Patient patient = Context.getPatientService().getPatient(patientId);
-			formAccess.saveExportElements(new FormInstance(locationId, formId, formInstanceId), locationTagId, encounterId, 
-				patient, parameterMap, parameterHandler);
-			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_TRUE, pw);
-		} catch (Exception e) {
-		    LOG.error("Error saving prioritized elements", e);
-			ServletUtil.writeTag(XML_RESULT, ChirdlUtilConstants.FORM_ATTR_VAL_FALSE, pw);
-		}
-		
-		pw.write(XML_SAVE_RESULT_END);
 	}
 }

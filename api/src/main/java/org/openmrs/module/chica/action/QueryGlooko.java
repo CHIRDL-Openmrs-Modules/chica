@@ -3,6 +3,7 @@ package org.openmrs.module.chica.action;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -11,9 +12,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.SslConfigurator;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
@@ -31,6 +30,8 @@ import org.openmrs.module.chirdlutilbackports.action.ProcessStateAction;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -39,7 +40,7 @@ import org.springframework.http.HttpStatus;
  */
 public class QueryGlooko implements ProcessStateAction
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(QueryGlooko.class);
 	
 	// This is expensive to create 
 	// I'm not sure that we'll need to initialize with SSLContext if the Glooko server doesn't need our certificate
@@ -88,8 +89,7 @@ public class QueryGlooko implements ProcessStateAction
 										.securityProtocol("TLSv1.2"); // Global property
 		 
 		SSLContext sslContext = sslConfig.createSSLContext();
-		Client client = ClientBuilder.newBuilder().sslContext(sslContext).build();
-		return client;
+		return ClientBuilder.newBuilder().sslContext(sslContext).build();
 	}
 	
 	/**
@@ -116,34 +116,34 @@ public class QueryGlooko implements ProcessStateAction
 			String enableQuery = adminService.getGlobalProperty(GLOBAL_PROP_ENABLE_GLOOKO_QUERY);
 			if(StringUtils.isBlank(enableQuery) || ChirdlUtilConstants.GENERAL_INFO_FALSE.equalsIgnoreCase(enableQuery))
 			{
-				log.error("Glooko query is not enabled and will not be completed for patient: " + patient.getPatientId());
+				log.error("Glooko query is not enabled and will not be completed for patient: {}",  patient.getPatientId());
 			}
 			
 			String rootWebTargetString = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT); // Read global property to get rootWebTarget
 			if(StringUtils.isBlank(rootWebTargetString))
 			{
-				log.error(GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				log.error("{} is not valid. Glooko query will not be performed for patient: {}.", GLOBAL_PROP_GLOOKO_TARGET_ENDPOINT, patient.getPatientId());
 				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			
 			String apiKey = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_API_KEY); // Read global property to get apiKey
 			if(StringUtils.isBlank(apiKey))
 			{
-				log.error(GLOBAL_PROP_GLOOKO_API_KEY + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				log.error("{} is not valid. Glooko query will not be performed for patient:{}", GLOBAL_PROP_GLOOKO_API_KEY,  patient.getPatientId());
 				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			
 			String username = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_USERNAME); // Read global property to get username
 			if(StringUtils.isBlank(username))
 			{
-				log.error(GLOBAL_PROP_GLOOKO_USERNAME + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				log.error("{} is not valid. Glooko query will not be performed for patient: {}", GLOBAL_PROP_GLOOKO_USERNAME, patient.getPatientId());
 				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			
 			String password = adminService.getGlobalProperty(GLOBAL_PROP_GLOOKO_PASS); // Read global property to get password
 			if(StringUtils.isBlank(password))
 			{
-				log.error(GLOBAL_PROP_GLOOKO_PASS + " is not valid. Glooko query will not be performed for patient: " + patient.getPatientId());
+				log.error("{} is not valid. Glooko query will not be performed for patient: {}", GLOBAL_PROP_GLOOKO_PASS,  patient.getPatientId());
 				enableQuery = ChirdlUtilConstants.GENERAL_INFO_FALSE;
 			}
 			
@@ -207,7 +207,7 @@ public class QueryGlooko implements ProcessStateAction
 								else
 								{
 									// Don't try to read anymore pages. We don't want to end up with a partial list of readings
-									log.error("An error occurred while querying for device data. ResponseStatus: " + response.getStatus());
+									log.error("An error occurred while querying for device data. ResponseStatus: {}", response.getStatus());
 									allReadings.clear();
 									break;
 								}
@@ -220,7 +220,7 @@ public class QueryGlooko implements ProcessStateAction
 					}
 					else
 					{
-						log.error("An error occurred while querying for device data for patient: " + patient.getPatientId() + ". ResponseStatus: " + response.getStatus());
+						log.error("An error occurred while querying for device data for patient: {}. ResponseStatus: {}", patient.getPatientId(), response.getStatus());
 					}
 				}	
 			}
@@ -231,7 +231,7 @@ public class QueryGlooko implements ProcessStateAction
 			// Don't do anything with the list if an error occurs at any point in time
 			// Running rules against a partial list of readings could result in 
 			// incorrect logic, just log it and change the patient's state
-			log.error("An error occurred while querying for device data for patient: " + patient.getPatientId(), e);
+			log.error("An error occurred while querying for device data for patient: {}", patient.getPatientId(), e);
 			
 		}
 		finally

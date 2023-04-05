@@ -1,34 +1,23 @@
 package org.openmrs.module.chica.web.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.FieldType;
-import org.openmrs.Form;
-import org.openmrs.FormField;
 import org.openmrs.Patient;
-import org.openmrs.api.ConceptService;
-import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.atd.TeleformTranslator;
 import org.openmrs.module.atd.service.ATDService;
 import org.openmrs.module.atd.xmlBeans.Field;
 import org.openmrs.module.atd.xmlBeans.Record;
 import org.openmrs.module.atd.xmlBeans.Records;
 import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstanceTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,10 +29,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class FormController {
 	
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
-	
-	private static final String PROVIDER_VIEW = "_provider_view";
-	private static final String PROVIDER_SUBMIT = "_provider_submit";
+	private static final Logger log = LoggerFactory.getLogger(FormController.class);
 	
 	/** Parameters */
 	private static final String PARAM_ENCOUNTER_ID = "encounterId";
@@ -114,7 +100,7 @@ public class FormController {
      * @return The name of the next view
      */
     @RequestMapping(value = "module/chica/pwsIUHCerner.form", method = RequestMethod.POST)
-    protected ModelAndView processPwsIuhCernerSubmit(HttpServletRequest request) {
+    public ModelAndView processPwsIuhCernerSubmit(HttpServletRequest request) {
         return handleSubmit(request, FORM_VIEW_PWS_IUH);
     }
     
@@ -146,7 +132,7 @@ public class FormController {
         }
         
         try {
-            scanForm(formInstTag, request);
+            ControllerUtil.scanForm(formInstTag, request);
         } catch (Exception e) {
             String messagePart1 = "Error signing form.";
             String messagePart2 = "Please contact support with the following information: Form ID: " + 
@@ -163,17 +149,17 @@ public class FormController {
         if (providerId != null && providerId.trim().length() > 0) {
             Integer patientId = Integer.parseInt(patientIdStr);
             Patient patient = Context.getPatientService().getPatient(patientId);
-            saveProviderSubmitter(patient, encounterId, providerId, formInstTag);
+            ControllerUtil.saveProviderSubmitter(patient, encounterId, providerId, formInstTag);
         } else {
-            String message = "No valid providerId provided.  Cannot log who is submitting form ID: " + formInstTag.getFormId() + 
-                    " form instance ID: " + formInstTag.getFormInstanceId() + " location ID: " + formInstTag.getLocationId() + 
-                    " location tag ID: " + formInstTag.getLocationTagId();
-            log.error(message);
+       
+            log.error("No valid providerId provided.  Cannot log who is submitting form ID: {} form instance ID: {} location ID: {} location tag ID: {}",
+                    formInstTag.getFormId(),formInstTag.getFormInstanceId(),formInstTag.getLocationId(),formInstTag.getLocationTagId());
         }
         
         map.put(PARAM_PATIENT_ID, patientIdStr);
         
-        addSubmittedFormInstance(request, formInstance); // CHICA-1004 Add the submitted form instance to the session
+        // CHICA-1004 Add the submitted form instance to the session
+        ControllerUtil.addSubmittedFormInstance(request, formInstance);
         
         return new ModelAndView(new RedirectView(SUCCESS_VIEW), map);
     }
@@ -234,25 +220,24 @@ public class FormController {
 		
 		// Save who is viewing the form.
 		if (providerId != null && providerId.trim().length() > 0) {
-			saveProviderViewer(patient, encounterId, providerId, formInstTag);
+			ControllerUtil.saveProviderViewer(patient, encounterId, providerId, formInstTag);
 		} else {
-			log.error("Error saving viewing provider ID for form ID: " + formId + " patient ID: " + patientIdStr + 
-				" encounter ID: " + encounterId + " provider ID: " + providerId + " form instance ID: " + 
-					formInstanceId + " location ID: " + locationId + " location tag ID: " + locationTagId);
+			log.error("Error saving viewing provider ID for form ID: {} patient ID: {} encounter ID: {} provider ID: {} form instance ID: {} location ID: {} location tag ID: {}",
+					formId,patientIdStr,encounterId,providerId,formInstanceId,locationId,locationTagId);
 		}
 		
 		// Add session timeout information
 		Integer sessionTimeoutWarning = 180;
 		String sessionTimeoutWarningStr = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING);
 		if (sessionTimeoutWarningStr == null || sessionTimeoutWarningStr.trim().length() == 0) {
-			log.warn("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING + " global property does not have a value set.  180 seconds "
-					+ "will be used as a default value.");
+			log.warn("The {} global property does not have a value set.  180 seconds will be used as a default value.",
+					ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING );
 		} else {
 			try {
 				sessionTimeoutWarning = Integer.parseInt(sessionTimeoutWarningStr);
 			} catch (NumberFormatException e) {
-				log.error("The " + ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING + " global property is not a valid Integer.  180 seconds "
-						+ "will be used as a default value", e);
+				log.error("The {} global property is not a valid Integer.  180 seconds will be used as a default value", 
+						ChirdlUtilConstants.GLOBAL_PROP_SESSION_TIMEOUT_WARNING,e);
 				sessionTimeoutWarning = 180;
 			}
 		}
@@ -283,132 +268,6 @@ public class FormController {
 		}
 	}
 	
-	private void scanForm(FormInstanceTag formInstanceTag, HttpServletRequest request) {
-		//pull all the input fields from the database for the form
-		FormService formService = Context.getFormService();
-		Set<String> inputFields = new HashSet<>();
-		Form form = formService.getForm(formInstanceTag.getFormId());
-		Set<FormField> formFields = form.getFormFields();
-		TeleformTranslator translator = new TeleformTranslator();
-		FieldType exportFieldType = translator.getFieldType(ChirdlUtilConstants.FORM_FIELD_TYPE_EXPORT);
-		for (FormField formField : formFields) {
-			org.openmrs.Field currField = formField.getField();
-			FieldType fieldType = currField.getFieldType();
-			if (fieldType != null && fieldType.equals(exportFieldType)) {
-				inputFields.add(currField.getName());
-			}
-		}
-		
-		ATDService atdService = Context.getService(ATDService.class);
-		Records records = atdService.getFormRecords(formInstanceTag);
-		Record record = records.getRecord();
-		for (String inputField : inputFields) {
-			String inputVal = request.getParameter(inputField);
-			if (inputVal == null) {
-				// Create a new Field with no value
-				Field field = new Field();
-				field.setId(inputField);
-				record.addField(field);
-				continue;
-			}
-			
-			// See if the field exists in the XML
-			boolean found = false;
-			for (Field currField : record.getFields()) {
-				String name = currField.getId();
-				if (inputField.equals(name)) {
-					found = true;
-					currField.setValue(inputVal);
-					break;
-				}
-			}
-			
-			if (!found) {
-				// Create a new Field
-				Field field = new Field();
-				field.setId(inputField);
-				field.setValue(inputVal);
-				record.addField(field);
-			}
-		}
-		
-		Context.getService(ATDService.class).saveFormRecords(formInstanceTag, records);
-	}
-	
-	/**
-	 * Saves the viewer's provider ID to an observation.
-	 * 
-	 * @param patient The patient who owns the form.
-	 * @param formId The ID of the form being viewed.
-	 * @param encounterId The encounter ID of the encounter where the form was created.
-	 * @param providerId The ID of the provider to be stored.
-	 * @param formInstTag The form instance tag information
-	 */
-	private void saveProviderViewer(Patient patient, Integer encounterId, String providerId, FormInstanceTag formInstTag) {
-		Form form = Context.getFormService().getForm(formInstTag.getFormId());
-		String conceptName = form.getName() + PROVIDER_VIEW;
-		saveProviderInfo(patient, encounterId, providerId, conceptName, formInstTag);
-	}
-	
-	/**
-	 * Saves the submitter's provider ID to an observation.
-	 * 
-	 * @param patient The patient who owns the form.
-	 * @param formId The ID of the form being viewed.
-	 * @param encounterId The encounter ID of the encounter where the form was created.
-	 * @param providerId The ID of the provider to be stored.
-	 * @param formInstTag The form instance tag information
-	 */
-	private void saveProviderSubmitter(Patient patient, Integer encounterId, String providerId, FormInstanceTag formInstTag) {
-		Form form = Context.getFormService().getForm(formInstTag.getFormId());
-		String conceptName = form.getName() + PROVIDER_SUBMIT;
-		saveProviderInfo(patient, encounterId, providerId, conceptName, formInstTag);
-	}
-	
-	/**
-	 * Saves the submitter's provider ID to an observation.
-	 * 
-	 * @param patient The patient who owns the form.
-	 * @param formId The ID of the form being viewed.
-	 * @param encounterId The encounter ID of the encounter where the form was created.
-	 * @param providerId The ID of the provider to be stored.
-	 * @param conceptName The name of the concept.
-	 * @param formInstTag The form instance tag information
-	 */
-	private void saveProviderInfo(Patient patient, Integer encounterId, String providerId, String conceptName, FormInstanceTag formInstTag) {
-		ConceptService conceptService = Context.getConceptService();
-		Concept concept = conceptService.getConceptByName(conceptName);
-		if (concept == null) {
-			log.error("Could not log provider info.  Concept " + conceptName + " not found.");
-			return;
-		}
-		FormInstance formInstance = new FormInstance(formInstTag.getLocationId(),formInstTag.getFormId(),formInstTag.getFormInstanceId());
-		org.openmrs.module.chica.util.Util.saveObsWithStatistics(patient, concept, encounterId, providerId, formInstance, null, formInstTag.getLocationTagId(), null);
-	}
-	
-	/**
-	 * CHICA-1004 Store previously submitted form instance in the user's session
-	 * @param request
-	 */
-	@SuppressWarnings("unchecked")
-	private void addSubmittedFormInstance(HttpServletRequest request, String formInstance)
-	{
-		HttpSession session = request.getSession();
-		List<String> submittedFormInstances = null;
-		Object submittedFormInstancesObj = session.getAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
-		if(submittedFormInstancesObj == null)
-		{
-			submittedFormInstances = new ArrayList<>();
-			submittedFormInstances.add(formInstance);
-		}
-		else if(submittedFormInstancesObj instanceof List)
-		{
-			submittedFormInstances =  (List<String>) submittedFormInstancesObj;
-			submittedFormInstances.add(formInstance);
-		}
-		session.setAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES, submittedFormInstances);
-	}
-	
 	/**
 	 * CHICA-1004 Check for previous form submission by checking the session variable to see if the form instance exists
 	 * 
@@ -423,7 +282,7 @@ public class FormController {
 		List<String> submittedFormInstances = null;
 		Object submittedFormInstancesObj = session.getAttribute(SESSION_ATTRIBUTE_SUBMITTED_FORM_INSTANCES);
 
-		if(submittedFormInstancesObj != null && submittedFormInstancesObj instanceof List)
+		if(submittedFormInstancesObj instanceof List)
 		{
 			submittedFormInstances =  (List<String>) submittedFormInstancesObj;
 			if(submittedFormInstances.contains(formInstance))

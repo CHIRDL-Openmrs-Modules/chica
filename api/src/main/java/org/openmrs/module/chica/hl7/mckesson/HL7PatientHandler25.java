@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.openmrs.PersonAddress;
-import org.openmrs.module.chirdlutil.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.datatype.CE;
 import ca.uhn.hl7v2.model.v25.datatype.CX;
@@ -32,6 +32,7 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class HL7PatientHandler25 extends
 		org.openmrs.module.sockethl7listener.HL7PatientHandler25
 {
+	private static final Logger log = LoggerFactory.getLogger(HL7PatientHandler25.class);
 	
 	//------get additional person attributes for chica patients
 	public String getSSN(Message message)
@@ -50,10 +51,9 @@ public class HL7PatientHandler25 extends
 				{
 					ssn = "";
 				}
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				logger
-						.debug("Warning: SSN information not available in PID segment.");
+				log.debug("Warning: SSN information not available in PID segment.",e);
 			}
 		}
 		return ssn;
@@ -75,10 +75,9 @@ public class HL7PatientHandler25 extends
 					religion = religionST.getValue();
 				}
 
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				logger
-						.debug("Warning: religion information not available in PID segment.");
+				log.debug("Warning: religion information not available in PID segment.", e);
 			}
 		}
 		return religion;
@@ -101,10 +100,9 @@ public class HL7PatientHandler25 extends
 					marital = maritalST.getValue();
 				}
 
-			} catch (RuntimeException e1)
+			} catch (RuntimeException e)
 			{
-				logger
-						.debug("Warning: marital information not available in PID segment.");
+				log.debug("Warning: marital information not available in PID segment.", e);
 			}
 
 		}
@@ -121,29 +119,32 @@ public class HL7PatientHandler25 extends
 
 			if (maidenXPN != null)
 			{
-				try
-				{
-					FN maidenFN = maidenXPN.getFamilyName();
-
-					if (maidenFN != null)
-					{
-						ST maidenST = maidenFN.getSurname();
-						if (maidenST != null)
-						{
-							maiden = maidenST.getValue();
-						}
-					}
-				} catch (RuntimeException e1)
-				{
-					logger
-							.debug("Warning: maiden information not available in PID segment.");
-				}
+				maiden = getMothersMaidenNameFromXPNField(maiden, maidenXPN);
 
 			}
 		} catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			logger.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+			log.error("Exception parsing mother's maiden name from PID segment", e);
+		}
+		return maiden;
+	}
+
+	private String getMothersMaidenNameFromXPNField(String maiden, XPN maidenXPN) {
+		try
+		{
+			FN maidenFN = maidenXPN.getFamilyName();
+
+			if (maidenFN != null)
+			{
+				ST maidenST = maidenFN.getSurname();
+				if (maidenST != null)
+				{
+					maiden = maidenST.getValue();
+				}
+			}
+		} catch (RuntimeException e)
+		{
+			log.debug("Warning: mother's maiden name not available in PID segment.", e);
 		}
 		return maiden;
 	}
@@ -164,17 +165,13 @@ public class HL7PatientHandler25 extends
 					&& checkDigitST.getValue().length()>0)
 			{
 				String checkDigit = checkDigitST.getValue();
-				stIdent += "-" + checkDigit;
-			}else{
-				if(stIdent!=null&&stIdent.length()>=2){
-					stIdent = stIdent.substring(0, stIdent.length()-1)+"-"+stIdent.substring(stIdent.length()-1);
-				}
+				stIdent += checkDigit;
 			}
-			stIdent = Util.removeLeadingZeros(stIdent);
 		}
 		return stIdent;
 	}
 	
+	@Override
 	protected PersonAddress getAddress(XAD xad){
 
 		PersonAddress address = new PersonAddress();
@@ -208,7 +205,7 @@ public class HL7PatientHandler25 extends
 	@Override
 	public List<PersonAddress> getAddresses(Message message)
 	{
-		List<PersonAddress> addresses = new ArrayList<PersonAddress>();
+		List<PersonAddress> addresses = new ArrayList<>();
 		XAD[] xadAddresses = null;
 		
 		try
@@ -231,7 +228,7 @@ public class HL7PatientHandler25 extends
 
 		} catch (Exception e)
 		{
-			logger.warn("Unable to collect address from PID or NK1 for", e);
+			log.warn("Exception parsing address from PID or NK1.", e);
 		}
 		return addresses;
 	}
@@ -246,7 +243,7 @@ public class HL7PatientHandler25 extends
 			Terser terser = new Terser(newMessage);
 			pid = terser.get("/.PID-3-1");
 		} catch (Exception e) {
-			logger.error("MRF dump encoding error for Terser getting identifier from MRF dump." , e);
+			log.error("MRF dump encoding error getting identifier from PID-3-1 field.", e);
 		} 
 		return pid;
 	}

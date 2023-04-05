@@ -4,13 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Form;
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -18,6 +14,8 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.hibernateBeans.RuleEntry;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runs null priority rules for a patient/form and changes the state.
@@ -25,7 +23,8 @@ import org.openmrs.module.dss.service.DssService;
  * @author Steve McKee
  */
 public class CompleteForm implements Runnable {
-    private Log log = LogFactory.getLog(this.getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(CompleteForm.class);
     private Integer patientId;
     private Integer formId;
     private Map<String, Object> parameters;
@@ -54,39 +53,28 @@ public class CompleteForm implements Runnable {
      */
     @Override
     public void run() {
-        Context.openSession();
         try {
-            try {
-                AdministrationService adminService = Context.getAdministrationService();
-                Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME), 
-                    adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
+            Patient patient = Context.getPatientService().getPatient(this.patientId);
+            Form form = Context.getFormService().getForm(this.formId);
 
-                Patient patient = Context.getPatientService().getPatient(patientId);
-                Form form = Context.getFormService().getForm(formId);
-
-                DssService dssService = Context.getService(DssService.class);
-                List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
-                
-                for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
-                    Rule currRule = currRuleEntry.getRule();
-                    if (currRule.checkAgeRestrictions(patient)) {
-                        currRule.setParameters(parameters);
-                        dssService.runRule(patient, currRule);
-                    }
+            DssService dssService = Context.getService(DssService.class);
+            List<RuleEntry> nonPriorRuleEntries = dssService.getNonPrioritizedRuleEntries(form.getName());
+            
+            for (RuleEntry currRuleEntry : nonPriorRuleEntries) {
+                Rule currRule = currRuleEntry.getRule();
+                if (currRule.checkAgeRestrictions(patient)) {
+                    currRule.setParameters(this.parameters);
+                    dssService.runRule(patient, currRule);
                 }
-            } catch (Exception e) {
-                this.log.error(e.getMessage());
-                this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
-            } 
-        
-            try {
-                changeState(formInstance, parameters);
-            } catch (Exception e) {
-                this.log.error(e.getMessage());
-                this.log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
             }
-        } finally {
-            Context.closeSession();
+        } catch (Exception e) {
+            log.error("Exception processing non-prioritized rules.",e);
+        } 
+    
+        try {
+            changeState(this.formInstance, this.parameters);
+        } catch (Exception e) {
+            log.error("Exception changing state for form instance {}.",formInstance.getFormInstanceId(),e);
         }
     }
     
@@ -111,8 +99,7 @@ public class CompleteForm implements Runnable {
                     BaseStateActionHandler.getInstance().changeState(formInstState, (HashMap)stateChangeParameters);
                 }
                 catch (Exception e) {
-                    log.error(e.getMessage());
-                    log.error(org.openmrs.module.chirdlutil.util.Util.getStackTrace(e));
+                    log.error("Exception changing state for session {} ",formInstState.getSessionId(),e);
                 }
             }
         }

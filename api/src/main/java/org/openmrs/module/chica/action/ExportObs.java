@@ -2,15 +2,11 @@ package org.openmrs.module.chica.action;
 
 import java.util.HashMap;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.chica.hl7.HL7ExportObsRunnable;
-import org.openmrs.module.chica.service.EncounterService;
-import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.StateManager;
@@ -19,13 +15,15 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1070 Used to create HL7 ORU message and store in the sockethl7listener_hl7_out_queue table to be picked up by the HL7OutboundHandler task
  */
 public class ExportObs implements ProcessStateAction
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ExportObs.class);
 	
 	@Override
 	public void processAction(StateAction stateAction, Patient patient, PatientState patientState, HashMap<String, Object> parameters) {
@@ -45,35 +43,33 @@ public class ExportObs implements ProcessStateAction
 			// If host and port are not set, allow the record to be created with localhost and port 0
 			if(StringUtils.isBlank(host))
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+				log.error("Error creating HL7Outbound record in {}. Host has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_HOST);
 				host = ChirdlUtilConstants.DEFAULT_HOST;
 			}
 			
 			if(StringUtils.isBlank(portString))
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+				log.error("Error creating HL7Outbound record in {}. Port has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_PORT);
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
 			try
 			{
-				port = Integer.parseInt(portString);
+				port = Integer.valueOf(portString);
 			}
 			catch(NumberFormatException e)
 			{
-				log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + "). Port will be set to default value " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+				log.error("Error creating HL7Outbound record in {}. Port is not in a valid numeric format (portString:{}). Port will be set to default value {}."
+						, this.getClass().getName(), portString, ChirdlUtilConstants.DEFAULT_PORT, e);
 				port = ChirdlUtilConstants.DEFAULT_PORT;
 			}
 			
-			EncounterService encounterService = Context.getService(EncounterService.class);
-			Encounter encounter = (Encounter) encounterService.getEncounter(encounterId);
-			
-			ThreadManager threadManager = ThreadManager.getInstance();
-			threadManager.execute(new HL7ExportObsRunnable(patient.getPatientId(), encounterId, getConceptSource(), host, port), encounter.getLocation().getLocationId());
+			Runnable export = new HL7ExportObsRunnable(patient.getPatientId(), encounterId, getConceptSource(), host, port);
+			Daemon.runInDaemonThread(export, org.openmrs.module.chica.util.Util.getDaemonToken());
 		}
 		catch(Exception e)
 		{
-			log.error("Exception exporting obs for encounterId: " + encounterId, e);
+			log.error("Exception exporting obs for encounterId: {}", encounterId, e);
 		}
 		finally
 		{

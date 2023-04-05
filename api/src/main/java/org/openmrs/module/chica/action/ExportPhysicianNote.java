@@ -20,20 +20,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.openmrs.Concept;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.logic.result.Result;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chica.util.Util;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
@@ -48,13 +47,16 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.hl7v2.model.v25.datatype.TX;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
+import ca.uhn.hl7v2.model.v25.segment.EVN;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
 import ca.uhn.hl7v2.model.v25.segment.OBX;
 import ca.uhn.hl7v2.model.v25.segment.PID;
 import ca.uhn.hl7v2.model.v25.segment.PV1;
-import ca.uhn.hl7v2.model.v25.segment.EVN;
 import ca.uhn.hl7v2.model.v25.segment.TXA;
 import ca.uhn.hl7v2.parser.PipeParser;
 
@@ -77,7 +79,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	
 	private static final String MODE = "mode";
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ExportPhysicianNote.class);
 	
 	private static final String TXA_ID = "1";
 	private static final String PV1_PATIENT_CLASS = "Outpatient";
@@ -114,6 +116,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		
 		Map<String, Object> ruleParams = new HashMap<String, Object>();
 		ruleParams.put(MODE, PRODUCE);
+		ruleParams.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, encounterId);
 		
 		Rule rule = new Rule();
 		rule.setTokenName(PHYSICIAN_NOTE);
@@ -135,13 +138,13 @@ public class ExportPhysicianNote implements ProcessStateAction {
 	private String createOutgoingHL7(Integer encounterId, String note, String hl7Abbreviation, String conceptName,
 	                                 String resultStatusValue) {
 		
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		
 		try {
 			
 			Integer numberOfOBXSegments = 0;
-			
-			Encounter openmrsEncounter = (Encounter) encounterService.getEncounter(encounterId);
+		
+			Encounter openmrsEncounter = encounterService.getEncounter(encounterId);
 			
 			MDM_T02 mdm = new MDM_T02();
 			
@@ -165,7 +168,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			}
 			catch (Exception e) {
 				
-				log.error("Error occurred while creating outgoing note (encounterId: " + encounterId + ")", e);
+				log.error("Error occurred while creating outgoing note (encounterId: {})", encounterId, e);
 			}
 			finally {
 				if (reader != null) {
@@ -184,7 +187,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		}
 		catch (Exception e) {
 			
-			log.error("Error sending powerNote:", e);
+			log.error("Error sending powerNote for encouter id {}.", encounterId, e);
 		}
 		return null;
 	}
@@ -213,7 +216,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception constructing export message MSH segment. EncounterId: " + enc.getEncounterId(), e);
+			log.error("Exception constructing export message MSH segment. EncounterId: {}", enc.getEncounterId(), e);
 		}
 		
 		return msh;
@@ -257,7 +260,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception adding PID segment to hl7.  PatientId: " + pat.getPatientId(), e);
+			log.error("Exception adding PID segment to hl7.  PatientId: {}", pat.getPatientId(), e);
 			return null;
 		}
 	}
@@ -291,7 +294,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 			
 		}
 		catch (Exception e) {
-			log.error("Exception constructing OBX segment for concept ." + name, e);
+			log.error("Exception constructing OBX segment for concept {}", name, e);
 		}
 		return obx;
 		
@@ -376,7 +379,7 @@ public class ExportPhysicianNote implements ProcessStateAction {
 				}
 				catch(Exception e)
 				{
-					log.error("Error occurred while adding provider id to TXA segment for encounter: " + encounter.getEncounterId() + ".", e);
+					log.error("Error occurred while adding provider id to TXA segment for encounter: {}.", encounter.getEncounterId(), e);
 				}
 			}
 			
@@ -415,7 +418,8 @@ public class ExportPhysicianNote implements ProcessStateAction {
 
 				if(encounterAttributeValue == null)
 				{
-					log.error("Error creating PV1 segment for outgoing note. Unable to locate " + ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER + " attribute for encounterId: " + encounter.getId());		
+					log.error("Error creating PV1 segment for outgoing note. Unable to locate {} attribute for encounterId: {}."
+							, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_VISIT_NUMBER, encounter.getId());		
 					return null;
 				}
 
@@ -455,26 +459,26 @@ public class ExportPhysicianNote implements ProcessStateAction {
 		// If host and port are not set, allow the record to be created with localhost and port 0
 		if (host == null || host.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Host has been set to " + ChirdlUtilConstants.DEFAULT_HOST + ".");
+			log.error("Error creating HL7Outbound record in {}. Host has been set to {}.", this.getClass().getName(),  ChirdlUtilConstants.DEFAULT_HOST);
 			host = ChirdlUtilConstants.DEFAULT_HOST;
 		}
 		
 		if(portString == null || portString.isEmpty())
 		{
-			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port has been set to " + ChirdlUtilConstants.DEFAULT_PORT + ".");
+			log.error("Error creating HL7Outbound record in {}. Port has been set to {}.", this.getClass().getName(), ChirdlUtilConstants.DEFAULT_PORT);
 			port = ChirdlUtilConstants.DEFAULT_PORT;
+		} else {
+			try
+			{
+				port = Integer.parseInt(portString);
+			}
+			catch(NumberFormatException e)
+			{
+				log.error("Error creating HL7Outbound record in {}. Port is not in a valid numeric format (portString: {}).", this.getClass().getName(), portString, e);
+				port = ChirdlUtilConstants.DEFAULT_PORT;
+			}
 		}
-		
-		try
-		{
-			port = Integer.parseInt(portString);
-		}
-		catch(NumberFormatException e)
-		{
-			log.error("Error creating HL7Outbound record in " + this.getClass().getName() + ". Port is not in a valid numeric format (portString: " + portString + ").");
-			port = ChirdlUtilConstants.DEFAULT_PORT;
-		}
-		
+	
 		try
 		{
 			// CHICA-1070 Replaced with new util method

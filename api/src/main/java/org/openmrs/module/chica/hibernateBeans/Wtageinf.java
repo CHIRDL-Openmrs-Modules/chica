@@ -3,13 +3,17 @@ package org.openmrs.module.chica.hibernateBeans;
 import org.openmrs.module.chica.Percentile;
 
 /**
- * Holds information to store in the wtageinf table
+ * Holds information to store in the chica_wtageinf table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
 public class Wtageinf implements java.io.Serializable,Percentile {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer wtageinfId = null;
 	private Double s = null;

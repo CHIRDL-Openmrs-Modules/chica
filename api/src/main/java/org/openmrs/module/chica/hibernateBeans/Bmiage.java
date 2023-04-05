@@ -3,13 +3,17 @@ package org.openmrs.module.chica.hibernateBeans;
 import org.openmrs.module.chica.Percentile;
 
 /**
- * Holds information to store in the bmiage table
+ * Holds information to store in the chica_bmiage table
  * 
  * @author Tammy Dugan
  * @version 1.0
  */
 public class Bmiage implements java.io.Serializable,Percentile {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// Fields
 	private Integer bmiageId = null;
 	private Double s = null;
@@ -119,4 +123,5 @@ public class Bmiage implements java.io.Serializable,Percentile {
 	{
 		this.sex = sex;
 	}
+
 }

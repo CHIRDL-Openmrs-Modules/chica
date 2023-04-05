@@ -8,16 +8,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.atd.TeleformFileState;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutilbackports.BaseStateActionHandler;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormInstance;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -25,7 +23,7 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
  */
 public class ProcessFile implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(ProcessFile.class);
 
 	private PatientState patientState = null;
 	private String filename = null;
@@ -43,14 +41,14 @@ public class ProcessFile implements ChirdlRunnable
 		Map<String, Object> parameters = tfState.getParameters();
 		if (parameters != null)
 		{
-			patientState = (PatientState) parameters.get("patientState");
-			Hibernate.initialize(patientState);
-			Hibernate.initialize(patientState.getState());
-			Hibernate.initialize(patientState.getState().getAction());
-			Hibernate.initialize(patientState.getPatient());
-			this.patientId = patientState.getPatientId();
-			if (patientState.getState() != null) {
-				this.stateName = patientState.getState().getName();
+			this.patientState = (PatientState) parameters.get("patientState");
+			Hibernate.initialize(this.patientState);
+			Hibernate.initialize(this.patientState.getState());
+			Hibernate.initialize(this.patientState.getState().getAction());
+			Hibernate.initialize(this.patientState.getPatient());
+			this.patientId = this.patientState.getPatientId();
+			if (this.patientState.getState() != null) {
+				this.stateName = this.patientState.getState().getName();
 			}
 		}
 	}
@@ -61,28 +59,22 @@ public class ProcessFile implements ChirdlRunnable
 	 * @see java.lang.Runnable#run()
 	 */
 
+	@Override
 	public void run()
 	{
-		log.info("Started execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-			new Timestamp(new Date().getTime()) + ")");
-		Context.openSession();
+		log.info("Started execution of {} ({}, {})", getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()));
 		try
 		{
-			AdministrationService adminService = Context
-					.getAdministrationService();
-			Context.authenticate(adminService
-					.getGlobalProperty("scheduler.username"), adminService
-					.getGlobalProperty("scheduler.password"));
-			HashMap<String, Object> stateParameters = patientState
+			HashMap<String, Object> stateParameters = this.patientState
 					.getParameters();
 			if (stateParameters == null)
 			{
-				stateParameters = new HashMap<String, Object>();
+				stateParameters = new HashMap<>();
 			}
 			stateParameters.put("filename", this.filename);
 			stateParameters.put("formInstance", this.formInstance);
 	
-			BaseStateActionHandler.getInstance().changeState(patientState,
+			BaseStateActionHandler.getInstance().changeState(this.patientState,
 					stateParameters);
 		} 
 		catch (Exception e)
@@ -91,27 +83,27 @@ public class ProcessFile implements ChirdlRunnable
 		} 
 		finally
 		{
-			Context.closeSession();
-			log.info("Finished execution of " + getName() + "("+ Thread.currentThread().getName() + ", " + 
-				new Timestamp(new Date().getTime()) + ")");
+			log.info("Finished execution of {} ({}, {})",  getName(), Thread.currentThread().getName(), new Timestamp(new Date().getTime()) );
 		}
 	}
 
 	/**
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getName()
 	 */
-    public String getName() {
-	    return "Process File (State: " + stateName + " Patient: " + patientId + " Patient State: " + 
-	    	patientState.getPatientStateId() + ")";
+    @Override
+	public String getName() {
+	    return "Process File (State: " + this.stateName + " Patient: " + this.patientId + " Patient State: " + 
+	    	this.patientState.getPatientStateId() + ")";
     }
 
 	/**
 	 * @see org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable#getPriority()
 	 */
-    public int getPriority() {
-    	if ("PWS_wait_to_scan".equalsIgnoreCase(stateName) || 
-    			"PWS_process".equalsIgnoreCase(stateName) || 
-    			"PWS_rescan".equalsIgnoreCase(stateName)) {
+    @Override
+	public int getPriority() {
+    	if ("PWS_wait_to_scan".equalsIgnoreCase(this.stateName) || 
+    			"PWS_process".equalsIgnoreCase(this.stateName) || 
+    			"PWS_rescan".equalsIgnoreCase(this.stateName)) {
     		return ChirdlRunnable.PRIORITY_FOUR;
     	}
     	

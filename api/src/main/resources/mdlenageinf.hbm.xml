@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chica">
+
+	<class name="org.openmrs.module.chica.hibernateBeans.MDlenageinf" table="chica_md_lenaginf">
+		<id name="mdlenageinfId" type="java.lang.Integer" column="md_lenaginf_id">
+			<generator class="native" />
+		</id>
+		<property name="ageYears" type="java.lang.Double" column="age_years"/>
+		<property name="meanAge" type="java.lang.Double" column="mean_age"/>
+		<property name="sample" type="java.lang.Double" column="sample"/>
+		<property name="mean" type="java.lang.Double" column="mean"/>
+		<property name="sd" type="java.lang.Double" column="sd"/>
+		<property name="p10" type="java.lang.Double" column="p10"/>
+		<property name="p25" type="java.lang.Double" column="p25"/>
+		<property name="p50" type="java.lang.Double" column="p50"/>
+		<property name="p75" type="java.lang.Double" column="p75"/>
+		<property name="p90" type="java.lang.Double" column="p90"/>
+	</class>
+	
+</hibernate-mapping>

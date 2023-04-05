@@ -18,9 +18,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Form;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.vendor.Vendor;
@@ -29,6 +27,8 @@ import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -37,14 +37,13 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class VendorImpl implements Vendor {
 	
-	private static Log log = LogFactory.getLog(VendorImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(VendorImpl.class);
 	
 	protected static final String PARAM_MRN = "mrn";
 	protected static final String PARAM_PROVIDER_ID = "providerId";
 	protected static final String PARAM_PASS = "password";
 	protected static final String PARAM_USERNAME = "username";
 	private static final char CHARACTER_SPACE = ' ';
-	private static final String STRING_SPACE = " ";
 	private static final String REPLACEMENT_VALUE_ZERO = "0";
 	
 	protected HttpServletRequest request = null;
@@ -65,6 +64,7 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getFormName(java.lang.Integer, java.lang.Integer)
 	 */
+	@Override
 	public String getFormName(Integer locationId, Integer locationTagId) {
 		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
     	
@@ -85,6 +85,7 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getStartState(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
+	@Override
 	public String getStartState(Integer locationId, Integer locationTagId, String formName) {
 		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_START_STATE, formName);
 	}
@@ -92,6 +93,7 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getEndState(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
+	@Override
 	public String getEndState(Integer locationId, Integer locationTagId, String formName) {
 		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_END_STATE, formName);
 	}
@@ -99,6 +101,7 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getProviderId()
 	 */
+	@Override
 	public String getProviderId() {
 		// DWE CHICA-861 Trim leading and trailing white space, we found that the url contained a space in this parameter
 		try
@@ -107,14 +110,15 @@ public class VendorImpl implements Vendor {
 		}
 		catch(Exception e)
 		{
-			log.error("Error getting " + PARAM_PROVIDER_ID + " parameter in HTTP request.", e);
-			return "";
+			log.error("Error getting {} parameter in HTTP request.", PARAM_PROVIDER_ID, e);
+			return ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING;
 		}
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getFormPage(java.lang.Integer, java.lang.Integer, java.lang.String)
 	 */
+	@Override
 	public String getFormPage(Integer locationId, Integer locationTagId, String formName) {
 		return getFormAttributeValue(locationId, locationTagId, ChirdlUtilConstants.FORM_ATTRIBUTE_URL, formName);
 	}
@@ -122,15 +126,17 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getMrn()
 	 */
+	@Override
 	public String getMrn() {
-		return request.getParameter(PARAM_MRN);
+		return this.request.getParameter(PARAM_MRN);
 	}
 	
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getPassword()
 	 */
+	@Override
 	public String getPassword() {
-		String password = request.getParameter(PARAM_PASS);
+		String password = this.request.getParameter(PARAM_PASS);
 		if (password == null || password.trim().length() == 0) {
 			log.error("No " + PARAM_PASS + " parameter found in HTTP request.");
 			return null;
@@ -147,8 +153,9 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getUsername()
 	 */
+	@Override
 	public String getUsername() {
-		String username = request.getParameter(PARAM_USERNAME);
+		String username = this.request.getParameter(PARAM_USERNAME);
 		if (username == null || username.trim().length() == 0) {
 			log.error("No " + PARAM_USERNAME + " parameter found in HTTP request.");
 			return null;
@@ -165,11 +172,11 @@ public class VendorImpl implements Vendor {
 	/**
 	 * @see org.openmrs.module.chica.vendor.Vendor#getEncryptionKey()
 	 */
+	@Override
 	public String getEncryptionKey() {
 		String key = Context.getAdministrationService().getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROP_ENCRYPTION_KEY);
 		if (key == null || key.trim().length() == 0) {
-			log.warn("Cannot find value for global property " + ChirdlUtilConstants.GLOBAL_PROP_ENCRYPTION_KEY + ".  Clear text "
-					+ "value will be used.");
+			log.warn("Cannot find value for global property {}. Clear text value will be used.", ChirdlUtilConstants.GLOBAL_PROP_ENCRYPTION_KEY);
 			return null;
 		}
 		
@@ -192,7 +199,7 @@ public class VendorImpl implements Vendor {
 	 */
 	public String removeLeadingTrailingSpacesAddLeadingZeros(String parameterName) throws Exception
 	{
-		String paramValue = request.getParameter(parameterName);
+		String paramValue = this.request.getParameter(parameterName);
 		
 		if(paramValue != null && paramValue.length() > 0)
 		{
@@ -201,7 +208,7 @@ public class VendorImpl implements Vendor {
 				paramValue = paramValue.substring(1); // Remove the leading space, but leave the rest of the leading spaces
 			}
 			
-			paramValue = StringUtils.stripEnd(paramValue, STRING_SPACE); // Remove all trailing spaces
+			paramValue = StringUtils.stripEnd(paramValue, ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE); // Remove all trailing spaces
 			
 			if(paramValue.length() > 0 && paramValue.charAt(0) == CHARACTER_SPACE)
 			{
@@ -211,7 +218,7 @@ public class VendorImpl implements Vendor {
 
 				if (m.matches()) 
 				{
-					paramValue = m.group(1).replaceAll(STRING_SPACE, REPLACEMENT_VALUE_ZERO) + m.group(2);
+					paramValue = m.group(1).replace(ChirdlUtilConstants.GENERAL_INFO_SINGLE_SPACE, REPLACEMENT_VALUE_ZERO) + m.group(2);
 				}
 			}
 		}

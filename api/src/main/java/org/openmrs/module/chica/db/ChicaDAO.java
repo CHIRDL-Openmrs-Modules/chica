@@ -6,9 +6,10 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.openmrs.Concept;
-import org.openmrs.ConceptMap;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.db.DAOException;
 import org.openmrs.module.chica.Percentile;
 import org.openmrs.module.chica.hibernateBeans.Bmiage;
 import org.openmrs.module.chica.hibernateBeans.Chica1Appointment;
@@ -17,12 +18,15 @@ import org.openmrs.module.chica.hibernateBeans.Chica1PatientObsv;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7Export;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportMap;
 import org.openmrs.module.chica.hibernateBeans.ChicaHL7ExportStatus;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hibernateBeans.Family;
 import org.openmrs.module.chica.hibernateBeans.Hcageinf;
 import org.openmrs.module.chica.hibernateBeans.Lenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDbmiageinf;
+import org.openmrs.module.chica.hibernateBeans.MDlenageinf;
+import org.openmrs.module.chica.hibernateBeans.MDwtageinf;
 import org.openmrs.module.chica.hibernateBeans.PatientFamily;
 import org.openmrs.module.chica.hibernateBeans.Study;
+import org.openmrs.module.chica.hibernateBeans.StudyAttribute;
 import org.openmrs.module.chica.hibernateBeans.StudyAttributeValue;
 import org.openmrs.module.chica.hibernateBeans.StudySubject;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
@@ -68,8 +72,26 @@ public interface ChicaDAO {
 	public Lenageinf getLenageinf(double ageMos,int sex);
 	
 	public List<Study> getActiveStudies();
-		
-	public StudyAttributeValue getStudyAttributeValue(Study study,String studyAttributeName);
+	
+	/**
+	 * Retrieve a StudyAttribute by name.
+	 * 
+	 * @param studyAttributeName The name of the study attribute.
+	 * @param includeRetired 
+	 * @return StudyAttribute list with the provided study attribute name or null if one is not found with the provided name.
+	 */
+	public List<StudyAttribute> getStudyAttributesByName(String studyAttributeName, boolean includeRetired);
+	
+	/**
+	 * Retrieve list of StudyAttributeValue by Study and StudyAttributeName.
+	 * 
+	 * @param studyList The study list object.
+	 * @param studyAttributeList The study attribute list object.
+	 * @param includeRetired 
+	 * @return StudyAttributeValue list with the provided study and study attribute.
+	 */
+	public List<StudyAttributeValue> getStudyAttributeValues(List<Study> studyList,
+			List<StudyAttribute> studyAttributeList, boolean includeRetired);
 	
 	public List<Chica1PatientObsv> getChicaPatientObsByPSF(Integer psfId,Integer patientId);
 	public List<Chica1PatientObsv> getChicaPatientObsByPWS(Integer pwsId,Integer patientId);
@@ -173,6 +195,15 @@ public interface ChicaDAO {
 	public Study getStudyByTitle(String studyTitle);
 	
 	/**
+	 * Retrieve a Study by title.
+	 * 
+	 * @param studyTitle The title of the study.
+	 * @param includeRetired retired value
+	 * @return Study list with the provided title or null if one is not found with the provided title.
+	 */
+	public List<Study> getStudiesByTitle(String studyTitle, boolean includeRetired);
+	
+	/**
 	 * DWE CHICA-761
 	 * Get reprint/rescan states by session Id
 	 * @param sessionId
@@ -182,4 +213,83 @@ public interface ChicaDAO {
 	 * @return
 	 */
 	public List<PatientState> getReprintRescanStatesBySessionId(Integer sessionId, Date optionalDateRestriction, List<Integer> locationTagIds,Integer locationId) throws HibernateException;
+	
+	/**
+	 * Saves a new chica study attribute
+	 * 
+	 * @param studyAttribute to be saved
+	 * @throws DAOException
+	 */
+	public StudyAttribute saveStudyAttribute(StudyAttribute studyAttribute) ;
+	
+	/**
+	 * Saves a chica study attribute value
+	 * 
+	 * @param studyAttributeValue to be saved
+	 * @throws DAOException
+	 */
+	public StudyAttributeValue saveStudyAttributeValue(StudyAttributeValue studyAttributeValue);
+	
+	/**
+	 * Saves a new chica study
+	 * 
+	 * @param study to be saved
+	 * @throws DAOException
+	 */
+	public Study saveStudy(Study study) ;
+	
+	/**
+     * @param meanAge
+     * @return Muscular Dystrophy height mean age percentile
+     */
+    public MDlenageinf getMdlenageinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy height mean age left percentile
+     */
+    public MDlenageinf getMdlenageLeftinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy height mean age left percentile
+     */
+    public MDlenageinf getMdlenageRightinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy weight mean age percentile
+     */
+    public MDwtageinf getMdwtageinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy weight mean age left percentile
+     */
+    public MDwtageinf getMdwtageLeftinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy weight mean age left percentile
+     */
+    public MDwtageinf getMdwtageRightinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy bmi mean age percentile
+     */
+    public MDbmiageinf getMdbmiageinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy bmi mean age left percentile
+     */
+    public MDbmiageinf getMdbmiageLeftinf(double meanAge);
+    
+    /**
+     * @param meanAge
+     * @return Muscular Dystrophy bmi mean age left percentile
+     */
+    public MDbmiageinf getMdbmiageRightinf(double meanAge);
+	
 }

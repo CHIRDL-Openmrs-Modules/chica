@@ -5,8 +5,6 @@ package org.openmrs.module.chica.hl7;
 
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Location;
 import org.openmrs.LocationTag;
 import org.openmrs.api.LocationService;
@@ -15,6 +13,8 @@ import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttribut
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7EncounterHandler;
 import org.openmrs.module.sockethl7listener.HL7Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -24,8 +24,9 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class PrinterLocationHL7Filter implements HL7Filter
 {
-	protected final Log log = LogFactory.getLog(getClass());
+	private static final Logger log = LoggerFactory.getLogger(PrinterLocationHL7Filter.class);
 	
+	@Override
 	public boolean ignoreMessage(HL7EncounterHandler hl7EncounterHandler,
 			Message message,String incomingMessageString)
 	{

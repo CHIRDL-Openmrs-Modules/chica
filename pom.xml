@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chica</artifactId>
-	<version>1.85.0</version>
+	<version>1.86.0</version>
 	<packaging>pom</packaging>
 	<name>Chica</name>
 	<description>Parent project for Chica</description>
@@ -33,31 +33,31 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>chirdlutilbackports-api</artifactId>
-				<version>2.12.0</version>
+				<version>2.13.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>chirdlutil-api</artifactId>
-				<version>1.20.1</version>
+				<version>1.21.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>sockethl7listener-api</artifactId>
-				<version>1.13.0</version>
+				<version>1.14.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>dss-api</artifactId>
-				<version>3.1.0</version>
+				<version>3.2.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>atd-api</artifactId>
-				<version>2.16.0</version>
+				<version>2.17.0</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -69,11 +69,6 @@
 				<groupId>aopalliance</groupId>
 				<artifactId>aopalliance</artifactId>
 				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jamonapi</groupId>
-				<artifactId>jamon</artifactId>
-				<version>2.4</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jibx</groupId>
@@ -127,7 +122,7 @@
 			<dependency>
 				<groupId>com.itextpdf</groupId>
 				<artifactId>itextpdf</artifactId>
-				<version>5.1.2</version>
+				<version>5.5.13.3</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -205,12 +200,17 @@
 	</dependencyManagement>
 
 	<properties>
-		<openMRSVersion>2.0.6.2</openMRSVersion>
+		<openMRSVersion>2.4.2.1</openMRSVersion>
 	</properties>
 
 	<build>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+				   <groupId>org.apache.maven.plugins</groupId>
+				   <artifactId>maven-surefire-plugin</artifactId>
+				   <version>2.22.2</version>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>

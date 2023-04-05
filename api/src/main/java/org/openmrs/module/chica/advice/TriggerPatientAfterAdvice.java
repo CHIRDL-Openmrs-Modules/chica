@@ -2,20 +2,15 @@ package org.openmrs.module.chica.advice;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Location;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.atd.TeleformFileState;
-import org.openmrs.module.chirdlutil.threadmgmt.ThreadManager;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
-import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.AfterReturningAdvice;
 
 /**
@@ -26,7 +21,7 @@ import org.springframework.aop.AfterReturningAdvice;
  */
 public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(TriggerPatientAfterAdvice.class);
 
 	@Override
 	public void afterReturning(Object returnValue, Method method,
@@ -39,20 +34,15 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				if (method.getParameterTypes()[0].getName().compareTo(
 						"org.openmrs.Encounter") == 0)
 				{
-					AdministrationService adminService = Context.getAdministrationService();
 					org.openmrs.Encounter encounter = (org.openmrs.Encounter) args[0];
 					
-					ThreadManager threadManager = ThreadManager.getInstance();
-					Location location = encounter.getLocation();
 					//spawn the checkin thread
-					threadManager.execute(new CheckinPatient(encounter.getEncounterId()), location.getLocationId());
-					
+					Runnable checkin = new CheckinPatient(encounter.getEncounterId());
+					Daemon.runInDaemonThread(checkin, org.openmrs.module.chica.util.Util.getDaemonToken());
 				}
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util
-						.getStackTrace(e));
+				log.error("Exception during patient checkin after hl7 message processing.", e);
 			}
 		}
 		else if (method.getName().equals("fileProcessed"))
@@ -82,14 +72,12 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 				} 
 			} catch (Exception e)
 			{
-				this.log.error(e.getMessage());
-				this.log.error(org.openmrs.module.chirdlutil.util.Util
-						.getStackTrace(e));
+				log.error("Exception after processing teleform file.",e);
 			}
 		}
 		else if(method.getName().equals("cleanCache")) 
 		{
-            log.info("clear regenObs and medicationList");
+            log.info("Clear regenObs and medicationList.");
             ((ObsInMemoryDatasource) Context.getLogicService().getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY)).clearObs();
 
         }
@@ -102,17 +90,8 @@ public class TriggerPatientAfterAdvice implements AfterReturningAdvice
 			return;
 		}
 		
-		ThreadManager threadManager = ThreadManager.getInstance();
-		Map<String, Object> parameters = tfState.getParameters();
-		Integer locationId = -1;
-		if (parameters != null) 
-		{
-			PatientState patientState = (PatientState) parameters.get("patientState");
-			locationId = patientState.getLocationId();
-		}
-		
 		// Flush the session so the contents will be available for the thread.
 		Context.flushSession();
-		threadManager.execute(new ProcessFile(tfState), locationId);
+		Daemon.runInDaemonThread(new ProcessFile(tfState), org.openmrs.module.chica.util.Util.getDaemonToken());
 	}
 }

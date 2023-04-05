@@ -38,6 +38,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @return the id
 	 */
+	@Override
 	public String getId()
 	{
 		return this.id;
@@ -46,6 +47,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @param id the id to set
 	 */
+	@Override
 	public void setId(String id)
 	{
 		this.id = id;
@@ -54,6 +56,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @return the value
 	 */
+	@Override
 	public String getValue()
 	{
 		return this.value;
@@ -62,6 +65,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @param value the value to set
 	 */
+	@Override
 	public void setValue(String value)
 	{
 		this.value = value;
@@ -70,6 +74,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @return the taborder
 	 */
+	@Override
 	public String getTaborder()
 	{
 		return this.taborder;
@@ -78,6 +83,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @param taborder the taborder to set
 	 */
+	@Override
 	public void setTaborder(String taborder)
 	{
 		this.taborder = taborder;
@@ -86,6 +92,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @return the type
 	 */
+	@Override
 	public String getType()
 	{
 		return this.type;
@@ -94,6 +101,7 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
 	/**
 	 * @param type the type to set
 	 */
+	@Override
 	public void setType(String type)
 	{
 		this.type = type;
@@ -104,7 +112,8 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
      * 
      * @return value
      */
-    public String getSubstituteEstimate() {
+    @Override
+	public String getSubstituteEstimate() {
         return substituteEstimate;
     }
 
@@ -113,7 +122,8 @@ public class Field extends org.openmrs.module.atd.xmlBeans.Field
      * 
      * @param substituteEstimate
      */
-    public void setSubstituteEstimate(String substituteEstimate) {
+    @Override
+	public void setSubstituteEstimate(String substituteEstimate) {
         this.substituteEstimate = substituteEstimate;
     }
 }

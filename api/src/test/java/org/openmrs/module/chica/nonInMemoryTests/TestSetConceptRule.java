@@ -1,32 +1,32 @@
 package org.openmrs.module.chica.nonInMemoryTests;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 
 import org.openmrs.module.dss.hibernateBeans.Rule;
 import org.openmrs.module.dss.service.DssService;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+import org.openmrs.test.jupiter.BaseModuleContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 
 /**
  * @author Tammy Dugan
  * 
  */
-@SkipBaseSetup
+@Disabled
 public class TestSetConceptRule extends BaseModuleContextSensitiveTest
 {
 
-	@Before
+	@BeforeEach
 	public void runBeforeEachTest() throws Exception {
 //		authenticate();
 	}
+
 	@Test
-	@Ignore
 	public void testSetConceptRule() throws Exception
 	{
 		DssService dssService = Context.getService(DssService.class);

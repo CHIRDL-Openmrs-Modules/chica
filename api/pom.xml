@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>chica</artifactId>
-		<version>1.85.0</version>
+		<version>1.86.0</version>
 	</parent>
 	<artifactId>chica-api</artifactId>
 	<packaging>jar</packaging>
@@ -25,9 +25,9 @@
 			<artifactId>chirdlutil-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>sockethl7listener-api</artifactId>
-		</dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>sockethl7listener-api</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>dss-api</artifactId>

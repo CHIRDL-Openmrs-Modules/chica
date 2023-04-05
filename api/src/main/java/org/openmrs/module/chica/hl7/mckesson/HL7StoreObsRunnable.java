@@ -20,9 +20,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptName;
 import org.openmrs.Location;
@@ -40,6 +37,8 @@ import org.openmrs.module.chirdlutilbackports.datasource.ObsInMemoryDatasource;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -50,7 +49,7 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class HL7StoreObsRunnable implements Runnable {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(HL7StoreObsRunnable.class);
 	private Integer patientId;
 	private Integer locationId;
 	private Integer sessionId;
@@ -78,39 +77,33 @@ public class HL7StoreObsRunnable implements Runnable {
 	/**
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
-		Context.openSession();
 		try {
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-			    adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
-			Patient patient = Context.getPatientService().getPatient(patientId);
+			Patient patient = Context.getPatientService().getPatient(this.patientId);
 			if (patient == null) {
-				log.error("Invalid patient ID: " + patientId);
+				log.error("Invalid patient ID: {}", this.patientId);
 				return;
 			}
 			
-			Location location = Context.getLocationService().getLocation(locationId);
+			Location location = Context.getLocationService().getLocation(this.locationId);
 			if (location == null) {
-				log.error("Invalid location ID: " + locationId);
+				log.error("Invalid location ID: {}", this.locationId);
 				return;
 			}
 			
 			// DWE CLINREQ-130 Get locationTagId
-			LocationTag locationTag = Context.getLocationService().getLocationTagByName(printerLocation);
+			LocationTag locationTag = Context.getLocationService().getLocationTagByName(this.printerLocation);
 			if(locationTag == null)
 			{
-				log.error("Invalid printer location: " + printerLocation);
+				log.error("Invalid printer location: {} ", this.printerLocation);
 				return;
 			}
 			
 			storeHL7Obs(patient, location, locationTag.getLocationTagId());
 		}
 		catch (Exception e) {
-			log.error("Error processing file", e);
-		}
-		finally {
-			Context.closeSession();
+			log.error("Error storing HL7 obs for patient id: {}, location id: {}, printer location {}", this.patientId, this.locationId, this.printerLocation, e);
 		}
 	}
 	
@@ -133,7 +126,7 @@ public class HL7StoreObsRunnable implements Runnable {
 		AdministrationService  adminService = Context.getAdministrationService();	
 		State state = backportsService.getStateByName(ChirdlUtilConstants.STATE_HL7_PROCESS_REGISTRATION_OBS);
 		PatientState patientState = backportsService
-				.addPatientState(patient, state, sessionId, locationTagId,
+				.addPatientState(patient, state, this.sessionId, locationTagId,
 						location.getLocationId(), null); // DWE CLINREQ-130 Changed this to use the location service to get the location tag
 		patientState.setStartTime(new Date());
 		patientState = backportsService.updatePatientState(patientState);
@@ -145,7 +138,7 @@ public class HL7StoreObsRunnable implements Runnable {
 			Integer patientId = patient.getPatientId();
 			HL7ObsHandler25 obsHandler = new HL7ObsHandler25();
 			
-			ArrayList<Obs> allObs = obsHandler.getObs(message, patient);
+			ArrayList<Obs> allObs = obsHandler.getObs(this.message, patient);
 			LogicService logicService = Context.getLogicService();
 			ObsInMemoryDatasource xmlDatasource = 
 					(ObsInMemoryDatasource) logicService.getLogicDataSource(ChirdlUtilConstants.DATA_SOURCE_IN_MEMORY);
@@ -153,15 +146,15 @@ public class HL7StoreObsRunnable implements Runnable {
 			HashMap<String, Set<Obs>> obsByConcept = xmlDatasource.getObs(patientId);
 			
 			if (obsByConcept == null) {
-				obsByConcept = new HashMap<String, Set<Obs>>();
+				obsByConcept = new HashMap<>();
 			}
 			
-			Map<Integer, Concept> mrfConceptMapping = new HashMap<Integer, Concept>();
-			Map<Integer, Concept> vitalsConceptMapping = new HashMap<Integer, Concept>();
-			Map<String, Concept> vitalsConceptByNameMapping = new HashMap<String, Concept>();
-			Set<Integer> mrfConceptSet = new HashSet<Integer>();
-			Set<Integer> vitalsConceptSet = new HashSet<Integer>();
-			Set<String> vitalsConceptByNameSet = new HashSet<String>();
+			Map<Integer, Concept> mrfConceptMapping = new HashMap<>();
+			Map<Integer, Concept> vitalsConceptMapping = new HashMap<>();
+			Map<String, Concept> vitalsConceptByNameMapping = new HashMap<>();
+			Set<Integer> mrfConceptSet = new HashSet<>();
+			Set<Integer> vitalsConceptSet = new HashSet<>();
+			Set<String> vitalsConceptByNameSet = new HashSet<>();
 			
 			ConceptService conceptService = Context.getConceptService();
 			ObsService obsService = Context.getObsService();
@@ -181,13 +174,13 @@ public class HL7StoreObsRunnable implements Runnable {
 			
 				// check to see if we've already looked up a mapping for this concept
 				Concept mappedConcept = mrfConceptMapping.get(conceptId);
-				if (mappedConcept == null) {
+				if (mappedConcept == null && !mrfConceptSet.contains(conceptId)) {
 					// check to see if we've already searched this one before
-					if (!mrfConceptSet.contains(conceptId)) {
-						mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
-						mrfConceptSet.add(conceptId);
-						mrfConceptMapping.put(conceptId, mappedConcept);
-					}
+				
+					mappedConcept = conceptService.getConceptByMapping(conceptId.toString(), medicalRecordSource);
+					mrfConceptSet.add(conceptId);
+					mrfConceptMapping.put(conceptId, mappedConcept);
+					
 				}
 				
 				if (mappedConcept != null) {
@@ -232,8 +225,7 @@ public class HL7StoreObsRunnable implements Runnable {
 						if (answerConcept != null) {
 							String answerConceptName = answerConcept.getName().getName();
 							currObs.setValueText(answerConceptName);
-							log.error("Could not map vitals concept: " + answerConceptName
-								+ ". Could not store vitals observation.");
+							log.error("Could not map vitals concept: {}. Could not store vitals observation.", answerConceptName);
 						}
 					}
 					org.openmrs.module.chica.hl7.vitals.HL7SocketHandler.convertVitalsUnits(currObs, mappedVitalsConcept);
@@ -243,9 +235,9 @@ public class HL7StoreObsRunnable implements Runnable {
 					try{
 						obsService.saveObs(currObs, null);
 						savedToDB = true;
-					}catch(APIException apie){
+					}catch(APIException e){
 						// CHICA-1017 Catch the exception and log it so that we can continue processing the message
-						log.error("APIException while saving obs " + currObs + ".", apie);
+						log.error("APIException while saving obs {}", currObs, e);
 					}
 				}
 				
@@ -253,7 +245,7 @@ public class HL7StoreObsRunnable implements Runnable {
 				if (!savedToDB) {
 					Set<Obs> obs = obsByConcept.get(currConceptName);
 					if (obs == null) {
-						obs = new HashSet<Obs>();
+						obs = new HashSet<>();
 						obsByConcept.put(currConceptName, obs);
 					}
 					obs.add(currObs);

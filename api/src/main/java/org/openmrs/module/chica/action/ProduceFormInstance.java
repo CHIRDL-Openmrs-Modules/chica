@@ -4,25 +4,18 @@
 package org.openmrs.module.chica.action;
 
 import java.util.HashMap;
-import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Encounter;
-import org.openmrs.Form;
 import org.openmrs.Patient;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.EncounterService;
-import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.LocationTagAttributeValue;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.PatientState;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.Session;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.State;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.StateAction;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author tmdugan
@@ -30,7 +23,7 @@ import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService
  */
 public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFormInstance
 {
-	private static Log log = LogFactory.getLog(ProduceFormInstance.class);
+	private static final Logger log = LoggerFactory.getLogger(ProduceFormInstance.class);
 
 	/*
 	 * (non-Javadoc)
@@ -40,8 +33,9 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 	 *      org.openmrs.module.atd.hibernateBeans.PatientState,
 	 *      java.util.HashMap)
 	 */
+	@Override
 	public void processAction(StateAction stateAction, Patient patient,
-			PatientState patientState, HashMap<String, Object> parameters)
+			PatientState patientState, HashMap<String, Object> parameters) 
 	{
 		processProduceAction(stateAction, patient, patientState, parameters);
 		super.processAction(stateAction, patient, patientState, parameters);
@@ -105,9 +99,7 @@ public class ProduceFormInstance extends org.openmrs.module.atd.action.ProduceFo
 			currState = chirdlutilbackportsService.getStateByName("ErrorState");
 			chirdlutilbackportsService.addPatientState(patient,
 					currState, sessionId,locationTagId,locationId, null);
-			log.error(formName+
-					" locationTagAttribute does not exist for locationTagId: "+
-					locationTagId+" locationId: "+locationId);
+			log.error("{} locationTagAttribute does not exist for locationTagId: {} locationId: {}", formName, locationTagId, locationId);
 			return;
 		}
 	}

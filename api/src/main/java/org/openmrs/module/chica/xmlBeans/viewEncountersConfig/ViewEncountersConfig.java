@@ -8,7 +8,7 @@ public class ViewEncountersConfig {
 	 * @return the formsToDisplay
 	 */
 	public FormsToDisplay getFormsToDisplay() {
-		return formsToDisplay;
+		return this.formsToDisplay;
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class ViewEncountersConfig {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((formsToDisplay == null) ? 0 : formsToDisplay.hashCode());
+		result = prime * result + ((this.formsToDisplay == null) ? 0 : this.formsToDisplay.hashCode());
 		return result;
 	}
 
@@ -44,11 +44,11 @@ public class ViewEncountersConfig {
 			return false;
 		}
 		ViewEncountersConfig other = (ViewEncountersConfig) obj;
-		if (formsToDisplay == null) {
+		if (this.formsToDisplay == null) {
 			if (other.formsToDisplay != null) {
 				return false;
 			}
-		} else if (!formsToDisplay.equals(other.formsToDisplay)) {
+		} else if (!this.formsToDisplay.equals(other.formsToDisplay)) {
 			return false;
 		}
 		return true;
@@ -59,6 +59,6 @@ public class ViewEncountersConfig {
 	 */
 	@Override
 	public String toString() {
-		return "ViewEncountersConfig [formsToDisplay=" + formsToDisplay + "]";
+		return "ViewEncountersConfig [formsToDisplay=" + this.formsToDisplay + "]";
 	}
 }

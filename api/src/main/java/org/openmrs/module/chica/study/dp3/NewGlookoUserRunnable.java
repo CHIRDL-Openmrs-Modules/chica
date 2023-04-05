@@ -5,20 +5,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.APIException;
-import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.chirdlutil.threadmgmt.ChirdlRunnable;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CHICA-1063
@@ -26,7 +25,7 @@ import org.openmrs.module.chirdlutil.util.DateUtil;
  */
 public class NewGlookoUserRunnable implements ChirdlRunnable
 {
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(NewGlookoUserRunnable.class);
 	private String firstName;
 	private String lastName; 
 	private String dateOfBirth; 
@@ -50,27 +49,22 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 	 * This thread does the following
 	 * Attempts to match the patient using first name, last name, and date of birth
 	 * If a match is found, the GlookoCode person attribute is created
-	 */
+	 */    
 	@Override
 	public void run() 
 	{
-		Context.openSession();
 		try
 		{	
-			AdministrationService adminService = Context.getAdministrationService();
-			Context.authenticate(adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_USERNAME),
-					adminService.getGlobalProperty(ChirdlUtilConstants.GLOBAL_PROPERTY_SCHEDULER_PASSPHRASE));
-
-			List<Patient> patients = Context.getPatientService().getPatients(firstName + ChirdlUtilConstants.GENERAL_INFO_COMMA + lastName, null, null, false);
+			List<Patient> patients = Context.getPatientService().getPatients(this.firstName + ChirdlUtilConstants.GENERAL_INFO_COMMA + this.lastName, null, null, false);
 			if(patients != null && patients.size() > 0)
 			{
-				List<Patient> possibleMatches = new ArrayList<Patient>();
+				List<Patient> possibleMatches = new ArrayList<>();
 				
 				// Look through the list to find possible matches
-				Date glookoDOB = DateUtil.parseDate(dateOfBirth, ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd);
+				Date glookoDOB = DateUtil.parseDate(this.dateOfBirth, ChirdlUtilConstants.DATE_FORMAT_yyyy_MM_dd);
 				for(Patient patient : patients)
 				{
-					if(firstName.equalsIgnoreCase(patient.getPersonName().getGivenName()) && lastName.equalsIgnoreCase(patient.getPersonName().getFamilyName()) && patient.getBirthdate().compareTo(glookoDOB) == 0)
+					if(this.firstName.equalsIgnoreCase(patient.getPersonName().getGivenName()) && this.lastName.equalsIgnoreCase(patient.getPersonName().getFamilyName()) && patient.getBirthdate().compareTo(glookoDOB) == 0)
 					{
 						possibleMatches.add(patient);
 					}	
@@ -85,7 +79,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 				{
 					// More than one possible match. Try to match by locating a patient that has an encounter for the day
 					EncounterService encounterService = Context.getEncounterService();
-					List<Patient> matches = new ArrayList<Patient>();
+					List<Patient> matches = new ArrayList<>();
 					
 					for(Patient patient : possibleMatches)
 					{
@@ -117,12 +111,12 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 				}
 				else
 				{
-					log.error("New Glooko user notification was received. Unable to locate patient match for: " + lastName + ", " + firstName);
+					log.error("New Glooko user notification was received. Unable to locate patient match for: {}, {}.",  this.lastName, this.firstName);
 				}
 			}
 			else
 			{
-				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: " + lastName + ", " + firstName);
+				log.error("New Glooko user notification was received. Unable to locate possible patient matches for: {}, {}.", this.lastName,  this.firstName);
 			}	
 		}
 		catch(ContextAuthenticationException e)
@@ -131,11 +125,7 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 		}
 		catch(Exception e)
 		{
-			log.error("Error in " + this.getClass().getName() + ".", e);
-		}
-		finally
-		{
-			Context.closeSession();
+			log.error("Error in {}", this.getClass().getName(), e);
 		}		
 	}
 	
@@ -151,11 +141,11 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 
 			if (attributeType == null)
 			{
-				log.error("Unable to create GlookoCode person attribute for patient: " + patient.getPatientId() + " Person attribute type does not exist.");
+				log.error("Unable to create GlookoCode person attribute for patient: {}.  Person attribute type does not exist.",patient.getPatientId());
 				return;
 			}
 			
-			PersonAttribute attr = new PersonAttribute(attributeType, glookoCode);
+			PersonAttribute attr = new PersonAttribute(attributeType, this.glookoCode);
 			attr.setDateCreated(new Date());
 			attr.setCreator(Context.getAuthenticatedUser());
 			patient.addAttribute(attr);
@@ -183,6 +173,6 @@ public class NewGlookoUserRunnable implements ChirdlRunnable
 	@Override
 	public String getName() 
 	{
-		return this.getClass().getName() + " (GlookoCode: " + glookoCode + ")";
+		return this.getClass().getName() + " (GlookoCode: " + this.glookoCode + ")";
 	}
 }

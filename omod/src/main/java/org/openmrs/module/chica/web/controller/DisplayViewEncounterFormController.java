@@ -3,23 +3,23 @@ package org.openmrs.module.chica.web.controller;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.utils.URIBuilder;
-import org.openmrs.Location;
 import org.openmrs.api.APIAuthenticationException;
-import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.util.ChicaConstants;
 import org.openmrs.module.chica.web.ChicaServlet;
+import org.openmrs.module.chica.web.ServletUtil;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.IOUtil;
-import org.openmrs.module.chirdlutil.util.Util;
 import org.openmrs.module.chirdlutilbackports.hibernateBeans.FormAttributeValue;
 import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.ui.ModelMap;
@@ -33,7 +33,8 @@ import org.springframework.web.servlet.view.RedirectView;
 public class DisplayViewEncounterFormController {
 	
 	/** Logger for this class and subclasses */
-	protected final Log log = LogFactory.getLog(getClass());
+
+	private static final Logger log = LoggerFactory.getLogger(DisplayViewEncounterFormController.class);
 	
 	private static final String FORM_VIEW = "/module/chica/displayViewEncounterForm";
 	private static final String PARAMETER_RIGHT_FORM_NAME = "rightFormName";
@@ -42,7 +43,6 @@ public class DisplayViewEncounterFormController {
 	private static final String PARAMETER_RIGHT_IMAGE_FILENAME = "rightImagefilename";
 	private static final String PARAMETER_LEFT_HTML_OUTPUT = "leftHtmlOutput";
 	private static final String PARAMETER_RIGHT_HTML_OUTPUT = "rightHtmlOutput";
-	private static final String LOCATION_PEPS = "PEPS";
 
 	@RequestMapping(method = RequestMethod.POST)
 	protected ModelAndView processSubmit(HttpServletRequest request,HttpServletResponse response, Object command) throws Exception {
@@ -99,20 +99,20 @@ public class DisplayViewEncounterFormController {
 					String transformUrl = null;
 					try {
 						URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-						uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.TRANSFORM_FORM_XML);
+						uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.TRANSFORM_FORM_XML);
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_ID, String.valueOf(formId));
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, String.valueOf(locationTagId));
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_LOCATION_ID, String.valueOf(locationId));
 						uriBuilder.addParameter(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE_ID, String.valueOf(formInstanceId));
-						uriBuilder.addParameter(ChicaServlet.STYLESHEET, stylesheet);
-						uriBuilder.addParameter(ChicaServlet.FORM_DIRECTORY, formDirectory);
+						uriBuilder.addParameter(ServletUtil.STYLESHEET, stylesheet);
+						uriBuilder.addParameter(ServletUtil.FORM_DIRECTORY, formDirectory);
 
 						transformUrl = uriBuilder.toString();
 					}
 					catch (URISyntaxException e) {
-						log.error("Error generating URI for form image location for action: " + ChicaServlet.TRANSFORM_FORM_XML + 
-								" form ID: " + formId + " location tag ID: " + locationTagId + " location ID " + locationId + 
-								" form instance ID: " + formInstanceId + " stylesheet: " + stylesheet, e);
+						log.error("Error generating URI for form image location for action: {} form ID: {} location tag ID: {}"
+								+ "location ID {} form instance ID: {} stylesheet: {}",
+								ServletUtil.TRANSFORM_FORM_XML,formId,locationTagId,locationId,formInstanceId,stylesheet,e);
 					}
 
 					map.put(htmlOutputParameterName, transformUrl);
@@ -121,15 +121,15 @@ public class DisplayViewEncounterFormController {
 			{
 				try {
 					URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-					uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
-					uriBuilder.addParameter(ChicaServlet.PARAM_TIFF_FILE_LOCATION, imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
+					uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.CONVERT_TIFF_TO_PDF);
+					uriBuilder.addParameter(ServletUtil.PARAM_TIFF_FILE_LOCATION, imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING);
 
 					imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 					map.put(filenameParameterName, imageFilename);
 				}
 				catch (URISyntaxException e) {
-					log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF + 
-							" tiff file location: " + (imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING), e);
+					log.error("Error generating URI form image filename for action: {} tiff file location: {}",
+							ServletUtil.CONVERT_TIFF_TO_PDF,(imagefile != null ? imagefile.getPath() : ChirdlUtilConstants.GENERAL_INFO_EMPTY_STRING), e);
 				}
 			}
 		}
@@ -138,12 +138,12 @@ public class DisplayViewEncounterFormController {
 			// We weren't able to locate the form. We still need to return something so an error page gets displayed.
 			try {
 				URIBuilder uriBuilder = new URIBuilder(ChicaServlet.CHICA_SERVLET_URL);
-				uriBuilder.addParameter(ChicaServlet.PARAM_ACTION, ChicaServlet.CONVERT_TIFF_TO_PDF);
+				uriBuilder.addParameter(ServletUtil.PARAM_ACTION, ServletUtil.CONVERT_TIFF_TO_PDF);
 				imageFilename = uriBuilder.toString() + ChicaServlet.CHICA_SERVLET_PDF_PARAMS;
 				map.put(filenameParameterName, imageFilename);
 			}
 			catch (URISyntaxException e) {
-				log.error("Error generating URI form image filename for action: " + ChicaServlet.CONVERT_TIFF_TO_PDF, e);
+				log.error("Error generating URI form image filename for action: {} ",ServletUtil.CONVERT_TIFF_TO_PDF, e);
 			}
 		}
 	}
@@ -170,7 +170,7 @@ public class DisplayViewEncounterFormController {
 			}
 			catch(NumberFormatException nfe)
 			{
-				log.error("Error in " + getClass().getName() + ". Error parsing parameter: " + paramName + " stringValue: " + stringValue + ".", nfe);
+				log.error("Error in {}. Error parsing parameter: {} stringValue: {}.",getClass().getName(),paramName,stringValue,nfe);
 			}
 		}
 		
@@ -254,7 +254,7 @@ public class DisplayViewEncounterFormController {
 			// login page
 		}catch (Exception e){
 
-			this.log.error(Util.getStackTrace(e));
+			log.error("",e);
 		}
 
 		return FORM_VIEW;

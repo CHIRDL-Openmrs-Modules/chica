@@ -13,7 +13,8 @@
 		<mapping resource="chica1_patient_obsv.hbm.xml" />
 		<mapping resource="chica1_patient.hbm.xml" />
 		<mapping resource="ddst.hbm.xml" />
-		<mapping resource="encounter.hbm.xml" />
+        <mapping resource="encounter_attribute_value.hbm.xml" />
+        <mapping resource="encounter_attribute.hbm.xml" />
 		<mapping resource="family.hbm.xml" />
 		<mapping resource="hcageinf.hbm.xml" />
 		<mapping resource="high_bp.hbm.xml" />
@@ -36,5 +37,8 @@
 	    <mapping resource="session.hbm.xml"/>
 	    <mapping resource="patient_state.hbm.xml"/>
 	    <mapping resource="form_instance.hbm.xml"/>
+	    <mapping resource="mdlenageinf.hbm.xml" />
+	    <mapping resource="mdwtageinf.hbm.xml" />
+	    <mapping resource="mdbmiageinf.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

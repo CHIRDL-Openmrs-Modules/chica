@@ -13,7 +13,7 @@ public class ConceptYAxis {
      * @return the name
      */
     public String getName() {
-    	return name;
+    	return this.name;
     }
 	
     /**
@@ -27,7 +27,7 @@ public class ConceptYAxis {
      * @return the minPosition
      */
     public Float getMinPosition() {
-    	return minPosition;
+    	return this.minPosition;
     }
 	
     /**
@@ -41,7 +41,7 @@ public class ConceptYAxis {
      * @return the maxPosition
      */
     public Float getMaxPosition() {
-    	return maxPosition;
+    	return this.maxPosition;
     }
 	
     /**
@@ -55,7 +55,7 @@ public class ConceptYAxis {
      * @return the minVal
      */
     public Float getMinVal() {
-    	return minVal;
+    	return this.minVal;
     }
 	
     /**
@@ -69,7 +69,7 @@ public class ConceptYAxis {
      * @return the maxVal
      */
     public Float getMaxVal() {
-    	return maxVal;
+    	return this.maxVal;
     }
 	
     /**

@@ -19,7 +19,7 @@ public class ViewEncounterForm {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	/**
 	 * @param name the name to set
@@ -31,7 +31,7 @@ public class ViewEncounterForm {
 	 * @return the displayPosition
 	 */
 	public String getDisplayPosition() {
-		return displayPosition;
+		return this.displayPosition;
 	}
 	/**
 	 * @param displayPosition the displayPosition to set
@@ -43,7 +43,7 @@ public class ViewEncounterForm {
 	 * @return the stylesheet
 	 */
 	public String getStylesheet() {
-		return stylesheet;
+		return this.stylesheet;
 	}
 	/**
 	 * @param stylesheet the stylesheet to set
@@ -55,7 +55,7 @@ public class ViewEncounterForm {
 	 * @return the directory
 	 */
 	public String getDirectory() {
-		return directory;
+		return this.directory;
 	}
 	/**
 	 * @param directory the directory to set
@@ -69,7 +69,7 @@ public class ViewEncounterForm {
 	 */
 	public List<String> getStateNames() {
 		List<String> stateNamesList = new ArrayList<String>();
-		String[] stateNamesArray = stateNames.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
+		String[] stateNamesArray = this.stateNames.split(ChirdlUtilConstants.GENERAL_INFO_COMMA);
 		if(stateNamesArray != null)
 		{
 			stateNamesList = Arrays.asList(stateNamesArray);
@@ -86,7 +86,7 @@ public class ViewEncounterForm {
 	 * @return the relatedForms
 	 */
 	public ArrayList<ViewEncounterForm> getRelatedForms() {
-		return relatedForms;
+		return this.relatedForms;
 	}
 	/**
 	 * @param relatedForms the relatedForms to set
@@ -101,12 +101,12 @@ public class ViewEncounterForm {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((directory == null) ? 0 : directory.hashCode());
-		result = prime * result + ((displayPosition == null) ? 0 : displayPosition.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((relatedForms == null) ? 0 : relatedForms.hashCode());
-		result = prime * result + ((stylesheet == null) ? 0 : stylesheet.hashCode());
-		result = prime * result + ((stateNames == null) ? 0 : stateNames.hashCode());
+		result = prime * result + ((this.directory == null) ? 0 : this.directory.hashCode());
+		result = prime * result + ((this.displayPosition == null) ? 0 : this.displayPosition.hashCode());
+		result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+		result = prime * result + ((this.relatedForms == null) ? 0 : this.relatedForms.hashCode());
+		result = prime * result + ((this.stylesheet == null) ? 0 : this.stylesheet.hashCode());
+		result = prime * result + ((this.stateNames == null) ? 0 : this.stateNames.hashCode());
 		return result;
 	}
 	/* (non-Javadoc)
@@ -124,47 +124,47 @@ public class ViewEncounterForm {
 			return false;
 		}
 		ViewEncounterForm other = (ViewEncounterForm) obj;
-		if (directory == null) {
+		if (this.directory == null) {
 			if (other.directory != null) {
 				return false;
 			}
-		} else if (!directory.equals(other.directory)) {
+		} else if (!this.directory.equals(other.directory)) {
 			return false;
 		}
-		if (displayPosition == null) {
+		if (this.displayPosition == null) {
 			if (other.displayPosition != null) {
 				return false;
 			}
-		} else if (!displayPosition.equals(other.displayPosition)) {
+		} else if (!this.displayPosition.equals(other.displayPosition)) {
 			return false;
 		}
-		if (name == null) {
+		if (this.name == null) {
 			if (other.name != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		} else if (!this.name.equals(other.name)) {
 			return false;
 		}
-		if (relatedForms == null) {
+		if (this.relatedForms == null) {
 			if (other.relatedForms != null) {
 				return false;
 			}
-		} else if (!relatedForms.equals(other.relatedForms)) {
+		} else if (!this.relatedForms.equals(other.relatedForms)) {
 			return false;
 		}
-		if (stylesheet == null) {
+		if (this.stylesheet == null) {
 			if (other.stylesheet != null) {
 				return false;
 			}
-		} else if (!stylesheet.equals(other.stylesheet)) {
+		} else if (!this.stylesheet.equals(other.stylesheet)) {
 			return false;
 		}
 		
-		if (stateNames == null) {
+		if (this.stateNames == null) {
 			if (other.stateNames != null) {
 				return false;
 			}
-		} else if (!stateNames.equals(other.stateNames)) {
+		} else if (!this.stateNames.equals(other.stateNames)) {
 			return false;
 		}
 		return true;
@@ -174,7 +174,7 @@ public class ViewEncounterForm {
 	 */
 	@Override
 	public String toString() {
-		return "ViewEncounterForm [name=" + name + ", displayPosition=" + displayPosition + ", stylesheet=" + stylesheet
-				+ ", directory=" + directory + ", stateNames=" + stateNames + ", relatedForms=" + relatedForms + "]";
+		return "ViewEncounterForm [name=" + this.name + ", displayPosition=" + this.displayPosition + ", stylesheet=" + this.stylesheet
+				+ ", directory=" + this.directory + ", stateNames=" + this.stateNames + ", relatedForms=" + this.relatedForms + "]";
 	}
 }

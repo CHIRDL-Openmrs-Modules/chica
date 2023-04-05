@@ -19,11 +19,10 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.ConceptMap;
 import org.openmrs.ConceptSource;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Location;
 import org.openmrs.Patient;
@@ -36,24 +35,27 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.PersonName;
 import org.openmrs.User;
 import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientIdentifierException;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chica.hibernateBeans.Encounter;
 import org.openmrs.module.chica.hl7.mckesson.HL7EncounterHandler25;
 import org.openmrs.module.chica.hl7.mckesson.HL7PatientHandler25;
 import org.openmrs.module.chica.hl7.mckesson.HL7SocketHandler;
 import org.openmrs.module.chica.hl7.mckesson.PatientHandler;
 import org.openmrs.module.chica.service.ChicaService;
-import org.openmrs.module.chica.service.EncounterService;
 import org.openmrs.module.chirdlutil.util.ChirdlUtilConstants;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.openmrs.module.chirdlutilbackports.hibernateBeans.EncounterAttributeValue;
+import org.openmrs.module.chirdlutilbackports.service.ChirdlUtilBackportsService;
 import org.openmrs.module.sockethl7listener.HL7ObsHandler25;
 import org.openmrs.module.sockethl7listener.Provider;
 import org.openmrs.validator.PatientIdentifierValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
@@ -61,8 +63,9 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
 public class ManualCheckin
 {
 
+	private static final String NEXT_OF_KIN = "Next of Kin";
 	/** Logger for this class and subclasses */
-	protected static final Log log = LogFactory.getLog(ManualCheckin.class);
+	private static final Logger log = LoggerFactory.getLogger(ManualCheckin.class);
 	private static final String PARAM_MRN = "mrn";
 	
 	public static void getManualCheckinPatient(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -105,6 +108,7 @@ public class ManualCheckin
 				PatientIdentifierValidator.validateIdentifier(mrn, identifierType);
 				valid = true;
 			}  catch(PatientIdentifierException e) {
+				log.error("Exception validating identifier for {}", mrn,e);
 			}
 		}
 		
@@ -118,7 +122,7 @@ public class ManualCheckin
 		// see if there is a patient that already has the mrn
 		if (mrn != null)
 		{
-			List<PatientIdentifierType> identifierTypes = new ArrayList<PatientIdentifierType>();
+			List<PatientIdentifierType> identifierTypes = new ArrayList<>();
 			identifierTypes.add(identifierType);
 			List<Patient> patients = patientService.getPatientsByIdentifier(null, mrn,
 					identifierTypes,true); // CHICA-977 Use getPatientsByIdentifier() as a temporary solution to openmrs TRUNK-5089
@@ -138,7 +142,7 @@ public class ManualCheckin
 			}
 		}
 		
-		TreeMap<String,String> raceCodes = new TreeMap<String,String>();
+		TreeMap<String,String> raceCodes = new TreeMap<>();
 		ConceptService conceptService = Context.getConceptService();
 		ConceptSource conceptSource = conceptService.getConceptSourceByName("Wishard Race Codes");
 		List<ConceptMap> conceptMaps = conceptService.getConceptMappingsToSource(conceptSource); // CHICA-1151 replace getConceptsByConceptSource() with getConceptMappingsToSource()
@@ -170,10 +174,11 @@ public class ManualCheckin
 		ProviderService providerService = Context.getProviderService();
 		List<org.openmrs.Provider> doctors = providerService.getAllProviders();
 		
-		List<org.openmrs.Provider> doctorList = new ArrayList<org.openmrs.Provider>();
+		List<org.openmrs.Provider> doctorList = new ArrayList<>();
 		
 		Comparator<org.openmrs.Provider> comparator = new Comparator<org.openmrs.Provider>(){		 
-            public int compare(org.openmrs.Provider p1, org.openmrs.Provider p2) 
+            @Override
+			public int compare(org.openmrs.Provider p1, org.openmrs.Provider p2) 
             {
                Person person1 = p1.getPerson();
                Person person2 = p2.getPerson();
@@ -334,7 +339,8 @@ public class ManualCheckin
 
 		PersonService personService = Context.getPersonService();
 		PatientService patientService = Context.getPatientService();
-		EncounterService encounterService = Context.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
+		ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
 		
 		Patient checkinPatient = new Patient();
 		PersonName name = new PersonName();
@@ -376,12 +382,12 @@ public class ManualCheckin
 		{
 			PersonAttribute attribute = new PersonAttribute();
 			PersonAttributeType attributeType = personService
-					.getPersonAttributeTypeByName("Next of Kin");
+					.getPersonAttributeTypeByName(NEXT_OF_KIN);
 			if (attributeType == null) {
 				attributeType = new PersonAttributeType();
 				attributeType.setDateCreated(new Date());
-				attributeType.setName("Next of Kin");
-				attributeType.setDescription("Next of Kin");
+				attributeType.setName(NEXT_OF_KIN);
+				attributeType.setDescription(NEXT_OF_KIN);
 				attributeType.setUuid(UUID.randomUUID().toString());
 				attributeType = personService.savePersonAttributeType(attributeType);
 			}
@@ -421,7 +427,7 @@ public class ManualCheckin
 
 		if (ssn1 != null && ssn2 != null && ssn3 != null&&ssn1.length()>0&&ssn2.length()>0&&ssn3.length()>0)
 		{
-			//removed "-" between segments for consistancy with hl7 SSM MSheley 2/29/2009
+			//removed "-" between segments for consistency with hl7 SSM MSheley 2/29/2009
 			String ssn = ssn1 + ssn2 + ssn3;
 			PatientIdentifierType identifierType = patientService
 					.getPatientIdentifierTypeByName("SSN");
@@ -461,7 +467,7 @@ public class ManualCheckin
 				checkinPatient.setBirthdate(birthdate);
 			} catch (Exception e)
 			{
-				log.error("Error parsing date: "+dob);
+				log.error("Error parsing date: {}.",dob,e);
 			}
 		}
 		Provider provider = new Provider();
@@ -474,9 +480,7 @@ public class ManualCheckin
 			provider.setProvider(openmrsProvider);
 		} catch (Exception e)
 		{
-			log.error("Could not assign provider: "+providerId);
-			log.error(e.getMessage());
-			log.error(Util.getStackTrace(e));
+			log.error("Could not assign provider:{} ", providerId,e);
 		}
 		
 		PipeParser parser = new PipeParser();
@@ -488,10 +492,9 @@ public class ManualCheckin
 				null);
 		
 		//create encounter
-		org.openmrs.module.chica.hibernateBeans.Encounter newEncounter = new org.openmrs.module.chica.hibernateBeans.Encounter();
+		Encounter newEncounter = new Encounter();
 		newEncounter.setLocation(encounterLocation);
 		newEncounter.setEncounterDatetime(encounterDate);
-		newEncounter.setPrinterLocation(request.getParameter("manualCheckinStation"));
 		newEncounter.setEncounterDatetime(encounterDate);
 		EncounterType encType = encounterService.getEncounterType("ManualCheckin");
 		if (encType == null){
@@ -510,10 +513,12 @@ public class ManualCheckin
 		boolean checkinSuccess = false;
 		HashMap<String,Object> parameters = new HashMap<String,Object>();
 		if (validIdentifier){
-			Encounter enc = (Encounter) socketHandler.checkin(provider, checkinPatient, encounterDate,
+			Encounter enc = socketHandler.checkin(provider, checkinPatient, encounterDate,
 					 null, null, newEncounter,parameters);
 			if (enc != null){
 				checkinSuccess = true;
+				Util.storeEncounterAttributeAsValueText(enc, ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION,request.getParameter("manualCheckinStation"));
+				
 				// Set the insurance category
 				String insuranceCategory = request.getParameter("manualCheckinInsuranceCategory");
 				if (insuranceCategory != null && insuranceCategory.trim().length() > 0) {
@@ -607,7 +612,7 @@ public class ManualCheckin
 			}
 		}
 
-		attribute = patient.getAttribute("Next of Kin");
+		attribute = patient.getAttribute(NEXT_OF_KIN);
 		if (attribute != null)
 		{
 			String value = attribute.getValue();
@@ -630,14 +635,13 @@ public class ManualCheckin
 			ServletUtil.writeTag("mrn", ServletUtil.escapeXML(mrn), pw);
 		}
 
-		EncounterService encounterService = Context
-				.getService(EncounterService.class);
+		EncounterService encounterService = Context.getEncounterService();
 		List<org.openmrs.Encounter> encounters = encounterService
 				.getEncounters(patient, null, null, null, null, null, null,null,null,false); // CHICA-1151 Add null parameters for Collection<VisitType> and Collection<Visit>
 
 		if (encounters != null && encounters.size() > 0)
 		{
-			Encounter encounter = (Encounter) encounters.get(0);
+			Encounter encounter = encounters.get(0);
 			
 			// CHICA-221 Use the provider that has the "Attending Provider" role for the encounter
 			org.openmrs.Provider provider = org.openmrs.module.chirdlutil.util.Util.getProviderByAttendingProviderEncounterRole(encounter);
@@ -646,9 +650,27 @@ public class ManualCheckin
 			{
 				ServletUtil.writeTag("doctor", provider.getId(), pw);
 			}
-
-			ServletUtil.writeTag("station", ServletUtil.escapeXML(encounter.getPrinterLocation()), pw);
-			ServletUtil.writeTag("insuranceCode", ServletUtil.escapeXML(encounter.getInsuranceSmsCode()), pw);
+			
+			//Get encounter attribute value for printer location
+			ChirdlUtilBackportsService chirdlutilbackportsService = Context.getService(ChirdlUtilBackportsService.class);
+			String printerLocation = null;	
+			EncounterAttributeValue printerLocationAttributeValue = chirdlutilbackportsService.
+					getEncounterAttributeValueByName(encounter.getEncounterId(), 
+							ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_PRINTER_LOCATION);
+			if (printerLocationAttributeValue != null) {
+				 printerLocation = printerLocationAttributeValue.getValueText();
+			}
+			
+			String insuranceSMSCode = null;
+			EncounterAttributeValue insuranceSMSCodeAttributeValue = chirdlutilbackportsService
+					.getEncounterAttributeValueByName(encounter.getEncounterId(), 
+							ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_INSURANCE_SMS_CODE);
+			if (insuranceSMSCodeAttributeValue != null) {
+				insuranceSMSCode = insuranceSMSCodeAttributeValue.getValueText();
+			}
+			
+			ServletUtil.writeTag("station", ServletUtil.escapeXML(printerLocation), pw);
+			ServletUtil.writeTag("insuranceCode", ServletUtil.escapeXML(insuranceSMSCode), pw);
 		}
 		
 		pw.write("</patient>");

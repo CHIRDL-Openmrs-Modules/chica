@@ -6,9 +6,12 @@ package org.openmrs.module.chica;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chica.service.ChicaService;
 import org.openmrs.module.chirdlutil.util.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Tammy Dugan
@@ -17,22 +20,36 @@ import org.openmrs.module.chirdlutil.util.Util;
 public class Calculator 
 {
 	
-	private static final String MALE_STRING = "M";
+	public static final String MALE_STRING = "M";
 	
-	private static final String FEMALE_STRING = "F";
+	public static final String FEMALE_STRING = "F";
 	
-	private static final int MALE_INT = 1;
+	public static final int MALE_INT = 1;
 	
-	private static final int FEMALE_INT = 2;
+	public static final int FEMALE_INT = 2;
 	
-	private static final String PERCENTILE_HC = "hc";
+	public static final String PERCENTILE_HC = "hc";
 	
-	private static final String PERCENTILE_LEN = "length";
+	public static final String PERCENTILE_LEN = "length";
 	
-	private static final String PERCENTILE_BMI = "bmi";
+	public static final String PERCENTILE_BMI = "bmi";
 	
-	private static final String PERCENTILE_WT = "weight";
+	public static final String PERCENTILE_WT = "weight";
 	
+	public static final String PERCENTILE_MD_LEN = "mdlength";
+	
+	public static final String PERCENTILE_MD_WT = "mdweight";
+	
+	public static final String PERCENTILE_MD_BMI = "mdbmi";
+	
+	public static final String PERCENTILE_LEFT = "left";
+    
+    public static final String PERCENTILE_RIGHT = "right";
+    
+    private static final Logger log = LoggerFactory.getLogger(Calculator.class);
+
+    public static final String MD_BMI_TWO_BELOW_SD = "mdbmi2belowsd";
+  	
 	/**
 	 * 
 	 */
@@ -75,7 +92,7 @@ public class Calculator
 		return String.valueOf(Util.round(percentile, 0).intValue());
 	}
 	
-	private Percentile lookupPercentile(String type, Double agemos, Integer sex) 
+	public Percentile lookupPercentile(String type, Double agemos, Integer sex) 
 	{
 		if (type == null || agemos == null || sex == null) {
 			return null;
@@ -202,7 +219,7 @@ public class Calculator
 		return calculatePercentile(measurement, gender, birthdate, type, measurementUnits, Calendar.getInstance().getTime());
 	}
 	
-	private Double interpolate(Double leftX, Double rightX, Double leftY, Double rightY, Double xValue){
+	public Double interpolate(Double leftX, Double rightX, Double leftY, Double rightY, Double xValue){
 		double result = (Math.abs(xValue-leftX)/(Math.abs(rightX-leftX)))*Math.abs(rightY-leftY);
 		
 		if(leftY <= rightY){
@@ -529,4 +546,203 @@ public class Calculator
 		
 		return null;
 	}
+	
+	public Double calculatePercentile(Double measurement, Date birthdate, String type, Date currDate) {
+
+        if (measurement == null || birthdate == null || type == null) {
+            return null;
+        }
+        
+        Double meanAge = Util.getFractionalAgeInUnits(birthdate, currDate, Util.YEAR_ABBR);
+        log.debug("Mean Age in Years - {}", meanAge);
+        
+        Double p10;
+        Double p25;
+        Double p50;
+        Double p75;
+        Double p90;
+                
+        //look up the percentile for the age in years
+        MDPercentile percentileTable = lookupPercentile(null, type, meanAge);
+        if (percentileTable != null) 
+        {
+            p10 = percentileTable.getP10();
+            p25 = percentileTable.getP25();
+            p50 = percentileTable.getP50();
+            p75 = percentileTable.getP75();
+            p90 = percentileTable.getP90();
+            
+            return convertToPercentile(measurement, p10, p25, p50, p75, p90);
+        }
+        
+        MDPercentile percentileTableLeft = lookupPercentile(PERCENTILE_LEFT, type, meanAge);
+        MDPercentile percentileTableRight = lookupPercentile(PERCENTILE_RIGHT, type, meanAge);
+        
+        if (percentileTableLeft != null && percentileTableRight != null) {
+
+            double p10ForAge = (((percentileTableRight.getP10() - percentileTableLeft.getP10()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getP10();
+            double p25ForAge = (((percentileTableRight.getP25() - percentileTableLeft.getP25()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getP25();
+            double p50ForAge = (((percentileTableRight.getP50() - percentileTableLeft.getP50()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getP50();
+            double p75ForAge = (((percentileTableRight.getP75() - percentileTableLeft.getP75()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getP75();
+            double p90ForAge = (((percentileTableRight.getP90() - percentileTableLeft.getP90()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getP90();
+            
+            return convertToPercentile(measurement, p10ForAge, p25ForAge, p50ForAge, p75ForAge, p90ForAge);
+        }
+        
+        //if we get here, we can't interpolate because one side is null
+        //so just use the non-null side
+        if (percentileTableLeft != null) 
+        {
+            percentileTable = percentileTableLeft;
+        }
+        if (percentileTableRight != null) 
+        {
+            percentileTable = percentileTableRight;
+        }
+        
+        if (percentileTable != null) 
+        {
+            p10 = percentileTable.getP10();
+            p25 = percentileTable.getP25();
+            p50 = percentileTable.getP50();
+            p75 = percentileTable.getP75();
+            p90 = percentileTable.getP90();
+            
+            return convertToPercentile(measurement, p10, p25, p50, p75, p90);
+        }
+        //return null if we didn't find any percentiles
+        return null;
+    }
+    
+    public MDPercentile lookupPercentile(String percentileRow, String type, Double meanAge) {
+        if (type == null || meanAge == null) {
+            return null;
+        }
+        
+        ChicaService chicaService = Context
+                .getService(ChicaService.class);
+        MDPercentile percentileTable = null;
+        
+        if (type.equalsIgnoreCase(PERCENTILE_MD_LEN)) {
+            if (StringUtils.isNotBlank(percentileRow)) {
+                if (percentileRow.equalsIgnoreCase(PERCENTILE_LEFT)) {
+                    percentileTable = chicaService.getMdlenageLeftinf(meanAge);
+                } else {
+                    percentileTable = chicaService.getMdlenageRightinf(meanAge);
+                }
+            } else {
+                percentileTable = chicaService.getMdlenageinf(meanAge);
+            }
+        } else if (type.equalsIgnoreCase(PERCENTILE_MD_WT)) {
+            if (StringUtils.isNotBlank(percentileRow)) {
+                if (percentileRow.equalsIgnoreCase(PERCENTILE_LEFT)) {
+                    percentileTable = chicaService.getMdwtageLeftinf(meanAge);
+                } else {
+                    percentileTable = chicaService.getMdwtageRightinf(meanAge);
+                }
+            } else {
+                percentileTable = chicaService.getMdwtageinf(meanAge);
+            }
+        } else if (type.equalsIgnoreCase(PERCENTILE_MD_BMI) || type.equalsIgnoreCase(MD_BMI_TWO_BELOW_SD)) {
+            if (StringUtils.isNotBlank(percentileRow)) {
+                if (percentileRow.equalsIgnoreCase(PERCENTILE_LEFT)) {
+                    percentileTable = chicaService.getMdbmiageLeftinf(meanAge);
+                } else {
+                    percentileTable = chicaService.getMdbmiageRightinf(meanAge);
+                }
+            } else {
+                percentileTable = chicaService.getMdbmiageinf(meanAge);
+            }
+        }
+        return percentileTable;
+    }
+    
+    private static Double convertToPercentile(Double measurement, Double p10, Double p25, Double p50, Double p75, Double p90) {
+        
+        if (measurement == null || p10 == null || p25 == null || p50 == null || p75 == null || p90 == null) {
+            return null;
+        }
+        
+        double percentile = 0;
+        log.debug("10th_for_age - {}\n25th_for_age - {}\n50th_for_age - {}\n75th_for_age - {}\n90th_for_age - {}", 
+                                    p10, p25, p50, p75, p90);
+
+        if (measurement < p10) {
+            percentile = 1;
+        } else if (measurement < p25) {
+            percentile = (25 - 10) / (p25 - p10) * (measurement - p10) + 10;
+        } else if (measurement < p50) {
+            percentile = (50 - 25) / (p50 - p25) * (measurement - p25) + 25;
+        } else if (measurement < p75) {
+            percentile = (75 - 50) / (p75 - p50) * (measurement - p50) + 50;
+        } else if (measurement < p90) {
+            percentile = (90 - 75) / (p90 - p75) * (measurement - p75) + 75;
+        } else {
+            percentile = 99;
+        }
+
+        return percentile;
+    }
+    
+    public Boolean isBMITwoBelowSD(Double measurement, Date birthdate, String type, Date currDate) {
+        if (measurement == null || birthdate == null || type == null) {
+            return Boolean.FALSE;
+        }
+        
+        Double meanAge = Util.getFractionalAgeInUnits(birthdate, currDate, Util.YEAR_ABBR);
+        log.debug("Mean Age in Years - "+ meanAge);
+        
+        double mean;
+        double sd;
+                
+        MDPercentile percentileTable = lookupPercentile(null, type, meanAge);
+        if (percentileTable != null) 
+        {
+            mean = percentileTable.getMean();
+            sd = percentileTable.getSd();
+            
+            return getMeanTwoBelowSDFlag(measurement, mean, sd);
+        }
+        
+        MDPercentile percentileTableLeft = lookupPercentile(PERCENTILE_LEFT, type, meanAge);
+        MDPercentile percentileTableRight = lookupPercentile(PERCENTILE_RIGHT, type, meanAge);
+        
+        if (percentileTableLeft != null && percentileTableRight != null) {
+            
+            double meanForAge = (((percentileTableRight.getMean() - percentileTableLeft.getMean()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getMean();
+            double sdForAge = (((percentileTableRight.getSd() - percentileTableLeft.getSd()) / 0.5) * (meanAge - percentileTableLeft.getMeanAge())) + percentileTableLeft.getSd();
+            
+            return getMeanTwoBelowSDFlag(measurement, meanForAge, sdForAge);
+        }
+        
+        //if we get here, we can't interpolate because one side is null
+        //so just use the non-null side
+        if (percentileTableLeft != null) 
+        {
+            percentileTable = percentileTableLeft;
+        }
+        if (percentileTableRight != null) 
+        {
+            percentileTable = percentileTableRight;
+        }
+        
+        if (percentileTable != null) 
+        {
+            mean = percentileTable.getMean();
+            sd = percentileTable.getSd();
+           
+            return getMeanTwoBelowSDFlag(measurement, mean, sd);
+        }
+        
+        return Boolean.FALSE;
+    }
+    
+    private static Boolean getMeanTwoBelowSDFlag(Double measurement, Double mean, Double sd) {
+        
+        double meanTwoBelowSD =  mean - (2 * sd);
+        if (measurement < meanTwoBelowSD)
+            return Boolean.TRUE;
+        return Boolean.FALSE;
+    } 
+
 }

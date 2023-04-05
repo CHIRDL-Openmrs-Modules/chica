@@ -25,7 +25,7 @@ public class LoginCredentials
 	 */
 	public String getUsername()
 	{
-		return username;
+		return this.username;
 	}
 	
 	/**
@@ -33,7 +33,7 @@ public class LoginCredentials
 	 */
 	public String getPassword()
 	{
-		return password;
+		return this.password;
 	}
 	
 	/**
@@ -59,8 +59,8 @@ public class LoginCredentials
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + ((this.password == null) ? 0 : this.password.hashCode());
+		result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
 		return result;
 	}
 
@@ -79,18 +79,18 @@ public class LoginCredentials
 			return false;
 		}
 		LoginCredentials other = (LoginCredentials) obj;
-		if (password == null) {
+		if (this.password == null) {
 			if (other.password != null) {
 				return false;
 			}
-		} else if (!password.equals(other.password)) {
+		} else if (!this.password.equals(other.password)) {
 			return false;
 		}
-		if (username == null) {
+		if (this.username == null) {
 			if (other.username != null) {
 				return false;
 			}
-		} else if (!username.equals(other.username)) {
+		} else if (!this.username.equals(other.username)) {
 			return false;
 		}
 		return true;

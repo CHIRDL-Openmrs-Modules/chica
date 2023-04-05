@@ -82,8 +82,8 @@ public class FormCompletionController {
      * @return The form view name
      */
     @RequestMapping(value = "module/chica/finishFormsMobile.form", method = RequestMethod.GET)
-    protected String initFinishFormsMobile(HttpServletRequest request, ModelMap map) {
-        return finishForm(request, map, FORM_VIEW_FINISH_FORMS_MOBILE);
+    protected ModelAndView initFinishFormsMobile(HttpServletRequest request, ModelMap map) {
+        return ControllerUtil.finishForm(request, map, FORM_VIEW_FINISH_FORMS_MOBILE);
 	}
     
     /**
@@ -94,8 +94,8 @@ public class FormCompletionController {
      * @return The form view name
      */
     @RequestMapping(value = "module/chica/finishFormsWeb.form", method = RequestMethod.GET)
-    protected String initFinishFormsWeb(HttpServletRequest request, ModelMap map) {
-        return finishForm(request, map, FORM_VIEW_FINISH_FORMS_WEB);
+    protected ModelAndView initFinishFormsWeb(HttpServletRequest request, ModelMap map) {
+        return ControllerUtil.finishForm(request, map, FORM_VIEW_FINISH_FORMS_WEB);
     }
     
     /**
@@ -114,8 +114,8 @@ public class FormCompletionController {
         String sessionIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_SESSION_ID);
         String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
         String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
-        Integer locationId = Integer.parseInt(locationIdStr);
-        Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
+        Integer locationId = Integer.valueOf(locationIdStr);
+        Patient patient = Context.getPatientService().getPatient(Integer.valueOf(patientIdStr));
         
         Map<String,Object> parameters = new HashMap<>();
         parameters.put(ChirdlUtilConstants.PARAMETER_MODE, ChirdlUtilConstants.PARAMETER_VALUE_PRODUCE);
@@ -123,9 +123,9 @@ public class FormCompletionController {
         FormInstance formInstance = new FormInstance(locationId, null, null);
         parameters.put(ChirdlUtilConstants.PARAMETER_FORM_INSTANCE, formInstance);
         parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_ID, locationId);
-        parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, Integer.parseInt(encounterIdStr));
-        parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, Integer.parseInt(locationTagIdStr));
-        parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, Integer.parseInt(sessionIdStr));
+        parameters.put(ChirdlUtilConstants.PARAMETER_ENCOUNTER_ID, Integer.valueOf(encounterIdStr));
+        parameters.put(ChirdlUtilConstants.PARAMETER_LOCATION_TAG_ID, Integer.valueOf(locationTagIdStr));
+        parameters.put(ChirdlUtilConstants.PARAMETER_SESSION_ID, Integer.valueOf(sessionIdStr));
         
         map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
         map.put(PARAMETER_NOTIFICATIONS, runRules(patient, parameters));
@@ -133,25 +133,6 @@ public class FormCompletionController {
         map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
         
         return FORM_VIEW_FINISH_FORMS_NOTIFICATION_MOBILE;
-    }
-    
-    /**
-     * Completes the form and returns the next view.
-     * 
-     * @param request The HTTP request information
-     * @param map map to populate for return to the client
-     * @param formView The form view to display next
-     * @return The form view to display next
-     */
-    private String finishForm(HttpServletRequest request, ModelMap map, String formView) {
-        String patientIdStr = request.getParameter(ChirdlUtilConstants.PARAMETER_PATIENT_ID);
-        Patient patient = Context.getPatientService().getPatient(Integer.parseInt(patientIdStr));
-        map.put(ChirdlUtilConstants.PARAMETER_PATIENT, patient);
-        String language = request.getParameter(ChicaConstants.PARAMETER_LANGUAGE);
-        map.put(ChicaConstants.PARAMETER_LANGUAGE, language);
-        String userQuitForm = request.getParameter(ChicaConstants.PARAMETER_USER_QUIT_FORM);
-        map.put(ChicaConstants.PARAMETER_USER_QUIT_FORM, userQuitForm);
-        return formView;
     }
     
     /**

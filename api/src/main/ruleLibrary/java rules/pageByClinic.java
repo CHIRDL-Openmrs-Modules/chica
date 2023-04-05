@@ -17,8 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Person;
@@ -39,7 +39,7 @@ import org.openmrs.module.dss.service.DssService;
 
 public class pageByClinic implements Rule {
 	
-	private Log log = LogFactory.getLog(this.getClass());
+	private static final Logger log = LoggerFactory.getLogger(pageByClinic.class);
 	
 	/**
 	 * *
