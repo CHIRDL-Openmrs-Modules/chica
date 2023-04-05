@@ -8,5 +8,5 @@ updates:
         day: "thursday"
         time: "07:45"
         timezone: "America/Indiana/Indianapolis"
-     target-branch: "Prod_Release_18.0"
+     target-branch: "master"
      open-pull-requests-limit: 0
