@@ -100,6 +100,7 @@
 				<excludes>
                     <exclude>Update Instruction for CHICA 2.doc</exclude>
                     <exclude>upgrade_scripts/chica_1_44_23_to_1_45/PSF.XML</exclude>
+                    <exclude>scripts/form_update_scripts/form_update.doc</exclude>
                 </excludes>
 			</resource>
 		</resources>
