@@ -99,6 +99,7 @@
 				<filtering>true</filtering>
 				<excludes>
                     <exclude>Update Instruction for CHICA 2.doc</exclude>
+                    <exclude>upgrade_scripts/chica_1_44_23_to_1_45/PSF.XML</exclude>
                 </excludes>
 			</resource>
 		</resources>
