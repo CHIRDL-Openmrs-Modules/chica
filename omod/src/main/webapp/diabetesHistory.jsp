@@ -2,14 +2,17 @@
 
 <!DOCTYPE html>
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/diabetesHistory.form" />
-<html>
+<html xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:jsp="http://java.sun.com/JSP/Page"
+    xmlns:openmrs="urn:jsptld:/WEB-INF/view/module/legacyui/taglibs/openmrs.tld"
+   >
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.css">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chicaMobile.css">
 		<link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/diabetesHistory.css">
-		<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+        <openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />        
 		<script src="${pageContext.request.contextPath}/moduleResources/chica/browserFixMobile.js" charset="utf-8"></script>
 		<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.mobile-1.3.2.min.js"></script>
 		<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.blockUI.js"></script>

@@ -1,3 +1,6 @@
+
+var $ = jQuery.noConflict();
+
 $("#Enter").click(function (e) {
 	e.preventDefault(); // <------------------ stop default behaviour of button
 	var element = this;    

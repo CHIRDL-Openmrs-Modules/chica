@@ -1,4 +1,7 @@
 var chicaServletUrl = ctx + "/moduleServlet/chica/chica?";
+
+var $ = jQuery.noConflict();
+
 $(function() {
     $( "#cacheTabs" ).tabs();
     $( "#submitButton, #clearEHRMedicalRecordCacheButton, #clearFormDraftCacheButton, #clearFormDraftButton" ).button();

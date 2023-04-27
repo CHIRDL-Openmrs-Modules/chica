@@ -5,11 +5,11 @@
 <link
 	href="${pageContext.request.contextPath}/moduleResources/chica/chica.css"
 	type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css"/>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css"/>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css"/>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+
+<openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />  
+<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.css" />
+
 <SCRIPT LANGUAGE="JavaScript">
 	$(function() {
 	    $("#rescannedButton").button();

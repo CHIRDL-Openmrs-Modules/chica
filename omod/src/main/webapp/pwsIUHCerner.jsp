@@ -4,16 +4,19 @@
     <html xmlns="http://www.w3.org/1999/xhtml">
 
     <head>
+    
+        <openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />
+        <openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.js" />
+        <openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.css" />
+        <openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.structure.min.css" />
+        <openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.theme.min.css" />
+        
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/pwsIUHCerner.css" type="text/css" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/recommendedHandouts.css" />
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.css" />
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css" />
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />
-        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
-        <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+
         <script>
             var ctx = "${pageContext.request.contextPath}";
         </script>
@@ -21,7 +24,9 @@
         <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/recommendedHandouts.js"></script>
         <script src="${pageContext.request.contextPath}/moduleResources/chica/timeout-dialog.js"></script>
+        
         <title>CHICA Physician Encounter Form</title>
+        
     </head>
 
     <body>

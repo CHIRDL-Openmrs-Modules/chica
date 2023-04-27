@@ -1,11 +1,11 @@
 
+var $ = jQuery.noConflict();
 
-
-$(function() {
+jQuery(function($) {
 	
-	$j("#exitButton").button();
+	$("#exitButton").button();
 	
-	$j("#viewImageDialog").dialog({
+	$("#viewImageDialog").dialog({
 	    resizable: true,
 	    autoOpen:false,
 	    modal: true,
@@ -15,19 +15,19 @@ $(function() {
 	    },
 	    buttons: {
 		    Cancel: function() {
-		   	 $j(this).dialog('close');
+		   	 $(this).dialog('close');
 		    } //end cancel button
 	    }//end buttons
 	    
     });
 	
-	$j("#datepickerStart").datepicker({
+	$("#datepickerStart").datepicker({
     	changeMonth:true,
     	changeYear:true,
     	appendText: "(mm/dd/yyyy)",
     	yearRange: "-3:+0"
     });
-	$j("#datepickerStop").datepicker({
+	$("#datepickerStop").datepicker({
     	changeMonth:true,
     	changeYear:true,
     	appendText: "(mm/dd/yyyy)",
@@ -87,8 +87,8 @@ $(document).ready(function() {
 	
 	$('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
 		
-		$j('#imageDisplay').attr('src', this.id);
-    	$j('#viewImageDialog').dialog('open');
+		$('#imageDisplay').attr('src', this.id);
+    	$('#viewImageDialog').dialog('open');
 
     } );
 	
