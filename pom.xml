@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chica</artifactId>
-	<version>1.86.0</version>
+	<version>1.87.0</version>
 	<packaging>pom</packaging>
 	<name>Chica</name>
 	<description>Parent project for Chica</description>
@@ -112,6 +112,12 @@
                 <artifactId>pdfbox</artifactId>
                 <version>2.0.24</version>
                 <scope>compile</scope>
+                <exclusions>
+					<exclusion>
+						<artifactId>commons-logging</artifactId>
+						<groupId>commons-logging</groupId>
+					</exclusion>
+				</exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
