@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/cacheConfiguration.css">
 
 <openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.min.css" />
 
 <script>var ctx = "${pageContext.request.contextPath}";</script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/cacheConfiguration.js"></script>

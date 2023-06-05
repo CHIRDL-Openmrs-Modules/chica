@@ -24,10 +24,10 @@
 <head>
 
 <openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.css" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.structure.min.css" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.theme.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.structure.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.theme.min.css" />
 
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>

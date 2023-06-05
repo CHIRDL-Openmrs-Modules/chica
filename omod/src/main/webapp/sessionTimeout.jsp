@@ -6,10 +6,10 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/moduleResources/chica/sessionTimeout.css">
 
 <openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.js" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.min.css" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.structure.min.css" />
-<openmrs:htmlInclude file="/scripts/jquery-ui/jquery-ui.theme.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.structure.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.theme.min.css" />
 
 <title>CHICA Session Timeout</title>
 </head>
