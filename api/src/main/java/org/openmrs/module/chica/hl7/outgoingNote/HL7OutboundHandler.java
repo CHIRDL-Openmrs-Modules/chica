@@ -73,6 +73,7 @@ public class HL7OutboundHandler implements Runnable
 		catch(Exception e)
 		{
 			log.error("Error in {}.", this.getClass().getName(), e);
+			Thread.currentThread().interrupt();
 		}
 		finally
 		{

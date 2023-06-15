@@ -95,6 +95,7 @@ public class VitalsProcessor extends AbstractTask {
 		}
 		catch (Exception e) {
 			log.error("Error shutting down VitalsProcessor task.", e);
+			Thread.currentThread().interrupt();
 		}
 	}
 }

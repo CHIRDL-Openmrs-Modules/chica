@@ -118,6 +118,7 @@ public class CheckinProcessor extends AbstractTask
 		} catch (Exception e)
 		{
 			log.error("Exception shutting down Checkin Processor task.",e);
+			Thread.currentThread().interrupt();
 		}	
 	}
 }

@@ -182,13 +182,20 @@ public class GreaseBoardBuilder {
 				EncounterAttributeValue  encounterAttributeValue = chirdlutilbackportsService.getEncounterAttributeValueByName
 						(encounterId,  ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
 				
+				Date appointmentDateTime = null;
+				
 				if  (encounterAttributeValue == null) {
 					log.error("Encounter attribute value does not exist for {}", ChirdlUtilConstants.ENCOUNTER_ATTRIBUTE_APPOINTMENT_TIME);
+				} else {
+					appointmentDateTime = encounterAttributeValue.getValueDateTime();
 				}
 			
-				Date appointmentDateTime = encounterAttributeValue.getValueDateTime();
-				String appointment = DateUtil.formatDate(appointmentDateTime, ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
-			
+				String appointment = null;
+				if (appointmentDateTime != null) {
+					appointment = DateUtil.formatDate(appointmentDateTime,
+							ChirdlUtilConstants.DATE_FORMAT_h_mm_a);
+				}
+				
 				PatientRow row = new PatientRow();
 				Date encounterDate = null;
 				
