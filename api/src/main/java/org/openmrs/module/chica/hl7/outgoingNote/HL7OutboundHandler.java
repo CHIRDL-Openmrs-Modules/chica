@@ -70,10 +70,13 @@ public class HL7OutboundHandler implements Runnable
 		{
 			log.error("Error authenticating context.", e);
 		}
+		catch (InterruptedException e) {
+			log.error("HL7OutboundHandler thread interrupted.", e);
+			Thread.currentThread().interrupt();
+		}
 		catch(Exception e)
 		{
 			log.error("Error in {}.", this.getClass().getName(), e);
-			Thread.currentThread().interrupt();
 		}
 		finally
 		{

@@ -115,10 +115,14 @@ public class CheckinProcessor extends AbstractTask
 				// AcceptorThread.stop() is used which does not guarantee that the socket has had time to close
 				Thread.sleep(3000);
 			}
-		} catch (Exception e)
+		}
+		catch (InterruptedException e) {
+			log.error("CheckinProcessor thread interrupted.", e);
+			Thread.currentThread().interrupt();
+		}
+		catch (Exception e)
 		{
 			log.error("Exception shutting down Checkin Processor task.",e);
-			Thread.currentThread().interrupt();
 		}	
 	}
 }
