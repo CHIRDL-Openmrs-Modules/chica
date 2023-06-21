@@ -348,7 +348,7 @@ public class ViewEncounterController {
 				{
 					Integer pid = Integer.parseInt(patientIdParam);
 					PatientService patientService = Context.getPatientService();
-					patient = patientService.getPatient(Integer.valueOf(pid));
+					patient = patientService.getPatient(pid);
 				}
 				catch(NumberFormatException nfe)
 				{

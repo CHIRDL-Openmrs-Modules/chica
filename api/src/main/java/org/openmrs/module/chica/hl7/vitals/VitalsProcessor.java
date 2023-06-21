@@ -93,6 +93,10 @@ public class VitalsProcessor extends AbstractTask {
 				Thread.sleep(3000);
 			}
 		}
+		catch (InterruptedException e) {
+			log.error("VitalsProcessor thread interrupted.", e);
+			Thread.currentThread().interrupt();
+		}
 		catch (Exception e) {
 			log.error("Error shutting down VitalsProcessor task.", e);
 		}

@@ -919,7 +919,7 @@ public class Util {
     		return false;
     	}
     	
-    	if (encounterId == obsEncounter.getEncounterId()) {
+    	if (encounterId.equals(obsEncounter.getEncounterId())) {
     		return true;
     	}
     	
