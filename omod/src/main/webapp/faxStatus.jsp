@@ -16,9 +16,7 @@
 <link href="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.css" type="text/css" rel="stylesheet" />
 
 <script>var ctx = "${pageContext.request.contextPath}";</script>
-
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.js"></script>
 
 <html>

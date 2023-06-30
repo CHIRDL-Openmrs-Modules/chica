@@ -2,10 +2,7 @@
 
 <!DOCTYPE html>
 <openmrs:require allPrivileges="View Encounters, View Patients, View Concept Classes" otherwise="/module/chica/loginMobile.form" redirect="/module/chica/diabetesHistory.form" />
-<html xmlns:c="http://java.sun.com/jsp/jstl/core"
-    xmlns:jsp="http://java.sun.com/JSP/Page"
-    xmlns:openmrs="urn:jsptld:/WEB-INF/view/module/legacyui/taglibs/openmrs.tld"
-   >
+<html>
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width" />

@@ -1,33 +1,32 @@
 
-var $ = jQuery.noConflict();
 
-jQuery(function($) {
+jQuery(function() {
 	
-	$("#exitButton").button();
+	$j("#exitButton").button();
 	
-	$("#viewImageDialog").dialog({
+	$j("#viewImageDialog").dialog({
 	    resizable: true,
 	    autoOpen:false,
 	    modal: true,
-        width: $(window).width() * 0.75,
-        height: $(window).height() * 0.75,
+        width: $j(window).width() * 0.75,
+        height: $j(window).height() * 0.75,
 	    open: function(event, ui){
 	    },
 	    buttons: {
 		    Cancel: function() {
-		   	 $(this).dialog('close');
+		   	 $j(this).dialog('close');
 		    } //end cancel button
 	    }//end buttons
 	    
     });
 	
-	$("#datepickerStart").datepicker({
+	$j("#datepickerStart").datepicker({
     	changeMonth:true,
     	changeYear:true,
     	appendText: "(mm/dd/yyyy)",
     	yearRange: "-3:+0"
     });
-	$("#datepickerStop").datepicker({
+	$j("#datepickerStop").datepicker({
     	changeMonth:true,
     	changeYear:true,
     	appendText: "(mm/dd/yyyy)",
@@ -36,9 +35,9 @@ jQuery(function($) {
 
 });
 
-$(document).ready(function() {
+$j(document).ready(function() {
 	
-	var statusTable = $('#faxStatusTable').dataTable(
+	var statusTable = $j('#faxStatusTable').dataTable(
 			{ 
 				
 				
@@ -85,10 +84,10 @@ $(document).ready(function() {
 			}).api();
 
 	
-	$('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
+	$j('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
 		
-		$('#imageDisplay').attr('src', this.id);
-    	$('#viewImageDialog').dialog('open');
+		$j('#imageDisplay').attr('src', this.id);
+    	$j('#viewImageDialog').dialog('open');
 
     } );
 	
