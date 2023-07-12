@@ -5,15 +5,18 @@
 <html>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables_themeroller-1.10.6.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" /> 
+
+<openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.structure.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.theme.min.css" />
+
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.css" type="text/css" rel="stylesheet" />
 
 <script>var ctx = "${pageContext.request.contextPath}";</script>
-<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/moduleResources/atd/jquery.dataTables-1.10.6.min.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/faxStatus.js"></script>
 
 <html>
