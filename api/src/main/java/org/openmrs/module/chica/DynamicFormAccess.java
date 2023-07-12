@@ -815,7 +815,7 @@ public class DynamicFormAccess {
 				atdService.addPatientATD(formInstance, currDssElement, encounterId, patientId);
 				addStatistic(dssService, atdService, patient, currDssElement, formInstanceId, i, encounter, formName,
 				    locationTagId, locationId);
-			} else if (currDssElement.getRuleId() != patientATD.getRule().getRuleId()) {
+			} else if (!currDssElement.getRuleId().equals(patientATD.getRule().getRuleId())) {
 				Integer ruleId = currDssElement.getRuleId();
 				Rule rule = null;
 				Integer priority = null;
