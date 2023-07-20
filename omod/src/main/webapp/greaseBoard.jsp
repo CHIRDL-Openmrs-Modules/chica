@@ -22,14 +22,17 @@
 
 <html>
 <head>
+
+<openmrs:htmlInclude file="/scripts/jquery/jquery.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/js/jquery-ui.min.js" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.structure.min.css" />
+<openmrs:htmlInclude file="/scripts/jquery-ui/css/jquery-ui.theme.min.css" />
+
 <link href="${pageContext.request.contextPath}/moduleResources/chica/chica.css" type="text/css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.structure.min.css" />
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.theme.min.css" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.css"/>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-1.9.1.min.js"></script>
+
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.timer.js"></script>
-<script src="${pageContext.request.contextPath}/moduleResources/chica/jquery-ui-1.11.2/jquery-ui.min.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/core.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/aes.js"></script>
 <script>var ctx = "${pageContext.request.contextPath}";</script>
@@ -38,6 +41,7 @@
 <script src="${pageContext.request.contextPath}/moduleResources/chica/forcePrintJITs.js"></script>
 <script src="${pageContext.request.contextPath}/moduleResources/chica/jquery.floatThead.min.js"></script>
 <style>
+
 #overlay { 
   display:none; 
   position:absolute; 

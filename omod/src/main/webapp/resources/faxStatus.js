@@ -1,7 +1,6 @@
 
 
-
-$(function() {
+jQuery(function() {
 	
 	$j("#exitButton").button();
 	
@@ -9,8 +8,8 @@ $(function() {
 	    resizable: true,
 	    autoOpen:false,
 	    modal: true,
-        width: $(window).width() * 0.75,
-        height: $(window).height() * 0.75,
+        width: $j(window).width() * 0.75,
+        height: $j(window).height() * 0.75,
 	    open: function(event, ui){
 	    },
 	    buttons: {
@@ -36,9 +35,9 @@ $(function() {
 
 });
 
-$(document).ready(function() {
+$j(document).ready(function() {
 	
-	var statusTable = $('#faxStatusTable').dataTable(
+	var statusTable = $j('#faxStatusTable').dataTable(
 			{ 
 				
 				
@@ -85,7 +84,7 @@ $(document).ready(function() {
 			}).api();
 
 	
-	$('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
+	$j('#faxStatusTable tbody tr').on( 'click', 'input',  function () {
 		
 		$j('#imageDisplay').attr('src', this.id);
     	$j('#viewImageDialog').dialog('open');

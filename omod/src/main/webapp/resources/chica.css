@@ -2,6 +2,10 @@ td{
 	vertical-align: top;
 }
 
+td#barcell {
+  vertical-align: middle;
+}
+
 .area {
 	  height:69%;
 	  width: 100%;
