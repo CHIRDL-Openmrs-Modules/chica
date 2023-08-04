@@ -329,7 +329,7 @@
 		<repository>
 			<id>chirdl-repo</id>
 			<name>CHIRDL Nexus Repository</name>
-			<url>https://iu-ota-icechip.ads.iu.edu:8091/repository/maven-public/</url>
+			<url>https://in-peds-phsr3.pediatrics.iupui.edu:8091/repository/maven-public/</url>
 		</repository>
 		<repository>
 			<id>icefaces-repo</id>
@@ -354,12 +354,12 @@
 		<repository>
 			<id>chirdl-repo-releases</id>
 			<name>CHIRDL Nexus Releases</name>
-			<url>https://iu-ota-icechip.ads.iu.edu:8091/repository/maven-releases/</url>
+			<url>https://in-peds-phsr3.pediatrics.iupui.edu:8091/repository/maven-releases/</url>
 		</repository>
 		<snapshotRepository>
 			<id>chirdl-repo-snapshots</id>
 			<name>CHIRDL Nexus Snapshots</name>
-			<url>https://iu-ota-icechip.ads.iu.edu:8091/repository/maven-snapshots/</url>
+			<url>https://in-peds-phsr3.pediatrics.iupui.edu:8091/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
