@@ -12,8 +12,8 @@
 	<url>http://openmrs.org</url>
 
 	<scm>
-		<connection>git@github.com:CHIRDL-Openmrs-Modules/chica.git</connection>
-		<developerConnection>git@github.com:CHIRDL-Openmrs-Modules/chica.git</developerConnection>
+		<connection>scm:git:git@github.com:CHIRDL-Openmrs-Modules/chica.git</connection>
+		<developerConnection>scm:git:git@github.com:CHIRDL-Openmrs-Modules/chica.git</developerConnection>
 		<url>https://github.com/CHIRDL-Openmrs-Modules/chica</url>
 	</scm>
 
