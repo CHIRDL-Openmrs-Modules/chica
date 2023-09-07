@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chica</artifactId>
-	<version>1.89.0-SNAPSHOT</version>
+	<version>1.89.0</version>
 	<packaging>pom</packaging>
 	<name>Chica</name>
 	<description>Parent project for Chica</description>
@@ -193,7 +193,7 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>legacyui-omod</artifactId>
-				<version>1.3.1.1</version>
+				<version>1.3.1.2</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
@@ -206,7 +206,7 @@
 	</dependencyManagement>
 
 	<properties>
-		<openMRSVersion>2.4.2.2</openMRSVersion>
+		<openMRSVersion>2.4.2.3</openMRSVersion>
 	</properties>
 
 	<build>
